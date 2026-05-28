@@ -1,6 +1,7 @@
 import { EventsView } from "@/components/views/events-view";
-import { EVENTS } from "@/lib/data";
+import { listPublishedEvents } from "@/lib/server/events";
 
-export default function EventsPage() {
-  return <EventsView events={EVENTS} />;
+export default async function EventsPage() {
+  const events = await listPublishedEvents();
+  return <EventsView events={events} />;
 }

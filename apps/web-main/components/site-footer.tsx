@@ -3,12 +3,17 @@
 import Link from "next/link";
 
 import { Button, Input } from "@gdggye/ui-kit";
+import type { Event } from "@gdggye/backend-core";
 
 import { useApp } from "./providers";
 import { Logo } from "./logo";
-import { COPY, EVENTS } from "@/lib/data";
+import { COPY } from "@/lib/data";
 
-export function SiteFooter() {
+export interface SiteFooterProps {
+  events: Pick<Event, "id" | "slug" | "name" | "year">[];
+}
+
+export function SiteFooter({ events }: SiteFooterProps) {
   const { lang } = useApp();
   const t = COPY[lang].footer;
   const navT = COPY[lang].nav;
@@ -76,7 +81,7 @@ export function SiteFooter() {
           <div>
             <div className="eyebrow mb-3.5">{t.eventsTitle}</div>
             <ul className="grid gap-2.5 text-sm">
-              {EVENTS.map((e) => (
+              {events.map((e) => (
                 <li key={e.id}>
                   <Link
                     href={`/events/${e.slug}`}

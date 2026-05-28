@@ -2,12 +2,18 @@
 
 import Link from "next/link";
 
+import type { Event } from "@gdggye/backend-core";
+
 import { useApp } from "./providers";
 import { COPY } from "@/lib/data";
-import type { EventSummary } from "@/lib/types";
+import {
+  eventAccent,
+  eventSummary,
+  shortVenue,
+} from "@/lib/event-presentation";
 
 interface EventCardProps {
-  event: EventSummary;
+  event: Event;
   featured?: boolean;
 }
 
@@ -15,18 +21,19 @@ export function EventCard({ event, featured = false }: EventCardProps) {
   const { lang } = useApp();
   const t = COPY[lang].upcoming;
   const locale = lang === "es" ? "es-EC" : "en-US";
-  const start = event.start_at.toLocaleDateString(locale, {
+  const startAt = new Date(event.startAt);
+  const start = startAt.toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
   });
-  const monthLong = event.start_at.toLocaleDateString(locale, {
-    month: "long",
-  });
-  const day = event.start_at.getDate();
-  const summary = lang === "es" ? event.summary_es : event.summary_en;
+  const monthLong = startAt.toLocaleDateString(locale, { month: "long" });
+  const day = startAt.getDate();
+  const summary = eventSummary(event, lang);
+  const venueShort = shortVenue(event.venueName);
+  const accent = eventAccent(event);
 
-  const accentVar = `var(--c-${event.accent})`;
-  const accentSoft = `var(--c-${event.accent}-soft)`;
+  const accentVar = `var(--c-${accent})`;
+  const accentSoft = `var(--c-${accent}-soft)`;
 
   if (featured) {
     return (
@@ -38,7 +45,7 @@ export function EventCard({ event, featured = false }: EventCardProps) {
           <div className="flex flex-col justify-between p-10">
             <div>
               <div className="mb-5 flex gap-2">
-                <span className={`chip chip-${event.accent}`}>
+                <span className={`chip chip-${accent}`}>
                   <span className="dot dot-pulse" /> Featured
                 </span>
                 <span className="chip chip-neutral">{event.year}</span>
@@ -71,13 +78,13 @@ export function EventCard({ event, featured = false }: EventCardProps) {
                 <div className="eyebrow mb-1.5">
                   {lang === "es" ? "Sede" : "Venue"}
                 </div>
-                <div className="font-medium">{event.venue_short}</div>
+                <div className="font-medium">{venueShort}</div>
               </div>
               <div>
                 <div className="eyebrow mb-1.5">
                   {lang === "es" ? "Asistentes" : "Expected"}
                 </div>
-                <div className="font-medium">{event.expected}</div>
+                <div className="font-medium">{event.expectedAttendance}</div>
               </div>
             </div>
           </div>
@@ -163,7 +170,7 @@ export function EventCard({ event, featured = false }: EventCardProps) {
             {summary}
           </p>
           <div className="mt-4 flex items-center justify-between text-xs text-[var(--c-text-subtle)]">
-            <span className="font-mono">{event.venue_short}</span>
+            <span className="font-mono">{venueShort}</span>
             <span
               className="font-mono text-[11px] font-medium uppercase tracking-wider"
               style={{ color: accentVar }}

@@ -5,12 +5,14 @@ import Link from "next/link";
 
 import { Button } from "@gdggye/ui-kit";
 
+import type { Event, EventContent } from "@gdggye/backend-core";
+
 import { useApp } from "../providers";
 import { Countdown } from "../countdown";
 import { FAQItem } from "../faq-item";
 import { SectionHeader } from "../section-header";
 import { COPY } from "@/lib/data";
-import type { EventDetail, EventSummary } from "@/lib/types";
+import { eventAccent } from "@/lib/event-presentation";
 
 const TRACK_COLORS: Record<string, string> = {
   Plenaria: "blue",
@@ -29,27 +31,30 @@ export function EventDetailView({
   event,
   detail,
 }: {
-  event: EventSummary;
-  detail: EventDetail | null;
+  event: Event;
+  detail: EventContent | null;
 }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
   const [activeSection, setActiveSection] = React.useState<SectionId>("agenda");
 
-  const accentVar = `var(--c-${event.accent})`;
-  const accentSoft = `var(--c-${event.accent}-soft)`;
+  const accent = eventAccent(event);
+  const accentVar = `var(--c-${accent})`;
+  const accentSoft = `var(--c-${accent}-soft)`;
   const locale = lang === "es" ? "es-EC" : "en-US";
 
-  const dateLong = event.start_at.toLocaleDateString(locale, {
+  const startAt = new Date(event.startAt);
+  const endAt = new Date(event.endAt);
+  const dateLong = startAt.toLocaleDateString(locale, {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
   });
-  const timeRange = `${event.start_at.toLocaleTimeString(locale, {
+  const timeRange = `${startAt.toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
-  })}–${event.end_at.toLocaleTimeString(locale, {
+  })}–${endAt.toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
   })}`;
@@ -102,11 +107,11 @@ export function EventDetailView({
           <div className="grid items-start gap-12 md:grid-cols-[1.4fr_1fr]">
             <div>
               <div className="mb-6 flex flex-wrap gap-2">
-                <span className={`chip chip-${event.accent}`}>
+                <span className={`chip chip-${accent}`}>
                   {prettifyType(event.type)}
                 </span>
                 <span className="chip chip-neutral">{event.year}</span>
-                {event.leaderboard_enabled ? (
+                {event.leaderboardEnabled ? (
                   <span className="chip chip-neutral">
                     🏆 {lang === "es" ? "Leaderboard activo" : "Leaderboard on"}
                   </span>
@@ -146,7 +151,7 @@ export function EventDetailView({
               ) : null}
 
               <div className="mb-9 flex flex-wrap gap-3">
-                <a href={event.ticket_url}>
+                <a href={event.ticketUrl ?? "#"}>
                   <Button variant="primary" size="lg">
                     {t.getTickets} →
                   </Button>
@@ -168,7 +173,7 @@ export function EventDetailView({
                   },
                   {
                     l: lang === "es" ? "Lugar" : "Venue",
-                    v: event.venue_name,
+                    v: event.venueName ?? "",
                   },
                 ].map((m) => (
                   <div key={m.l}>
@@ -197,7 +202,7 @@ export function EventDetailView({
                   className="font-mono text-xs font-medium uppercase tracking-widest"
                   style={{ color: accentVar }}
                 >
-                  {event.start_at.toLocaleDateString(locale, {
+                  {startAt.toLocaleDateString(locale, {
                     weekday: "long",
                   })}
                 </div>
@@ -210,7 +215,7 @@ export function EventDetailView({
                     letterSpacing: "-0.05em",
                   }}
                 >
-                  {event.start_at.getDate()}
+                  {startAt.getDate()}
                 </div>
                 <div
                   className="mt-1 font-display font-medium"
@@ -220,7 +225,7 @@ export function EventDetailView({
                     letterSpacing: "-0.02em",
                   }}
                 >
-                  {event.start_at.toLocaleDateString(locale, {
+                  {startAt.toLocaleDateString(locale, {
                     month: "long",
                   })}{" "}
                   {event.year}
@@ -234,7 +239,7 @@ export function EventDetailView({
                 >
                   {lang === "es" ? "Faltan" : "Countdown"}
                 </div>
-                <Countdown target={event.start_at} />
+                <Countdown target={startAt} />
               </div>
             </div>
           </div>
@@ -302,7 +307,7 @@ export function EventDetailView({
   );
 }
 
-function AgendaSection({ detail }: { detail: EventDetail }) {
+function AgendaSection({ detail }: { detail: EventContent }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
 
@@ -403,7 +408,7 @@ function AgendaSection({ detail }: { detail: EventDetail }) {
   );
 }
 
-function SpeakersSection({ detail }: { detail: EventDetail }) {
+function SpeakersSection({ detail }: { detail: EventContent }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
 
@@ -446,12 +451,12 @@ function SpeakersSection({ detail }: { detail: EventDetail }) {
   );
 }
 
-function SponsorsSection({ detail }: { detail: EventDetail }) {
+function SponsorsSection({ detail }: { detail: EventContent }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
 
   const tiers: Array<{
-    id: keyof EventDetail["sponsors"];
+    id: keyof EventContent["sponsors"];
     height: number;
     cols: number;
     fontSize: number;
@@ -526,10 +531,11 @@ function SponsorsSection({ detail }: { detail: EventDetail }) {
   );
 }
 
-function VenueSection({ event }: { event: EventSummary }) {
+function VenueSection({ event }: { event: Event }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
-  const accentVar = `var(--c-${event.accent})`;
+  const accent = eventAccent(event);
+  const accentVar = `var(--c-${accent})`;
 
   const facts = [
     {
@@ -578,10 +584,10 @@ function VenueSection({ event }: { event: EventSummary }) {
               className="mb-2 font-display font-semibold"
               style={{ fontSize: 28, letterSpacing: "-0.02em" }}
             >
-              {event.venue_name}
+              {event.venueName}
             </div>
             <div className="mb-6 text-[var(--c-text-muted)]">
-              {event.venue_address}
+              {event.venueAddress}
             </div>
 
             <div className="mb-7 grid gap-4">
@@ -679,7 +685,7 @@ function VenueSection({ event }: { event: EventSummary }) {
                 fill="var(--c-text)"
                 fontWeight="500"
               >
-                {event.venue_short}
+                {event.venueName ?? ""}
               </text>
               <text
                 x="430"
@@ -702,7 +708,7 @@ function VenueSection({ event }: { event: EventSummary }) {
   );
 }
 
-function FAQSection({ detail }: { detail: EventDetail }) {
+function FAQSection({ detail }: { detail: EventContent }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
 

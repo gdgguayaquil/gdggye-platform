@@ -1,6 +1,7 @@
 import { HomeView } from "@/components/views/home-view";
-import { EVENTS } from "@/lib/data";
+import { listPublishedEvents } from "@/lib/server/events";
 
-export default function HomePage() {
-  return <HomeView events={EVENTS} />;
+export default async function HomePage() {
+  const events = await listPublishedEvents();
+  return <HomeView events={events} />;
 }

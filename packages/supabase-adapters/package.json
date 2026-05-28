@@ -1,0 +1,31 @@
+{
+  "name": "@gdggye/supabase-adapters",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Supabase implementations of the backend-core ports. Server + browser clients + typed repositories.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/client/createServerClient.ts",
+    "./browser": "./src/client/createBrowserClient.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gdggye/backend-core": "*",
+    "@gdggye/types": "*",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.46.1"
+  },
+  "peerDependencies": {
+    "next": ">=14"
+  },
+  "devDependencies": {
+    "@gdggye/config": "*",
+    "@types/node": "^20",
+    "typescript": "^5"
+  }
+}

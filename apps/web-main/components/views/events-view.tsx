@@ -5,9 +5,15 @@ import Link from "next/link";
 
 import { Button } from "@gdggye/ui-kit";
 
+import type { Event, EventType } from "@gdggye/backend-core";
+
 import { useApp } from "../providers";
 import { COPY } from "@/lib/data";
-import type { EventSummary, EventType } from "@/lib/types";
+import {
+  eventAccent,
+  eventSummary,
+  shortVenue,
+} from "@/lib/event-presentation";
 
 type Filter = "all" | EventType;
 
@@ -26,7 +32,7 @@ function prettifyType(type: EventType) {
   return TYPE_LABELS[type];
 }
 
-export function EventsView({ events }: { events: EventSummary[] }) {
+export function EventsView({ events }: { events: Event[] }) {
   const { lang } = useApp();
   const t = COPY[lang];
   const [filter, setFilter] = React.useState<Filter>("all");
@@ -90,15 +96,18 @@ export function EventsView({ events }: { events: EventSummary[] }) {
         <div className="container-x">
           <div className="border-t border-[var(--c-border)]">
             {filtered.map((ev) => {
-              const accentVar = `var(--c-${ev.accent})`;
-              const day = ev.start_at.getDate();
-              const month = ev.start_at
+              const accent = eventAccent(ev);
+              const accentVar = `var(--c-${accent})`;
+              const startAt = new Date(ev.startAt);
+              const day = startAt.getDate();
+              const month = startAt
                 .toLocaleDateString(locale, { month: "short" })
                 .toUpperCase();
-              const dayOfWeek = ev.start_at.toLocaleDateString(locale, {
+              const dayOfWeek = startAt.toLocaleDateString(locale, {
                 weekday: "long",
               });
-              const summary = lang === "es" ? ev.summary_es : ev.summary_en;
+              const summary = eventSummary(ev, lang);
+              const venueShort = shortVenue(ev.venueName);
 
               return (
                 <Link
@@ -126,7 +135,7 @@ export function EventsView({ events }: { events: EventSummary[] }) {
 
                     <div>
                       <div className="mb-2 flex items-center gap-2.5">
-                        <span className={`chip chip-${ev.accent}`}>
+                        <span className={`chip chip-${accent}`}>
                           {prettifyType(ev.type)}
                         </span>
                         <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-subtle)]">
@@ -146,8 +155,8 @@ export function EventsView({ events }: { events: EventSummary[] }) {
                         {summary}
                       </p>
                       <div className="mt-3 flex gap-4.5 text-[13px] text-[var(--c-text-subtle)]">
-                        <span>📍 {ev.venue_short}</span>
-                        <span>👥 {ev.expected}</span>
+                        <span>📍 {venueShort}</span>
+                        <span>👥 {ev.expectedAttendance}</span>
                       </div>
                     </div>
 

@@ -3,14 +3,14 @@
 import Link from "next/link";
 
 import { Button } from "@gdggye/ui-kit";
+import type { Event } from "@gdggye/backend-core";
 
 import { useApp } from "../providers";
 import { EventCard } from "../event-card";
 import { SectionHeader } from "../section-header";
 import { COPY } from "@/lib/data";
-import type { EventSummary } from "@/lib/types";
 
-export function HomeView({ events }: { events: EventSummary[] }) {
+export function HomeView({ events }: { events: Event[] }) {
   const { lang } = useApp();
   const t = COPY[lang];
   const featured = events[0];

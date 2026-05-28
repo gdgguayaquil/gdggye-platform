@@ -8,7 +8,8 @@ insert into public.events (
   slug, name, type, year, status, language_mode,
   start_at, end_at, timezone,
   venue_name, venue_address, venue_map_url,
-  ticket_url, leaderboard_enabled, theme_key
+  ticket_url, leaderboard_enabled, theme_key,
+  summary_es, summary_en, expected_attendance
 ) values
 (
   'bwai-2026', 'Build with AI', 'build_with_ai', 2026, 'published', 'bilingual',
@@ -18,7 +19,10 @@ insert into public.events (
   null,
   'https://gdggye.org/bwai-2026/tickets',
   true,
-  'gdggye-core'
+  'gdggye-core',
+  'Un día construyendo con modelos generativos: Gemini, fine-tuning, agentes y producción.',
+  'One day building with generative models: Gemini, fine-tuning, agents, and production.',
+  '450+'
 ),
 (
   'devfest-2026', 'DevFest', 'devfest', 2026, 'published', 'bilingual',
@@ -28,7 +32,10 @@ insert into public.events (
   null,
   'https://gdggye.org/devfest-2026/tickets',
   true,
-  'gdggye-core'
+  'gdggye-core',
+  'El festival anual de la comunidad. Cuatro tracks, talleres en paralelo y más de 30 sesiones.',
+  'The community''s annual festival. Four tracks, parallel workshops, and 30+ sessions.',
+  '800+'
 ),
 (
   'io-extended-2026', 'I/O Extended', 'google_io', 2026, 'published', 'bilingual',
@@ -38,7 +45,10 @@ insert into public.events (
   null,
   'https://gdggye.org/io-extended-2026/tickets',
   false,
-  'gdggye-core'
+  'gdggye-core',
+  'Repaso comunitario de I/O 2026: lo más relevante para devs, en formato charla + lightning talks.',
+  'Community recap of I/O 2026: what matters for devs, in talk + lightning-talk format.',
+  '180'
 );
 
 -- ─────────────── event_content for bwai-2026 ───────────────

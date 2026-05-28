@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { Providers } from "@/components/providers";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { listPublishedEvents } from "@/lib/server/events";
 import type { Lang, ThemeMode } from "@/lib/types";
 
 import "./globals.css";
@@ -42,6 +43,16 @@ export default async function RootLayout({
   const theme = (cookieStore.get("gdg-theme")?.value as ThemeMode) || "light";
   const lang = (cookieStore.get("gdg-lang")?.value as Lang) || "es";
 
+  // Fetch once at layout level so the footer's event list and any future
+  // header-aware menus share the same data without re-querying.
+  const events = await listPublishedEvents();
+  const footerEvents = events.map((e) => ({
+    id: e.id,
+    slug: e.slug,
+    name: e.name,
+    year: e.year,
+  }));
+
   return (
     <html
       lang={lang}
@@ -52,7 +63,7 @@ export default async function RootLayout({
         <Providers initialTheme={theme} initialLang={lang}>
           <SiteHeader />
           <main className="flex-1">{children}</main>
-          <SiteFooter />
+          <SiteFooter events={footerEvents} />
         </Providers>
       </body>
     </html>

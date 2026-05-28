@@ -11,7 +11,20 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
+type EventTypeEnum =
+  | "devfest"
+  | "build_with_ai"
+  | "google_io"
+  | "meetup"
+  | "tech_talk"
+  | "conference"
+  | "workshop"
+  | "hackathon";
+
 export type Database = {
+  __InternalSupabase: {
+    PostgrestVersion: "12";
+  };
   public: {
     Tables: {
       events: {
@@ -19,15 +32,7 @@ export type Database = {
           id: string;
           slug: string;
           name: string;
-          type:
-            | "devfest"
-            | "build_with_ai"
-            | "google_io"
-            | "meetup"
-            | "tech_talk"
-            | "conference"
-            | "workshop"
-            | "hackathon";
+          type: EventTypeEnum;
           year: number;
           status: "draft" | "published" | "live" | "closed";
           language_mode: "es" | "en" | "bilingual";
@@ -41,6 +46,9 @@ export type Database = {
           pre_checkin_deadline: string | null;
           leaderboard_enabled: boolean;
           theme_key: string;
+          summary_es: string | null;
+          summary_en: string | null;
+          expected_attendance: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -48,15 +56,7 @@ export type Database = {
           id?: string;
           slug: string;
           name: string;
-          type:
-            | "devfest"
-            | "build_with_ai"
-            | "google_io"
-            | "meetup"
-            | "tech_talk"
-            | "conference"
-            | "workshop"
-            | "hackathon";
+          type: EventTypeEnum;
           year: number;
           status?: "draft" | "published" | "live" | "closed";
           language_mode?: "es" | "en" | "bilingual";
@@ -70,10 +70,14 @@ export type Database = {
           pre_checkin_deadline?: string | null;
           leaderboard_enabled?: boolean;
           theme_key?: string;
+          summary_es?: string | null;
+          summary_en?: string | null;
+          expected_attendance?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["events"]["Insert"]>;
+        Relationships: [];
       };
       event_content: {
         Row: {
@@ -99,20 +103,24 @@ export type Database = {
         Update: Partial<
           Database["public"]["Tables"]["event_content"]["Insert"]
         >;
+        Relationships: [
+          {
+            foreignKeyName: "event_content_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: true;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
+    Views: Record<never, never>;
+    Functions: Record<never, never>;
     Enums: {
-      event_type:
-        | "devfest"
-        | "build_with_ai"
-        | "google_io"
-        | "meetup"
-        | "tech_talk"
-        | "conference"
-        | "workshop"
-        | "hackathon";
+      event_type: EventTypeEnum;
       event_status: "draft" | "published" | "live" | "closed";
       language_mode: "es" | "en" | "bilingual";
     };
+    CompositeTypes: Record<never, never>;
   };
 };

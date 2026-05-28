@@ -41,6 +41,9 @@ create table public.events (
   pre_checkin_deadline  timestamptz,
   leaderboard_enabled   boolean not null default true,
   theme_key             text not null default 'gdggye-core',
+  summary_es            text,
+  summary_en            text,
+  expected_attendance   text,
   created_at            timestamptz not null default now(),
   updated_at            timestamptz not null default now()
 );

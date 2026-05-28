@@ -1,0 +1,17 @@
+{
+  "name": "@gdggye/config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared TypeScript, ESLint, Prettier, and Tailwind configuration for the gdggye-platform monorepo.",
+  "files": [
+    "tsconfig.base.json",
+    "eslint",
+    "prettier",
+    "tailwind"
+  ],
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./prettier": "./prettier/index.js",
+    "./tailwind/preset": "./tailwind/preset.js"
+  }
+}

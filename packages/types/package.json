@@ -1,0 +1,20 @@
+{
+  "name": "@gdggye/types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generated Supabase types and shared domain types for the gdggye-platform monorepo.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./database": "./src/database.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@gdggye/config": "*",
+    "typescript": "^5"
+  }
+}

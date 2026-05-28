@@ -11,8 +11,19 @@ import type { EventSummary, EventType } from "@/lib/types";
 
 type Filter = "all" | EventType;
 
+const TYPE_LABELS: Record<EventType, string> = {
+  build_with_ai: "Build with AI",
+  devfest: "DevFest",
+  google_io: "I/O Extended",
+  meetup: "Meetup",
+  tech_talk: "Tech Talk",
+  conference: "Conference",
+  workshop: "Workshop",
+  hackathon: "Hackathon",
+};
+
 function prettifyType(type: EventType) {
-  return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return TYPE_LABELS[type];
 }
 
 export function EventsView({ events }: { events: EventSummary[] }) {
@@ -23,11 +34,17 @@ export function EventsView({ events }: { events: EventSummary[] }) {
   const filtered =
     filter === "all" ? events : events.filter((e) => e.type === filter);
 
+  // Build filter pills from the types actually present in the data, so the row
+  // stays tight as new event types (meetups, tech talks, …) appear.
+  const presentTypes = React.useMemo(() => {
+    const seen = new Set<EventType>();
+    for (const e of events) seen.add(e.type);
+    return Array.from(seen);
+  }, [events]);
+
   const filters: { id: Filter; label: string }[] = [
     { id: "all", label: t.eventsPage.filterAll },
-    { id: "build_with_ai", label: "Build with AI" },
-    { id: "devfest", label: "DevFest" },
-    { id: "google_io", label: "I/O Extended" },
+    ...presentTypes.map((type) => ({ id: type, label: TYPE_LABELS[type] })),
   ];
 
   const locale = lang === "es" ? "es-EC" : "en-US";

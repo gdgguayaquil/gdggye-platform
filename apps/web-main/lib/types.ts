@@ -1,7 +1,15 @@
 export type Lang = "es" | "en";
 export type ThemeMode = "light" | "dark";
 
-export type EventType = "build_with_ai" | "devfest" | "google_io";
+export type EventType =
+  | "build_with_ai"
+  | "devfest"
+  | "google_io"
+  | "meetup"
+  | "tech_talk"
+  | "conference"
+  | "workshop"
+  | "hackathon";
 export type EventStatus = "draft" | "published" | "live" | "closed";
 export type EventAccent = "blue" | "green" | "yellow" | "red";
 

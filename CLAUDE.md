@@ -219,7 +219,10 @@ GitHub Actions: install → typecheck → lint → build → Supabase type drift
 `supabase/migrations/0001_events_and_content.sql`:
 
 ```sql
-create type event_type    as enum ('devfest', 'build_with_ai', 'google_io');
+create type event_type    as enum (
+  'devfest', 'build_with_ai', 'google_io',
+  'meetup', 'tech_talk', 'conference', 'workshop', 'hackathon'
+);
 create type event_status  as enum ('draft', 'published', 'live', 'closed');
 create type language_mode as enum ('es', 'en', 'bilingual');
 

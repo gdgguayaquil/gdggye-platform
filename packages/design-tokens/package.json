@@ -1,0 +1,21 @@
+{
+  "name": "@gdggye/design-tokens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Foundation + semantic design tokens for the GDG Guayaquil platform. Pure TS constants — no React, no CSS.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./foundations": "./src/foundations/index.ts",
+    "./semantic": "./src/semantic/tokens.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@gdggye/config": "*",
+    "typescript": "^5"
+  }
+}

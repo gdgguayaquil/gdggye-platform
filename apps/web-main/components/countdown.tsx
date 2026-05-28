@@ -5,18 +5,34 @@ import * as React from "react";
 import { useApp } from "./providers";
 import { COPY } from "@/lib/data";
 
+// Sentinel for the server snapshot. SSR/hydration render "00 00 00 00";
+// once mounted, useSyncExternalStore re-renders with Date.now().
+const SERVER_SNAPSHOT = 0;
+
+function subscribe(callback: () => void) {
+  const id = setInterval(callback, 1000);
+  return () => clearInterval(id);
+}
+
+function getSnapshot() {
+  return Date.now();
+}
+
+function getServerSnapshot() {
+  return SERVER_SNAPSHOT;
+}
+
 export function Countdown({ target }: { target: Date }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail.countdown;
-  const [now, setNow] = React.useState<Date | null>(null);
+  const now = React.useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
-  React.useEffect(() => {
-    setNow(new Date());
-    const id = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  const diff = now ? Math.max(0, target.getTime() - now.getTime()) : 0;
+  const diff =
+    now === SERVER_SNAPSHOT ? 0 : Math.max(0, target.getTime() - now);
   const d = Math.floor(diff / (1000 * 60 * 60 * 24));
   const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
   const m = Math.floor((diff / (1000 * 60)) % 60);

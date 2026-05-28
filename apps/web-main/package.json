@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "@gdggye/backend-core": "*",
+    "@gdggye/design-tokens": "*",
     "@gdggye/supabase-adapters": "*",
+    "@gdggye/theme-engine": "*",
+    "@gdggye/themes": "*",
     "@gdggye/types": "*",
     "@gdggye/ui-kit": "*",
     "clsx": "^2.1.1",

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { cookies } from "next/headers";
 
+import { ThemeStyles } from "@gdggye/theme-engine";
+import { gdggyeCoreLight, gdggyeCoreDark } from "@gdggye/themes";
+
 import { Providers } from "@/components/providers";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -59,6 +62,9 @@ export default async function RootLayout({
       data-theme={theme}
       className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
     >
+      <head>
+        <ThemeStyles light={gdggyeCoreLight} dark={gdggyeCoreDark} />
+      </head>
       <body className="flex min-h-screen flex-col">
         <Providers initialTheme={theme} initialLang={lang}>
           <SiteHeader />

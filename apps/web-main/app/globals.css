@@ -1,98 +1,21 @@
 @import "tailwindcss";
 
-/* ─────────── GDG Guayaquil — Design System ─────────── */
+/* ─────────── GDG Guayaquil — App-side CSS ───────────
+ * Token VALUES live in @gdggye/themes and are injected at runtime by
+ * <ThemeStyles /> in app/layout.tsx. This file keeps:
+ *   1. Layout-scope variables that don't vary by theme.
+ *   2. The Tailwind @theme bridge (so utilities resolve to our tokens).
+ *   3. Utility classes (.eyebrow, .chip-*, .placeholder, .fade-in, …)
+ *      consumed across the design.
+ * ────────────────────────────────────────────────── */
 
 :root {
-  /* Foundations — official GDG grayscale */
-  --c-bg: #ffffff;
-  --c-surface: #f0f0f0;
-  --c-surface-alt: #e4e4e4;
-  --c-border: #d8d8d8;
-  --c-border-strong: #b8b8b8;
-  --c-text: #1e1e1e;
-  --c-text-muted: #5a5a5a;
-  --c-text-subtle: #8a8a8a;
-
-  /* Brand — official GDG core */
-  --c-blue: #4285f4;
-  --c-green: #34a853;
-  --c-yellow: #f9ab00;
-  --c-red: #ea4335;
-
-  /* Brand — halftones (hover/secondary moments) */
-  --c-blue-half: #57caff;
-  --c-green-half: #5cdb6d;
-  --c-yellow-half: #ffd427;
-  --c-red-half: #ff7daf;
-
-  /* Brand — pastels (soft fills, chips, blocks) */
-  --c-blue-soft: #c3ecf6;
-  --c-green-soft: #ccf6c5;
-  --c-yellow-soft: #ffe7a5;
-  --c-red-soft: #f8d8d8;
-
-  /* Semantic */
-  --c-primary: var(--c-blue);
-  --c-primary-soft: var(--c-blue-soft);
-
-  /* Radii */
-  --r-xs: 6px;
-  --r-sm: 10px;
-  --r-md: 14px;
-  --r-lg: 20px;
-  --r-xl: 28px;
-  --r-pill: 999px;
-
-  /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(20, 22, 27, 0.04);
-  --shadow-sm:
-    0 2px 4px rgba(20, 22, 27, 0.04), 0 1px 2px rgba(20, 22, 27, 0.06);
-  --shadow-md:
-    0 8px 24px rgba(20, 22, 27, 0.06), 0 2px 6px rgba(20, 22, 27, 0.04);
-  --shadow-lg:
-    0 24px 48px rgba(20, 22, 27, 0.08), 0 4px 12px rgba(20, 22, 27, 0.04);
-
-  /* Layout */
   --container: 1200px;
   --nav-h: 68px;
 }
 
-[data-theme="dark"] {
-  --c-bg: #1e1e1e;
-  --c-surface: #262626;
-  --c-surface-alt: #303030;
-  --c-border: #3a3a3a;
-  --c-border-strong: #525252;
-  --c-text: #f0f0f0;
-  --c-text-muted: #a8a8a8;
-  --c-text-subtle: #757575;
-
-  --c-blue: #57caff;
-  --c-green: #5cdb6d;
-  --c-yellow: #ffd427;
-  --c-red: #ff7daf;
-
-  --c-blue-half: #4285f4;
-  --c-green-half: #34a853;
-  --c-yellow-half: #f9ab00;
-  --c-red-half: #ea4335;
-
-  --c-blue-soft: #1a2f4a;
-  --c-green-soft: #1c3a22;
-  --c-yellow-soft: #3a2e10;
-  --c-red-soft: #3a1c25;
-
-  --c-primary: var(--c-blue);
-  --c-primary-soft: var(--c-blue-soft);
-
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
 @theme inline {
-  /* Expose tokens to Tailwind */
+  /* Expose the runtime-injected tokens to Tailwind utility classes. */
   --color-bg: var(--c-bg);
   --color-surface: var(--c-surface);
   --color-surface-alt: var(--c-surface-alt);

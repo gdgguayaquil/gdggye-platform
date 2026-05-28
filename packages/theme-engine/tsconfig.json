@@ -1,0 +1,8 @@
+{
+  "extends": "@gdggye/config/tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "jsx": "preserve"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "@gdggye/themes",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Concrete AppTheme objects for the GDG Guayaquil platform.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./gdggye-core": "./src/gdggye-core.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gdggye/design-tokens": "*",
+    "@gdggye/theme-engine": "*"
+  },
+  "devDependencies": {
+    "@gdggye/config": "*",
+    "typescript": "^5"
+  }
+}

@@ -1,40 +1,49 @@
 export function Logo({ size = 24 }: { size?: number }) {
-  const dotR = size * 0.13;
-  const cx = size / 2;
-  const cy = size / 2;
+  // The new mark is wider than tall (~1.78:1), so `size` drives height
+  // and width scales to preserve the aspect ratio.
+  const height = size;
+  const width = size * (650 / 365);
+
   return (
     <span className="inline-flex items-center gap-2.5">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <circle
-          cx={cx - size * 0.28}
-          cy={cy + size * 0.05}
-          r={dotR}
-          fill="var(--c-blue)"
-        />
-        <circle
-          cx={cx - size * 0.1}
-          cy={cy - size * 0.18}
-          r={dotR}
-          fill="var(--c-red)"
-        />
-        <circle
-          cx={cx + size * 0.1}
-          cy={cy - size * 0.18}
-          r={dotR}
-          fill="var(--c-yellow)"
-        />
-        <circle
-          cx={cx + size * 0.28}
-          cy={cy + size * 0.05}
-          r={dotR}
-          fill="var(--c-green)"
-        />
+      <svg
+        width={width}
+        height={height}
+        viewBox="0 0 650 365"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+      >
+        {/* Red — upper bar, sweeps down-left */}
         <path
-          d={`M ${cx - size * 0.32} ${cy + size * 0.22} Q ${cx} ${cy + size * 0.4}, ${cx + size * 0.32} ${cy + size * 0.22}`}
+          transform="matrix(1.3333,0,0,-1.3333,293.3,86.54)"
+          d="M0,0c10.993,-15.297 7.505,-36.609 -7.792,-47.602l-72.862,-52.364c-15.296,-10.993 -36.609,-7.504 -47.602,7.792c-10.993,15.297 -7.505,36.609 7.792,47.603L-47.602,7.792C-32.306,18.785 -10.993,15.297 0,0"
+          fill="var(--c-red)"
           stroke="var(--c-text)"
-          strokeWidth={size * 0.06}
-          fill="none"
-          strokeLinecap="round"
+          strokeWidth="6"
+        />
+        {/* Blue — lower-left bar, sweeps down-right */}
+        <path
+          transform="matrix(1.3333,0,0,-1.3333,122.29,156.38)"
+          d="M0,0c-10.993,-15.297 -7.505,-36.609 7.792,-47.602l72.862,-52.364c15.296,-10.993 36.609,-7.504 47.602,7.792c10.993,15.297 7.505,36.609 -7.792,47.603L47.602,7.792C32.306,18.785 10.993,15.297 0,0"
+          fill="var(--c-blue)"
+          stroke="var(--c-text)"
+          strokeWidth="6"
+        />
+        {/* Yellow — lower-right bar, sweeps down-left */}
+        <path
+          transform="matrix(1.3333,0,0,-1.3333,528.05,156.38)"
+          d="M0,0c10.993,-15.297 7.505,-36.609 -7.792,-47.602l-72.862,-52.364c-15.296,-10.993 -36.609,-7.504 -47.602,7.792c-10.993,15.297 -7.505,36.609 7.792,47.603L-47.602,7.792C-32.306,18.785 -10.993,15.297 0,0"
+          fill="var(--c-yellow)"
+          stroke="var(--c-text)"
+          strokeWidth="6"
+        />
+        {/* Green — upper bar, sweeps down-right */}
+        <path
+          transform="matrix(1.3333,0,0,-1.3333,357.04,86.54)"
+          d="M0,0c-10.993,-15.297 -7.505,-36.609 7.792,-47.602l72.862,-52.364c15.296,-10.993 36.609,-7.504 47.602,7.792c10.993,15.297 7.505,36.609 -7.792,47.603L47.602,7.792C32.306,18.785 10.993,15.297 0,0"
+          fill="var(--c-green)"
+          stroke="var(--c-text)"
+          strokeWidth="6"
         />
       </svg>
       <span

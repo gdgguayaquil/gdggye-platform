@@ -13,6 +13,18 @@ type AnySupabaseClient = SupabaseServerClient | SupabaseBrowserClient;
 export class SupabaseEventRepository implements EventRepository {
   constructor(private readonly client: AnySupabaseClient) {}
 
+  async findById(id: string): Promise<Event | null> {
+    const { data, error } = await this.client
+      .from("events")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+    if (error) {
+      throw new Error(`SupabaseEventRepository.findById: ${error.message}`);
+    }
+    return data ? rowToEvent(data) : null;
+  }
+
   async findBySlug(slug: string): Promise<Event | null> {
     const { data, error } = await this.client
       .from("events")

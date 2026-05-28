@@ -6,6 +6,7 @@ export interface ListEventsFilter {
 }
 
 export interface EventRepository {
+  findById(id: string): Promise<Event | null>;
   findBySlug(slug: string): Promise<Event | null>;
   list(filter?: ListEventsFilter): Promise<Event[]>;
 }

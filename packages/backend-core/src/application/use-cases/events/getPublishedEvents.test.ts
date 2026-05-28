@@ -40,6 +40,9 @@ describe("getPublishedEvents", () => {
     // Repo intentionally ignores the status filter — the use case should still
     // strip drafts before returning.
     const repo: import("../../ports/EventRepository").EventRepository = {
+      async findById() {
+        return null;
+      },
       async findBySlug() {
         return null;
       },

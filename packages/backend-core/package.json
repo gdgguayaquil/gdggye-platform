@@ -9,6 +9,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./events": "./src/application/use-cases/events/index.ts",
+    "./identity": "./src/application/use-cases/identity/index.ts",
+    "./consents": "./src/application/use-cases/consents/index.ts",
+    "./registrations": "./src/application/use-cases/registrations/index.ts",
     "./domain": "./src/domain/index.ts",
     "./ports": "./src/application/ports/index.ts"
   },

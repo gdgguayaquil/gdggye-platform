@@ -1,3 +1,6 @@
 export * from "./domain";
 export * from "./application/ports";
 export * from "./application/use-cases/events";
+export * from "./application/use-cases/identity";
+export * from "./application/use-cases/consents";
+export * from "./application/use-cases/registrations";

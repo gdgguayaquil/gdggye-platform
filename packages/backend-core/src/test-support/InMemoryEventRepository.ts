@@ -10,6 +10,10 @@ import type {
 export class InMemoryEventRepository implements EventRepository {
   constructor(private readonly events: Event[] = []) {}
 
+  async findById(id: string): Promise<Event | null> {
+    return this.events.find((e) => e.id === id) ?? null;
+  }
+
   async findBySlug(slug: string): Promise<Event | null> {
     return this.events.find((e) => e.slug === slug) ?? null;
   }

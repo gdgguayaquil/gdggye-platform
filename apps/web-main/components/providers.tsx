@@ -2,7 +2,11 @@
 
 import * as React from "react";
 
-import type { Lang, ThemeMode } from "@/lib/types";
+import { LANG_COOKIE, type Lang } from "@gdggye/i18n";
+
+import type { ThemeMode } from "@/lib/types";
+
+const THEME_COOKIE = "gdg-theme";
 
 interface AppContextValue {
   theme: ThemeMode;
@@ -31,13 +35,13 @@ export function Providers({
 
   const setTheme = React.useCallback((t: ThemeMode) => {
     setThemeState(t);
-    setCookie("gdg-theme", t);
+    setCookie(THEME_COOKIE, t);
     document.documentElement.setAttribute("data-theme", t);
   }, []);
 
   const setLang = React.useCallback((l: Lang) => {
     setLangState(l);
-    setCookie("gdg-lang", l);
+    setCookie(LANG_COOKIE, l);
     document.documentElement.setAttribute("lang", l);
   }, []);
 

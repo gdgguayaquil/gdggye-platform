@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Event } from "@gdggye/backend-core";
 
 import { useApp } from "./providers";
-import { COPY } from "@/lib/data";
+import { COPY } from "@gdggye/i18n";
 import {
   eventAccent,
   eventSummary,

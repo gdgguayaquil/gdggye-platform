@@ -3,7 +3,7 @@
 import * as React from "react";
 
 import { useApp } from "./providers";
-import { COPY } from "@/lib/data";
+import { COPY } from "@gdggye/i18n";
 
 // Sentinel for the server snapshot. SSR/hydration render "00 00 00 00";
 // once mounted, useSyncExternalStore re-renders with Date.now().

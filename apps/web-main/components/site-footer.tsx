@@ -7,7 +7,7 @@ import type { Event } from "@gdggye/backend-core";
 
 import { useApp } from "./providers";
 import { Logo } from "./logo";
-import { COPY } from "@/lib/data";
+import { COPY } from "@gdggye/i18n";
 
 export interface SiteFooterProps {
   events: Pick<Event, "id" | "slug" | "name" | "year">[];

@@ -1,5 +1,4 @@
 // App-local UI state types. Domain types (Event, EventContent, EventType, …)
-// come from @gdggye/backend-core.
+// come from @gdggye/backend-core. Lang lives in @gdggye/i18n.
 
-export type Lang = "es" | "en";
 export type ThemeMode = "light" | "dark";

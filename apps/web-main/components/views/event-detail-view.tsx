@@ -11,7 +11,7 @@ import { useApp } from "../providers";
 import { Countdown } from "../countdown";
 import { FAQItem } from "../faq-item";
 import { SectionHeader } from "../section-header";
-import { COPY } from "@/lib/data";
+import { COPY } from "@gdggye/i18n";
 import { eventAccent } from "@/lib/event-presentation";
 
 const TRACK_COLORS: Record<string, string> = {

@@ -12,6 +12,7 @@
   "dependencies": {
     "@gdggye/backend-core": "*",
     "@gdggye/design-tokens": "*",
+    "@gdggye/i18n": "*",
     "@gdggye/supabase-adapters": "*",
     "@gdggye/theme-engine": "*",
     "@gdggye/themes": "*",

@@ -8,7 +8,7 @@ import type { Event } from "@gdggye/backend-core";
 import { useApp } from "../providers";
 import { EventCard } from "../event-card";
 import { SectionHeader } from "../section-header";
-import { COPY } from "@/lib/data";
+import { COPY } from "@gdggye/i18n";
 
 export function HomeView({ events }: { events: Event[] }) {
   const { lang } = useApp();

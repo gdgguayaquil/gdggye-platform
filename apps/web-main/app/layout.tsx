@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { cookies } from "next/headers";
 
 import { ThemeStyles } from "@gdggye/theme-engine";
 import { gdggyeCoreLight, gdggyeCoreDark } from "@gdggye/themes";
+import { LANG_COOKIE, getLang } from "@gdggye/i18n";
 
 import { Providers } from "@/components/providers";
+import { ServiceWorkerRegister } from "@/components/service-worker-register";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { listPublishedEvents } from "@/lib/server/events";
-import type { Lang, ThemeMode } from "@/lib/types";
+import type { ThemeMode } from "@/lib/types";
 
 import "./globals.css";
 
@@ -35,6 +37,21 @@ export const metadata: Metadata = {
   title: "GDG Guayaquil — Plataforma comunitaria",
   description:
     "Comunidad de desarrolladores en Guayaquil, Ecuador. Eventos, talleres y meetups.",
+  applicationName: "GDG Guayaquil",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "GDG Gye",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#1e1e1e" },
+  ],
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default async function RootLayout({
@@ -44,7 +61,7 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const theme = (cookieStore.get("gdg-theme")?.value as ThemeMode) || "light";
-  const lang = (cookieStore.get("gdg-lang")?.value as Lang) || "es";
+  const lang = getLang(cookieStore.get(LANG_COOKIE)?.value);
 
   // Fetch once at layout level so the footer's event list and any future
   // header-aware menus share the same data without re-querying.
@@ -70,6 +87,7 @@ export default async function RootLayout({
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <SiteFooter events={footerEvents} />
+          <ServiceWorkerRegister />
         </Providers>
       </body>
     </html>

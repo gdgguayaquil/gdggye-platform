@@ -8,7 +8,7 @@ import { Button } from "@gdggye/ui-kit";
 import type { Event, EventType } from "@gdggye/backend-core";
 
 import { useApp } from "../providers";
-import { COPY } from "@/lib/data";
+import { COPY } from "@gdggye/i18n";
 import {
   eventAccent,
   eventSummary,

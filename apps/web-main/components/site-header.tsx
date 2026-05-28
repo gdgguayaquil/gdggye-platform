@@ -8,7 +8,7 @@ import { Button } from "@gdggye/ui-kit";
 
 import { useApp } from "./providers";
 import { Logo } from "./logo";
-import { COPY } from "@/lib/data";
+import { COPY } from "@gdggye/i18n";
 
 export function SiteHeader() {
   const { lang, setLang, theme, setTheme } = useApp();

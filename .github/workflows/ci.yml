@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel in-progress runs on the same ref when a new commit lands.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint · typecheck · build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+  type-drift:
+    name: Supabase type drift
+    runs-on: ubuntu-latest
+    # Don't block merges if the drift check itself has infra issues — the verify
+    # job above covers correctness. Treat this as advisory until Supabase Cloud
+    # auth is set up in repo secrets.
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase
+        run: npx supabase start
+
+      - name: Regenerate types and check for drift
+        run: |
+          npx supabase gen types typescript --local > /tmp/database.generated.ts
+          if ! diff -u packages/types/src/database.ts /tmp/database.generated.ts; then
+            echo "::error::packages/types/src/database.ts is out of sync with the live schema."
+            echo "Run 'npm run supabase:types' locally and commit the result."
+            exit 1
+          fi
+
+      - name: Stop Supabase
+        if: always()
+        run: npx supabase stop

@@ -11,6 +11,19 @@ A digital platform for **GDG Guayaquil** with two purposes:
 
 **Architecture pillars:** monorepo, multiple Next.js apps per event-year, one shared design system, one central backend (Option A), one auth/profile system, one gamification engine, one admin platform.
 
+## Phase map
+
+| Phase | Focus                                | Detailed spec                                              |
+| ----- | ------------------------------------ | ---------------------------------------------------------- |
+| **1** | Foundation + public platform         | This file (below)                                          |
+| **2** | Auth + attendee gamification         | **`CLAUDE-phase2.md`** ← read this when working on Phase 2 |
+| 3     | Pre-checkin workflow                 | TBD                                                        |
+| 4     | Full admin suite                     | TBD                                                        |
+| 5     | Networking + badges                  | TBD                                                        |
+| 6     | Reports + global ranking + hardening | TBD                                                        |
+
+> When the user asks for Phase 2 work, open `CLAUDE-phase2.md` for the full spec (locked decisions, migration `0002`, RLS, scan use-case, sprint backlog). This file remains the source of truth for locked decisions and architectural rules that apply across **all** phases.
+
 ---
 
 ## Locked decisions
@@ -19,7 +32,7 @@ These are settled. Do not relitigate without explicit instruction.
 
 | Decision                  | Choice                                                                                               |
 | ------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Frontend framework        | **Next.js 16+** (App Router, RSC)                                                                    |
+| Frontend framework        | **Next.js 14+** (App Router, RSC)                                                                    |
 | Backend strategy          | **Option A**: Next.js Route Handlers as thin adapters; all business logic in `packages/backend-core` |
 | Database / Auth / Storage | **Supabase** (Postgres + Auth + Storage + Realtime + Edge Functions)                                 |
 | Monorepo tool             | **npm workspaces + Turborepo**                                                                       |
@@ -29,7 +42,7 @@ These are settled. Do not relitigate without explicit instruction.
 | Auth provider             | **Google OAuth via Supabase Auth**                                                                   |
 | Deployment                | **Vercel** for Next apps, **Supabase Cloud** for backend                                             |
 | Package manager           | **npm** (workspaces)                                                                                 |
-| Node version              | 24 LTS                                                                                               |
+| Node version              | 20 LTS                                                                                               |
 
 ---
 
@@ -124,7 +137,7 @@ gdggye-platform/
 ├── supabase/
 │   ├── migrations/
 │   ├── seed.sql
-│   └── functions/                   # Edge Functions (Phase 2+)
+│   └── functions/                   # Edge Functions — SCHEDULED JOBS ONLY (Phase 3+), never business logic
 ├── .github/workflows/ci.yml
 ├── pnpm-workspace.yaml
 ├── turbo.json
@@ -219,10 +232,7 @@ GitHub Actions: install → typecheck → lint → build → Supabase type drift
 `supabase/migrations/0001_events_and_content.sql`:
 
 ```sql
-create type event_type    as enum (
-  'devfest', 'build_with_ai', 'google_io',
-  'meetup', 'tech_talk', 'conference', 'workshop', 'hackathon'
-);
+create type event_type    as enum ('devfest', 'build_with_ai', 'google_io');
 create type event_status  as enum ('draft', 'published', 'live', 'closed');
 create type language_mode as enum ('es', 'en', 'bilingual');
 

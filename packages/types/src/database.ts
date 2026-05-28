@@ -21,6 +21,17 @@ type EventTypeEnum =
   | "workshop"
   | "hackathon";
 
+type SystemRole = "attendee" | "organizer" | "admin";
+type PreCheckinStatus = "not_submitted" | "pending" | "approved" | "rejected";
+type ScanTargetType = "sponsor" | "activity" | "attendee";
+type ScanResult = "accepted" | "rejected";
+type PointSource =
+  | "sponsor"
+  | "activity"
+  | "networking"
+  | "bonus"
+  | "admin_adjustment";
+
 export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "12";
@@ -113,6 +124,196 @@ export type Database = {
           },
         ];
       };
+      users: {
+        Row: {
+          id: string;
+          google_id: string | null;
+          email: string;
+          full_name: string;
+          photo_url: string | null;
+          company: string | null;
+          role: string | null;
+          phone: string | null;
+          city: string | null;
+          social_links: Json;
+          system_role: SystemRole;
+          accepted_terms_at: string | null;
+          accepted_privacy_at: string | null;
+          accepted_sponsor_consent_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          google_id?: string | null;
+          email: string;
+          full_name?: string;
+          photo_url?: string | null;
+          company?: string | null;
+          role?: string | null;
+          phone?: string | null;
+          city?: string | null;
+          social_links?: Json;
+          system_role?: SystemRole;
+          accepted_terms_at?: string | null;
+          accepted_privacy_at?: string | null;
+          accepted_sponsor_consent_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["users"]["Insert"]>;
+        Relationships: [];
+      };
+      consent_records: {
+        Row: {
+          id: string;
+          user_id: string;
+          consent_type: string;
+          version: string;
+          accepted_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          consent_type: string;
+          version?: string;
+          accepted_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["consent_records"]["Insert"]
+        >;
+        Relationships: [];
+      };
+      registrations: {
+        Row: {
+          id: string;
+          event_id: string;
+          user_id: string;
+          pre_checkin_status: PreCheckinStatus;
+          approved_at: string | null;
+          total_points: number;
+          event_rank: number | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          event_id: string;
+          user_id: string;
+          pre_checkin_status?: PreCheckinStatus;
+          approved_at?: string | null;
+          total_points?: number;
+          event_rank?: number | null;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["registrations"]["Insert"]
+        >;
+        Relationships: [];
+      };
+      sponsors: {
+        Row: {
+          id: string;
+          event_id: string;
+          name: string;
+          tier: string | null;
+          logo_url: string | null;
+          description: string | null;
+          booth_label: string | null;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          event_id: string;
+          name: string;
+          tier?: string | null;
+          logo_url?: string | null;
+          description?: string | null;
+          booth_label?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["sponsors"]["Insert"]>;
+        Relationships: [];
+      };
+      activities: {
+        Row: {
+          id: string;
+          sponsor_id: string;
+          event_id: string;
+          name: string;
+          points: number;
+          starts_at: string | null;
+          ends_at: string | null;
+          qr_rotation_seconds: number;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          sponsor_id: string;
+          event_id: string;
+          name: string;
+          points?: number;
+          starts_at?: string | null;
+          ends_at?: string | null;
+          qr_rotation_seconds?: number;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["activities"]["Insert"]>;
+        Relationships: [];
+      };
+      scan_logs: {
+        Row: {
+          id: string;
+          event_id: string;
+          scanner_user_id: string;
+          target_type: ScanTargetType;
+          target_id: string;
+          scanned_at: string;
+          points_granted: number;
+          result: ScanResult;
+          reject_reason: string | null;
+        };
+        Insert: {
+          id?: string;
+          event_id: string;
+          scanner_user_id: string;
+          target_type: ScanTargetType;
+          target_id: string;
+          scanned_at?: string;
+          points_granted?: number;
+          result: ScanResult;
+          reject_reason?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["scan_logs"]["Insert"]>;
+        Relationships: [];
+      };
+      point_transactions: {
+        Row: {
+          id: string;
+          event_id: string;
+          user_id: string;
+          source_type: PointSource;
+          source_id: string | null;
+          points: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          event_id: string;
+          user_id: string;
+          source_type: PointSource;
+          source_id?: string | null;
+          points: number;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["point_transactions"]["Insert"]
+        >;
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: Record<never, never>;
@@ -120,6 +321,11 @@ export type Database = {
       event_type: EventTypeEnum;
       event_status: "draft" | "published" | "live" | "closed";
       language_mode: "es" | "en" | "bilingual";
+      system_role: SystemRole;
+      precheckin_status: PreCheckinStatus;
+      scan_target_type: ScanTargetType;
+      scan_result: ScanResult;
+      point_source: PointSource;
     };
     CompositeTypes: Record<never, never>;
   };

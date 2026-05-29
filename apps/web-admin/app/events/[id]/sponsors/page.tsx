@@ -38,6 +38,9 @@ export default async function SponsorsListPage({
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <a href={`/events/${id}/qr-sheet`} target="_blank" rel="noopener">
+            <Button variant="secondary">QR sheet ↗</Button>
+          </a>
           <Link href={`/events/${id}/activities`}>
             <Button variant="secondary">Activities →</Button>
           </Link>

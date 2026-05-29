@@ -47,6 +47,9 @@ export default async function ActivitiesListPage({
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <a href={`/events/${id}/qr-sheet`} target="_blank" rel="noopener">
+            <Button variant="secondary">QR sheet ↗</Button>
+          </a>
           <Link href={`/events/${id}/sponsors`}>
             <Button variant="secondary">← Sponsors</Button>
           </Link>

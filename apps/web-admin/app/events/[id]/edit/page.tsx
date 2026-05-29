@@ -68,6 +68,13 @@ export default async function EditEventPage({
           <Link href={`/events/${event.id}/activities`}>
             <Button variant="secondary">Activities</Button>
           </Link>
+          <a
+            href={`/events/${event.id}/qr-sheet`}
+            target="_blank"
+            rel="noopener"
+          >
+            <Button variant="secondary">QR sheet ↗</Button>
+          </a>
           <Link href="/events">
             <Button variant="secondary">← All</Button>
           </Link>

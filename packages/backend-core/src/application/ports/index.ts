@@ -1,4 +1,9 @@
-export type { EventRepository, ListEventsFilter } from "./EventRepository";
+export type {
+  EventRepository,
+  ListEventsFilter,
+  CreateEventInput,
+  UpdateEventInput,
+} from "./EventRepository";
 export type { EventContentRepository } from "./EventContentRepository";
 export type { Clock } from "./Clock";
 export type {

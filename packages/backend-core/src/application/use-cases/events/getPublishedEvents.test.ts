@@ -52,6 +52,15 @@ describe("getPublishedEvents", () => {
           makeEvent({ id: "2", slug: "b", status: "published" }),
         ];
       },
+      async create() {
+        throw new Error("not used in this test");
+      },
+      async update() {
+        throw new Error("not used in this test");
+      },
+      async updateStatus() {
+        throw new Error("not used in this test");
+      },
     };
     const result = await getPublishedEvents({}, { eventRepo: repo });
     expect(result.map((e) => e.id)).toEqual(["2"]);

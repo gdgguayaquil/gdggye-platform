@@ -13,3 +13,18 @@ export {
   type GetEventContentInput,
   type GetEventContentDeps,
 } from "./getEventContent";
+export {
+  createEvent,
+  EventValidationError,
+  type CreateEventDeps,
+  type EventValidationReason,
+} from "./createEvent";
+export { updateEvent, type UpdateEventDeps } from "./updateEvent";
+export {
+  transitionEventStatus,
+  publishEvent,
+  goLive,
+  closeEvent,
+  InvalidStatusTransition,
+  type TransitionEventStatusDeps,
+} from "./transitionEventStatus";

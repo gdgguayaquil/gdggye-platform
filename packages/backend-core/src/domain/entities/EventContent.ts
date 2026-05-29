@@ -27,7 +27,11 @@ export interface Speaker {
   city: string;
 }
 
-export interface Sponsor {
+// Lightweight sponsor entry inside event_content.sponsors (a JSONB blob).
+// Distinct from the `Sponsor` domain entity backed by the `sponsors` table
+// (which carries id, tier, isActive, etc.). This shape is what the marketing
+// site renders directly.
+export interface SponsorListing {
   name: string;
 }
 
@@ -39,10 +43,10 @@ export interface FAQ {
 }
 
 export interface SponsorTiers {
-  platinum: Sponsor[];
-  gold: Sponsor[];
-  silver: Sponsor[];
-  community: Sponsor[];
+  platinum: SponsorListing[];
+  gold: SponsorListing[];
+  silver: SponsorListing[];
+  community: SponsorListing[];
 }
 
 export interface EventContent {

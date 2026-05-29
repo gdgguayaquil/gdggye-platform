@@ -3,4 +3,6 @@ export * from "./entities/EventContent";
 export * from "./entities/User";
 export * from "./entities/ConsentRecord";
 export * from "./entities/Registration";
+export * from "./entities/Sponsor";
+export * from "./entities/Activity";
 export * from "./qr-token";

@@ -19,3 +19,13 @@ export type {
   RegistrationRepository,
   EnsureRegistrationInput,
 } from "./RegistrationRepository";
+export type {
+  SponsorRepository,
+  CreateSponsorInput,
+  UpdateSponsorInput,
+} from "./SponsorRepository";
+export type {
+  ActivityRepository,
+  CreateActivityInput,
+  UpdateActivityInput,
+} from "./ActivityRepository";

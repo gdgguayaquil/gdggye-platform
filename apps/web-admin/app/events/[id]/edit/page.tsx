@@ -61,9 +61,17 @@ export default async function EditEventPage({
             <span className="chip chip-neutral">{event.status}</span>
           </div>
         </div>
-        <Link href="/events">
-          <Button variant="secondary">← All events</Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href={`/events/${event.id}/sponsors`}>
+            <Button variant="secondary">Sponsors</Button>
+          </Link>
+          <Link href={`/events/${event.id}/activities`}>
+            <Button variant="secondary">Activities</Button>
+          </Link>
+          <Link href="/events">
+            <Button variant="secondary">← All</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="mb-10">

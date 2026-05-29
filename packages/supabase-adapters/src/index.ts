@@ -17,3 +17,5 @@ export { SupabaseEventContentRepository } from "./repositories/SupabaseEventCont
 export { SupabaseUserRepository } from "./repositories/SupabaseUserRepository";
 export { SupabaseConsentRepository } from "./repositories/SupabaseConsentRepository";
 export { SupabaseRegistrationRepository } from "./repositories/SupabaseRegistrationRepository";
+export { SupabaseSponsorRepository } from "./repositories/SupabaseSponsorRepository";
+export { SupabaseActivityRepository } from "./repositories/SupabaseActivityRepository";

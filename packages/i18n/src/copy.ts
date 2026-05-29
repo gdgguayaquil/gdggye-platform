@@ -9,6 +9,10 @@ export const COPY = {
       signIn: "Iniciar sesión",
       signOut: "Salir",
       account: "Mi cuenta",
+      scanner: "Escáner",
+      leaderboard: "Tabla",
+      myQr: "Mi QR",
+      profile: "Perfil",
     },
     hero: {
       eyebrow: "Comunidad de desarrolladores · Guayaquil, Ecuador",
@@ -96,6 +100,10 @@ export const COPY = {
       signIn: "Sign in",
       signOut: "Sign out",
       account: "Account",
+      scanner: "Scanner",
+      leaderboard: "Ranking",
+      myQr: "My QR",
+      profile: "Profile",
     },
     hero: {
       eyebrow: "Developer community · Guayaquil, Ecuador",

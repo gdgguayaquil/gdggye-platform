@@ -6,6 +6,7 @@ import { ThemeStyles } from "@gdggye/theme-engine";
 import { bwai2026Light, bwai2026Dark } from "@gdggye/themes";
 import { LANG_COOKIE, getLang } from "@gdggye/i18n";
 
+import { BottomNav } from "@/components/bottom-nav";
 import { Providers } from "@/components/providers";
 import type { ThemeMode } from "@/lib/types";
 
@@ -70,7 +71,8 @@ export default async function RootLayout({
       </head>
       <body className="flex min-h-screen flex-col">
         <Providers initialTheme={theme} initialLang={lang}>
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pb-20">{children}</main>
+          <BottomNav />
         </Providers>
       </body>
     </html>

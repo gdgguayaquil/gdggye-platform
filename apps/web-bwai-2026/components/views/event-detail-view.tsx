@@ -31,10 +31,12 @@ export function EventDetailView({
   event,
   detail,
   hideBackLink = false,
+  isRegistered = false,
 }: {
   event: Event;
   detail: EventContent | null;
   hideBackLink?: boolean;
+  isRegistered?: boolean;
 }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
@@ -117,6 +119,11 @@ export function EventDetailView({
                 {event.leaderboardEnabled ? (
                   <span className="chip chip-neutral">
                     🏆 {lang === "es" ? "Leaderboard activo" : "Leaderboard on"}
+                  </span>
+                ) : null}
+                {isRegistered ? (
+                  <span className="chip chip-green">
+                    ✓ {lang === "es" ? "Registrado" : "Registered"}
                   </span>
                 ) : null}
               </div>

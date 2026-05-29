@@ -10,7 +10,14 @@ import { useApp } from "./providers";
 import { Logo } from "./logo";
 import { COPY } from "@gdggye/i18n";
 
-export function SiteHeader() {
+export interface SiteHeaderUser {
+  id: string;
+  fullName: string;
+  email: string;
+  photoUrl: string | null;
+}
+
+export function SiteHeader({ user }: { user: SiteHeaderUser | null }) {
   const { lang, setLang, theme, setTheme } = useApp();
   const pathname = usePathname();
   const [scrolled, setScrolled] = React.useState(false);
@@ -115,14 +122,40 @@ export function SiteHeader() {
             ))}
           </div>
 
-          <Link href="/events">
-            <Button variant="primary">
-              {t.join}
-              <span className="text-xs opacity-70">↗</span>
-            </Button>
-          </Link>
+          {user ? (
+            <>
+              <Link
+                href="/profile"
+                className={linkClass(pathname.startsWith("/profile"))}
+              >
+                {firstName(user.fullName) || t.account}
+              </Link>
+              <form
+                action="/auth/signout"
+                method="post"
+                className="flex items-center"
+              >
+                <Button type="submit" variant="secondary">
+                  {t.signOut}
+                </Button>
+              </form>
+            </>
+          ) : (
+            <Link href="/sign-in">
+              <Button variant="primary">
+                {t.signIn}
+                <span className="text-xs opacity-70">↗</span>
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </nav>
   );
+}
+
+function firstName(fullName: string): string {
+  const trimmed = fullName.trim();
+  if (!trimmed) return "";
+  return trimmed.split(/\s+/)[0] ?? "";
 }

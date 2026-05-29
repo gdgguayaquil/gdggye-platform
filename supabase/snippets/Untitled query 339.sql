@@ -1,0 +1,1 @@
+select id, email, full_name, system_role from public.users

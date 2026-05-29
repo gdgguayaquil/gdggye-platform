@@ -75,13 +75,15 @@ If tempted to add anything from this list, **STOP and ask the user.**
 
 ### Epic A — Authentication & identity (Sprint 1)
 
-**A1 — Sign in with Google**
-As a visitor, I can sign in with Google so I can access private event features.
+**A1 — Sign in**
+As a visitor, I can sign in (Google OAuth primary, email/password fallback) so I can access private event features.
 
 - Supabase Google OAuth provider configured (staging + prod client IDs)
+- Email + password path available for users without a Google account and for local dev without OAuth setup; `auth.email.enable_signup = true`, confirmations on for staging/prod, off for local
 - SSR-safe Supabase client (`@supabase/ssr`) reads/writes session cookies
 - Session persists across reloads; sign-out clears it
 - Redirect back to the page the user started from
+- Both paths converge on the same `signInBootstrap` use-case in A2 (auth method is transparent to backend-core)
 
 **A2 — Account bootstrap on first login**
 As a first-time user, my account is created automatically on first sign-in.
@@ -581,7 +583,7 @@ Phase 2 depends on `system_role` being in the JWT so RLS can branch on it. Confi
 - [ ] `grep -r "supabase\|@supabase" packages/backend-core/src` → **zero matches**
 - [ ] `grep -r "from 'next" packages/backend-core/src` → **zero matches**
 - [ ] No scan/points logic exists in any Edge Function (`supabase/functions/`)
-- [ ] Google sign-in works; first login creates exactly one `users` row (idempotent)
+- [ ] Sign-in works via both Google OAuth and email/password; first login through either path creates exactly one `users` row (idempotent)
 - [ ] JWT contains correct `system_role` for attendee, organizer, admin
 - [ ] RLS verified with all three roles: attendee cannot read another user's registration/scans/points
 - [ ] Profile completion gates event features; three consents recorded independently

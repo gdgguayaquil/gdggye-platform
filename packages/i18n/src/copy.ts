@@ -6,6 +6,9 @@ export const COPY = {
       community: "Comunidad",
       about: "Sobre nosotros",
       join: "Únete",
+      signIn: "Iniciar sesión",
+      signOut: "Salir",
+      account: "Mi cuenta",
     },
     hero: {
       eyebrow: "Comunidad de desarrolladores · Guayaquil, Ecuador",
@@ -90,6 +93,9 @@ export const COPY = {
       community: "Community",
       about: "About",
       join: "Join",
+      signIn: "Sign in",
+      signOut: "Sign out",
+      account: "Account",
     },
     hero: {
       eyebrow: "Developer community · Guayaquil, Ecuador",

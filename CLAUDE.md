@@ -30,19 +30,19 @@ A digital platform for **GDG Guayaquil** with two purposes:
 
 These are settled. Do not relitigate without explicit instruction.
 
-| Decision                  | Choice                                                                                               |
-| ------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Frontend framework        | **Next.js 14+** (App Router, RSC)                                                                    |
-| Backend strategy          | **Option A**: Next.js Route Handlers as thin adapters; all business logic in `packages/backend-core` |
-| Database / Auth / Storage | **Supabase** (Postgres + Auth + Storage + Realtime + Edge Functions)                                 |
-| Monorepo tool             | **npm workspaces + Turborepo**                                                                       |
-| Language                  | **TypeScript** everywhere, `strict: true`                                                            |
-| Styling                   | **Tailwind CSS + CSS variables** for theming                                                         |
-| Component library         | **shadcn/ui** installed into `packages/ui-kit/` (single source of truth, all apps import from it)    |
-| Auth provider             | **Google OAuth via Supabase Auth**                                                                   |
-| Deployment                | **Vercel** for Next apps, **Supabase Cloud** for backend                                             |
-| Package manager           | **npm** (workspaces)                                                                                 |
-| Node version              | 20 LTS                                                                                               |
+| Decision                  | Choice                                                                                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend framework        | **Next.js 14+** (App Router, RSC)                                                                                                                 |
+| Backend strategy          | **Option A**: Next.js Route Handlers as thin adapters; all business logic in `packages/backend-core`                                              |
+| Database / Auth / Storage | **Supabase** (Postgres + Auth + Storage + Realtime + Edge Functions)                                                                              |
+| Monorepo tool             | **npm workspaces + Turborepo**                                                                                                                    |
+| Language                  | **TypeScript** everywhere, `strict: true`                                                                                                         |
+| Styling                   | **Tailwind CSS + CSS variables** for theming                                                                                                      |
+| Component library         | **shadcn/ui** installed into `packages/ui-kit/` (single source of truth, all apps import from it)                                                 |
+| Auth provider             | **Google OAuth via Supabase Auth** (primary) + **email + password** (fallback) — both paths bootstrap through the same `signInBootstrap` use-case |
+| Deployment                | **Vercel** for Next apps, **Supabase Cloud** for backend                                                                                          |
+| Package manager           | **npm** (workspaces)                                                                                                                              |
+| Node version              | 20 LTS                                                                                                                                            |
 
 ---
 

@@ -27,5 +27,7 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   // Skip Next internals + static assets so the redirect doesn't fire on /_next/*.
-  matcher: ["/((?!_next|api|favicon.ico|manifest.webmanifest|sw.js|icon).*)"],
+  matcher: [
+    "/((?!_next|api|auth|favicon.ico|manifest.webmanifest|sw.js|icon).*)",
+  ],
 };

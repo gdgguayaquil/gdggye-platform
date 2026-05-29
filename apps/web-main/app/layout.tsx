@@ -8,8 +8,9 @@ import { LANG_COOKIE, getLang } from "@gdggye/i18n";
 
 import { Providers } from "@/components/providers";
 import { ServiceWorkerRegister } from "@/components/service-worker-register";
-import { SiteHeader } from "@/components/site-header";
+import { SiteHeader, type SiteHeaderUser } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { getCurrentUser } from "@/lib/server/auth";
 import { listPublishedEvents } from "@/lib/server/events";
 import type { ThemeMode } from "@/lib/types";
 
@@ -65,13 +66,24 @@ export default async function RootLayout({
 
   // Fetch once at layout level so the footer's event list and any future
   // header-aware menus share the same data without re-querying.
-  const events = await listPublishedEvents();
+  const [events, currentUser] = await Promise.all([
+    listPublishedEvents(),
+    getCurrentUser(),
+  ]);
   const footerEvents = events.map((e) => ({
     id: e.id,
     slug: e.slug,
     name: e.name,
     year: e.year,
   }));
+  const headerUser: SiteHeaderUser | null = currentUser
+    ? {
+        id: currentUser.id,
+        fullName: currentUser.fullName,
+        email: currentUser.email,
+        photoUrl: currentUser.photoUrl,
+      }
+    : null;
 
   return (
     <html
@@ -84,7 +96,7 @@ export default async function RootLayout({
       </head>
       <body className="flex min-h-screen flex-col">
         <Providers initialTheme={theme} initialLang={lang}>
-          <SiteHeader />
+          <SiteHeader user={headerUser} />
           <main className="flex-1">{children}</main>
           <SiteFooter events={footerEvents} />
           <ServiceWorkerRegister />

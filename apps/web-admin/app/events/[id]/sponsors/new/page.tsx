@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 
+import { EventSubNav } from "@/components/event-sub-nav";
+import { PageHeader } from "@/components/page-header";
 import { requireStaff } from "@/lib/server/auth";
 import { findEventById } from "@/lib/server/events";
 
@@ -27,15 +29,16 @@ export default async function NewSponsorPage({
 
   return (
     <div className="container-x py-12">
-      <div className="mb-8">
-        <div className="eyebrow mb-3">{event.name} / Sponsors / New</div>
-        <h1
-          className="h-display"
-          style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
-        >
-          New sponsor
-        </h1>
-      </div>
+      <PageHeader
+        crumbs={[
+          { label: "Events", href: "/events" },
+          { label: event.name, href: `/events/${id}/edit` },
+          { label: "Sponsors", href: `/events/${id}/sponsors` },
+          { label: "New" },
+        ]}
+        title="New sponsor"
+      />
+      <EventSubNav eventId={id} active="sponsors" />
       <SponsorForm mode="create" initial={initial} />
     </div>
   );

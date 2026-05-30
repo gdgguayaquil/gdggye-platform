@@ -4,23 +4,33 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium leading-none transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--c-primary)] disabled:pointer-events-none disabled:opacity-50 border border-transparent",
+  // Inline-flex with items-center handles vertical centering — no leading-none,
+  // which can squish text under Tailwind v4. Padding values use the canonical
+  // Tailwind scale so they survive purging cleanly. Colors come from the
+  // @theme bridge (`--color-text`, `--color-bg`, etc. in globals.css).
+  [
+    "inline-flex items-center justify-center gap-2",
+    "whitespace-nowrap rounded-full font-medium transition-all",
+    "border border-transparent",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    "focus-visible:ring-[var(--c-primary)]",
+    "disabled:pointer-events-none disabled:opacity-50",
+  ].join(" "),
   {
     variants: {
       variant: {
         primary:
-          "bg-[var(--c-text)] text-[var(--c-bg)] hover:-translate-y-px hover:shadow-[var(--shadow-md)]",
+          "bg-text text-bg hover:-translate-y-px hover:shadow-[var(--shadow-md)]",
         secondary:
-          "bg-[var(--c-surface)] text-[var(--c-text)] border-[var(--c-border)] hover:bg-[var(--c-surface-alt)] hover:border-[var(--c-border-strong)]",
-        ghost:
-          "bg-transparent text-[var(--c-text)] hover:bg-[var(--c-surface)]",
+          "bg-surface text-text border-border hover:bg-surface-alt hover:border-border-strong",
+        ghost: "bg-transparent text-text hover:bg-surface",
         outline:
-          "bg-transparent text-[var(--c-text)] border-[var(--c-border)] hover:border-[var(--c-border-strong)]",
+          "bg-transparent text-text border-border hover:border-border-strong",
       },
       size: {
-        default: "h-10 px-[18px] py-[10px] text-sm",
+        default: "h-10 px-5 text-sm",
         sm: "h-9 px-3 text-xs",
-        lg: "h-12 px-6 text-[15px]",
+        lg: "h-12 px-6 text-base",
         icon: "h-10 w-10",
       },
     },

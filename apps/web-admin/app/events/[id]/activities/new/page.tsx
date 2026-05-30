@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 
+import { EventSubNav } from "@/components/event-sub-nav";
+import { PageHeader } from "@/components/page-header";
 import { requireStaff } from "@/lib/server/auth";
 import { findEventById } from "@/lib/server/events";
 import { listSponsorsForEvent } from "@/lib/server/sponsors";
@@ -36,15 +38,16 @@ export default async function NewActivityPage({
 
   return (
     <div className="container-x py-12">
-      <div className="mb-8">
-        <div className="eyebrow mb-3">{event.name} / Activities / New</div>
-        <h1
-          className="h-display"
-          style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
-        >
-          New activity
-        </h1>
-      </div>
+      <PageHeader
+        crumbs={[
+          { label: "Events", href: "/events" },
+          { label: event.name, href: `/events/${id}/edit` },
+          { label: "Activities", href: `/events/${id}/activities` },
+          { label: "New" },
+        ]}
+        title="New activity"
+      />
+      <EventSubNav eventId={id} active="activities" />
       <ActivityForm mode="create" initial={initial} sponsors={sponsors} />
     </div>
   );

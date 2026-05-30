@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Button } from "@gdggye/ui-kit";
 
+import { PageHeader } from "@/components/page-header";
 import { requireStaff } from "@/lib/server/auth";
 import { listAllEvents } from "@/lib/server/events";
 
@@ -12,33 +13,36 @@ const STATUS_COLOR: Record<string, string> = {
   closed: "yellow",
 };
 
+// See sponsors/page.tsx for the rationale on inline grid templates.
+const EVENT_COLS = "minmax(0, 2fr) 120px 140px 140px 120px";
+
 export default async function EventsPage() {
   await requireStaff();
   const events = await listAllEvents();
 
   return (
     <div className="container-x py-12">
-      <div className="mb-8 flex items-end justify-between gap-6">
-        <div>
-          <div className="eyebrow mb-3">Eventos</div>
-          <h1
-            className="h-display"
-            style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
-          >
-            All events
-          </h1>
-          <p className="mt-2 text-[var(--c-text-muted)]">
-            {events.length} {events.length === 1 ? "event" : "events"} in the
-            database, including drafts.
-          </p>
-        </div>
-        <Link href="/events/new">
-          <Button variant="primary">+ New event</Button>
-        </Link>
-      </div>
+      <PageHeader
+        crumbs={[{ label: "Events" }]}
+        title="Events"
+        subtitle={
+          <>
+            {events.length} {events.length === 1 ? "event" : "events"} —
+            including drafts.
+          </>
+        }
+        actions={
+          <Link href="/events/new">
+            <Button variant="primary">+ New event</Button>
+          </Link>
+        }
+      />
 
       <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
-        <div className="grid grid-cols-[2fr_120px_140px_140px_120px] gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]">
+        <div
+          className="grid gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]"
+          style={{ gridTemplateColumns: EVENT_COLS }}
+        >
           <div>Name</div>
           <div>Type</div>
           <div>Year</div>
@@ -53,7 +57,8 @@ export default async function EventsPage() {
           events.map((e) => (
             <div
               key={e.id}
-              className="grid grid-cols-[2fr_120px_140px_140px_120px] items-center gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
+              className="grid items-center gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
+              style={{ gridTemplateColumns: EVENT_COLS }}
             >
               <div>
                 <div className="font-display font-semibold">{e.name}</div>
@@ -74,7 +79,7 @@ export default async function EventsPage() {
               </div>
               <div className="text-right">
                 <Link href={`/events/${e.id}/edit`}>
-                  <Button variant="secondary">Edit</Button>
+                  <Button variant="secondary">Open</Button>
                 </Link>
               </div>
             </div>

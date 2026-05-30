@@ -3,10 +3,15 @@ import { notFound } from "next/navigation";
 
 import { Button } from "@gdggye/ui-kit";
 
+import { EventSubNav } from "@/components/event-sub-nav";
+import { PageHeader } from "@/components/page-header";
 import { listActivitiesForEvent } from "@/lib/server/activities";
 import { requireStaff } from "@/lib/server/auth";
 import { findEventById } from "@/lib/server/events";
 import { listSponsorsForEvent } from "@/lib/server/sponsors";
+
+// See sponsors/page.tsx for the rationale on inline grid templates.
+const ACTIVITY_COLS = "minmax(0, 2fr) minmax(0, 1fr) 100px 120px 120px";
 
 export default async function ActivitiesListPage({
   params,
@@ -30,43 +35,34 @@ export default async function ActivitiesListPage({
 
   return (
     <div className="container-x py-12">
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <div className="eyebrow mb-3">
-            <Link href={`/events/${id}/edit`}>← {event.name}</Link>
-          </div>
-          <h1
-            className="h-display"
-            style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
-          >
-            Activities
-          </h1>
-          <p className="mt-2 text-[var(--c-text-muted)]">
-            {activities.length} activit
-            {activities.length === 1 ? "y" : "ies"}.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <a href={`/events/${id}/qr-sheet`} target="_blank" rel="noopener">
-            <Button variant="secondary">QR sheet ↗</Button>
-          </a>
-          <Link href={`/events/${id}/sponsors`}>
-            <Button variant="secondary">← Sponsors</Button>
-          </Link>
-          {noSponsors ? (
-            <span className="text-sm text-[var(--c-text-muted)]">
-              Add a sponsor first.
-            </span>
+      <PageHeader
+        crumbs={[
+          { label: "Events", href: "/events" },
+          { label: event.name, href: `/events/${id}/edit` },
+          { label: "Activities" },
+        ]}
+        title="Activities"
+        subtitle={`${activities.length} activit${activities.length === 1 ? "y" : "ies"}.`}
+        actions={
+          noSponsors ? (
+            <Link href={`/events/${id}/sponsors/new`}>
+              <Button variant="secondary">+ Add a sponsor first</Button>
+            </Link>
           ) : (
             <Link href={`/events/${id}/activities/new`}>
               <Button variant="primary">+ New activity</Button>
             </Link>
-          )}
-        </div>
-      </div>
+          )
+        }
+      />
+
+      <EventSubNav eventId={id} active="activities" />
 
       <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
-        <div className="grid grid-cols-[2fr_1fr_100px_120px_120px] gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]">
+        <div
+          className="grid gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]"
+          style={{ gridTemplateColumns: ACTIVITY_COLS }}
+        >
           <div>Name</div>
           <div>Sponsor</div>
           <div>Points</div>
@@ -81,7 +77,8 @@ export default async function ActivitiesListPage({
           activities.map((a) => (
             <div
               key={a.id}
-              className="grid grid-cols-[2fr_1fr_100px_120px_120px] items-center gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
+              className="grid items-center gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
+              style={{ gridTemplateColumns: ACTIVITY_COLS }}
             >
               <div className="font-display font-semibold">{a.name}</div>
               <div className="text-sm">{sponsorName(a.sponsorId)}</div>

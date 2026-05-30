@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/page-header";
 import { requireStaff } from "@/lib/server/auth";
 
 import { EventForm, type EventFormValues } from "../EventForm";
@@ -37,15 +38,11 @@ export default async function NewEventPage() {
 
   return (
     <div className="container-x py-12">
-      <div className="mb-8">
-        <div className="eyebrow mb-3">Events / New</div>
-        <h1
-          className="h-display"
-          style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
-        >
-          New event
-        </h1>
-      </div>
+      <PageHeader
+        crumbs={[{ label: "Events", href: "/events" }, { label: "New event" }]}
+        title="New event"
+        subtitle="Starts as a draft. Publish from the event page once it's ready."
+      />
       <EventForm mode="create" initial={initial} />
     </div>
   );

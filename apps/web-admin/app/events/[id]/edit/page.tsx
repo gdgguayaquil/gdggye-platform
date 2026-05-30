@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Button } from "@gdggye/ui-kit";
-
+import { EventSubNav } from "@/components/event-sub-nav";
+import { PageHeader } from "@/components/page-header";
 import { requireStaff } from "@/lib/server/auth";
 import { findEventById } from "@/lib/server/events";
 
@@ -13,6 +12,13 @@ function toLocalInput(d: Date): string {
   const off = d.getTimezoneOffset() * 60_000;
   return new Date(d.getTime() - off).toISOString().slice(0, 16);
 }
+
+const STATUS_COLOR: Record<string, string> = {
+  draft: "neutral",
+  published: "blue",
+  live: "green",
+  closed: "yellow",
+};
 
 export default async function EditEventPage({
   params,
@@ -46,40 +52,23 @@ export default async function EditEventPage({
 
   return (
     <div className="container-x py-12">
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <div className="eyebrow mb-3">Events / Edit</div>
-          <h1
-            className="h-display"
-            style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
-          >
-            {event.name}
-          </h1>
-          <div className="mt-2 flex items-center gap-3 text-sm text-[var(--c-text-muted)]">
-            <span className="font-mono">{event.slug}</span>
-            <span>·</span>
-            <span className="chip chip-neutral">{event.status}</span>
+      <PageHeader
+        crumbs={[{ label: "Events", href: "/events" }, { label: event.name }]}
+        title={event.name}
+        subtitle={
+          <div className="mt-1 flex items-center gap-3">
+            <span className="font-mono text-xs">{event.slug}</span>
+            <span className="text-[var(--c-text-subtle)]">·</span>
+            <span
+              className={`chip chip-${STATUS_COLOR[event.status] ?? "neutral"}`}
+            >
+              {event.status}
+            </span>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link href={`/events/${event.id}/sponsors`}>
-            <Button variant="secondary">Sponsors</Button>
-          </Link>
-          <Link href={`/events/${event.id}/activities`}>
-            <Button variant="secondary">Activities</Button>
-          </Link>
-          <a
-            href={`/events/${event.id}/qr-sheet`}
-            target="_blank"
-            rel="noopener"
-          >
-            <Button variant="secondary">QR sheet ↗</Button>
-          </a>
-          <Link href="/events">
-            <Button variant="secondary">← All</Button>
-          </Link>
-        </div>
-      </div>
+        }
+      />
+
+      <EventSubNav eventId={event.id} active="details" />
 
       <div className="mb-10">
         <StatusActions id={event.id} status={event.status} />

@@ -3,9 +3,16 @@ import { notFound } from "next/navigation";
 
 import { Button } from "@gdggye/ui-kit";
 
+import { EventSubNav } from "@/components/event-sub-nav";
+import { PageHeader } from "@/components/page-header";
 import { requireStaff } from "@/lib/server/auth";
 import { findEventById } from "@/lib/server/events";
 import { listSponsorsForEvent } from "@/lib/server/sponsors";
+
+// 5-column grid for the sponsors table. Set via inline style because
+// Tailwind v4 doesn't always emit arbitrary `grid-cols-[…]` classes with
+// multiple track values reliably.
+const SPONSOR_COLS = "minmax(0, 2fr) 140px 120px 120px 120px";
 
 export default async function SponsorsListPage({
   params,
@@ -21,37 +28,28 @@ export default async function SponsorsListPage({
 
   return (
     <div className="container-x py-12">
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <div className="eyebrow mb-3">
-            <Link href={`/events/${id}/edit`}>← {event.name}</Link>
-          </div>
-          <h1
-            className="h-display"
-            style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
-          >
-            Sponsors
-          </h1>
-          <p className="mt-2 text-[var(--c-text-muted)]">
-            {sponsors.length} sponsor
-            {sponsors.length === 1 ? "" : "s"} attached to this event.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <a href={`/events/${id}/qr-sheet`} target="_blank" rel="noopener">
-            <Button variant="secondary">QR sheet ↗</Button>
-          </a>
-          <Link href={`/events/${id}/activities`}>
-            <Button variant="secondary">Activities →</Button>
-          </Link>
+      <PageHeader
+        crumbs={[
+          { label: "Events", href: "/events" },
+          { label: event.name, href: `/events/${id}/edit` },
+          { label: "Sponsors" },
+        ]}
+        title="Sponsors"
+        subtitle={`${sponsors.length} sponsor${sponsors.length === 1 ? "" : "s"} attached to this event.`}
+        actions={
           <Link href={`/events/${id}/sponsors/new`}>
             <Button variant="primary">+ New sponsor</Button>
           </Link>
-        </div>
-      </div>
+        }
+      />
+
+      <EventSubNav eventId={id} active="sponsors" />
 
       <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
-        <div className="grid grid-cols-[2fr_140px_120px_120px_120px] gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]">
+        <div
+          className="grid gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]"
+          style={{ gridTemplateColumns: SPONSOR_COLS }}
+        >
           <div>Name</div>
           <div>Tier</div>
           <div>Booth</div>
@@ -66,7 +64,8 @@ export default async function SponsorsListPage({
           sponsors.map((s) => (
             <div
               key={s.id}
-              className="grid grid-cols-[2fr_140px_120px_120px_120px] items-center gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
+              className="grid items-center gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
+              style={{ gridTemplateColumns: SPONSOR_COLS }}
             >
               <div>
                 <div className="font-display font-semibold">{s.name}</div>

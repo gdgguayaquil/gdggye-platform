@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Button } from "@gdggye/ui-kit";
-
+import { EventSubNav } from "@/components/event-sub-nav";
+import { PageHeader } from "@/components/page-header";
 import { getActivity } from "@/lib/server/activities";
 import { requireStaff } from "@/lib/server/auth";
 import { findEventById } from "@/lib/server/events";
@@ -41,26 +40,22 @@ export default async function EditActivityPage({
     isActive: activity.isActive,
   };
 
+  const sponsorName =
+    sponsors.find((s) => s.id === activity.sponsorId)?.name ?? null;
+
   return (
     <div className="container-x py-12">
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <div className="eyebrow mb-3">
-            <Link href={`/events/${id}/activities`}>
-              ← {event.name} / Activities
-            </Link>
-          </div>
-          <h1
-            className="h-display"
-            style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
-          >
-            {activity.name}
-          </h1>
-        </div>
-        <Link href={`/events/${id}/activities`}>
-          <Button variant="secondary">← All activities</Button>
-        </Link>
-      </div>
+      <PageHeader
+        crumbs={[
+          { label: "Events", href: "/events" },
+          { label: event.name, href: `/events/${id}/edit` },
+          { label: "Activities", href: `/events/${id}/activities` },
+          { label: activity.name },
+        ]}
+        title={activity.name}
+        subtitle={sponsorName ? `Sponsor · ${sponsorName}` : null}
+      />
+      <EventSubNav eventId={id} active="activities" />
       <ActivityForm mode="edit" initial={initial} sponsors={sponsors} />
     </div>
   );

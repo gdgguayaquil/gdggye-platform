@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Button } from "@gdggye/ui-kit";
-
+import { EventSubNav } from "@/components/event-sub-nav";
+import { PageHeader } from "@/components/page-header";
 import { requireStaff } from "@/lib/server/auth";
 import { findEventById } from "@/lib/server/events";
 import { getSponsor } from "@/lib/server/sponsors";
@@ -36,24 +35,17 @@ export default async function EditSponsorPage({
 
   return (
     <div className="container-x py-12">
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <div className="eyebrow mb-3">
-            <Link href={`/events/${id}/sponsors`}>
-              ← {event.name} / Sponsors
-            </Link>
-          </div>
-          <h1
-            className="h-display"
-            style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
-          >
-            {sponsor.name}
-          </h1>
-        </div>
-        <Link href={`/events/${id}/sponsors`}>
-          <Button variant="secondary">← All sponsors</Button>
-        </Link>
-      </div>
+      <PageHeader
+        crumbs={[
+          { label: "Events", href: "/events" },
+          { label: event.name, href: `/events/${id}/edit` },
+          { label: "Sponsors", href: `/events/${id}/sponsors` },
+          { label: sponsor.name },
+        ]}
+        title={sponsor.name}
+        subtitle={sponsor.tier ?? null}
+      />
+      <EventSubNav eventId={id} active="sponsors" />
       <SponsorForm mode="edit" initial={initial} />
     </div>
   );

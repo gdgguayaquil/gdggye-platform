@@ -1,9 +1,11 @@
 export {
-  listSponsorsForEvent,
+  listAllSponsors,
+  searchSponsors,
   getSponsor,
+  getSponsorBySlug,
   createSponsor,
   updateSponsor,
-  setSponsorActive,
+  slugify,
   SponsorValidationError,
   type SponsorDeps,
   type SponsorValidationReason,

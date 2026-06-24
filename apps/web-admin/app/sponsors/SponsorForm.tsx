@@ -12,16 +12,26 @@ import {
 
 export interface SponsorFormValues {
   id?: string;
-  eventId: string;
+  slug: string;
   name: string;
-  tier: string | null;
   logoUrl: string | null;
   description: string | null;
-  boothLabel: string | null;
-  isActive: boolean;
+  websiteUrl: string | null;
+  defaultTier: string | null;
 }
 
 const initialState: SponsorActionState = { ok: false };
+
+// Mirror the use-case's slugify so the slug field can preview what will
+// happen when the user submits a blank slug.
+function previewSlug(name: string): string {
+  return name
+    .normalize("NFKD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 export function SponsorForm({
   mode,
@@ -37,43 +47,71 @@ export function SponsorForm({
   );
   const fe = state.fieldErrors ?? {};
 
+  const [name, setName] = React.useState(initial.name);
+  const [slug, setSlug] = React.useState(initial.slug);
+  const [slugTouched, setSlugTouched] = React.useState(initial.slug.length > 0);
+
+  React.useEffect(() => {
+    if (!slugTouched && mode === "create") {
+      setSlug(previewSlug(name));
+    }
+  }, [name, slugTouched, mode]);
+
   return (
     <form action={formAction} className="grid max-w-[640px] gap-5">
-      <input type="hidden" name="eventId" value={initial.eventId} />
       {initial.id ? <input type="hidden" name="id" value={initial.id} /> : null}
 
       <Field label="Name *" error={fe.name}>
-        <Input name="name" defaultValue={initial.name} required />
+        <Input
+          name="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
       </Field>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field
-          label="Tier"
-          hint="Free text. Typical: platinum / gold / silver / community."
-        >
-          <Input name="tier" defaultValue={initial.tier ?? ""} />
-        </Field>
-        <Field label="Booth label">
-          <Input name="boothLabel" defaultValue={initial.boothLabel ?? ""} />
-        </Field>
-      </div>
+      <Field
+        label="Slug *"
+        hint="Lowercase letters, numbers, and dashes. Used in URLs and as the sponsor's stable id."
+        error={fe.slug}
+      >
+        <Input
+          name="slug"
+          value={slug}
+          onChange={(e) => {
+            setSlug(e.target.value);
+            setSlugTouched(true);
+          }}
+          required
+        />
+      </Field>
+
+      <Field
+        label="Default tier"
+        hint="Optional. Suggested when attaching to an event (override per event)."
+      >
+        <Input
+          name="defaultTier"
+          defaultValue={initial.defaultTier ?? ""}
+          placeholder="platinum / gold / silver / community"
+        />
+      </Field>
 
       <Field label="Logo URL">
         <Input name="logoUrl" type="url" defaultValue={initial.logoUrl ?? ""} />
       </Field>
 
+      <Field label="Website URL">
+        <Input
+          name="websiteUrl"
+          type="url"
+          defaultValue={initial.websiteUrl ?? ""}
+        />
+      </Field>
+
       <Field label="Description">
         <Input name="description" defaultValue={initial.description ?? ""} />
       </Field>
-
-      <label className="flex items-center gap-3 text-sm">
-        <input
-          type="checkbox"
-          name="isActive"
-          defaultChecked={initial.isActive}
-        />
-        Active (scannable for points)
-      </label>
 
       <div className="flex items-center gap-3">
         <Button type="submit" variant="primary" disabled={pending}>

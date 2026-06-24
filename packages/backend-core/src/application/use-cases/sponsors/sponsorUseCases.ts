@@ -1,11 +1,15 @@
 import type { Sponsor } from "../../../domain/entities/Sponsor";
 import type {
   CreateSponsorInput,
+  SearchSponsorsInput,
   SponsorRepository,
   UpdateSponsorInput,
 } from "../../ports/SponsorRepository";
 
-export type SponsorValidationReason = "blank_name";
+export type SponsorValidationReason =
+  | "blank_name"
+  | "invalid_slug"
+  | "slug_taken";
 
 export class SponsorValidationError extends Error {
   constructor(public readonly reason: SponsorValidationReason) {
@@ -14,9 +18,17 @@ export class SponsorValidationError extends Error {
   }
 }
 
-function validate(name: string | undefined): void {
+const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+
+function validateName(name: string | undefined): void {
   if (name !== undefined && name.trim().length === 0) {
     throw new SponsorValidationError("blank_name");
+  }
+}
+
+function validateSlug(slug: string | undefined): void {
+  if (slug !== undefined && !SLUG_RE.test(slug)) {
+    throw new SponsorValidationError("invalid_slug");
   }
 }
 
@@ -24,12 +36,18 @@ export interface SponsorDeps {
   sponsorRepo: SponsorRepository;
 }
 
-// G2 — list all sponsors attached to an event (admin view, includes inactive).
-export async function listSponsorsForEvent(
-  eventId: string,
+export async function listAllSponsors(deps: SponsorDeps): Promise<Sponsor[]> {
+  return deps.sponsorRepo.list();
+}
+
+export async function searchSponsors(
+  input: SearchSponsorsInput,
   deps: SponsorDeps,
 ): Promise<Sponsor[]> {
-  return deps.sponsorRepo.listForEvent(eventId);
+  return deps.sponsorRepo.search({
+    query: input.query.trim(),
+    limit: input.limit,
+  });
 }
 
 export async function getSponsor(
@@ -39,11 +57,21 @@ export async function getSponsor(
   return deps.sponsorRepo.findById(id);
 }
 
+export async function getSponsorBySlug(
+  slug: string,
+  deps: SponsorDeps,
+): Promise<Sponsor | null> {
+  return deps.sponsorRepo.findBySlug(slug);
+}
+
 export async function createSponsor(
   input: CreateSponsorInput,
   deps: SponsorDeps,
 ): Promise<Sponsor> {
-  validate(input.name);
+  validateName(input.name);
+  validateSlug(input.slug);
+  const existing = await deps.sponsorRepo.findBySlug(input.slug);
+  if (existing) throw new SponsorValidationError("slug_taken");
   return deps.sponsorRepo.create(input);
 }
 
@@ -52,14 +80,22 @@ export async function updateSponsor(
   patch: UpdateSponsorInput,
   deps: SponsorDeps,
 ): Promise<Sponsor> {
-  validate(patch.name);
+  validateName(patch.name);
+  validateSlug(patch.slug);
+  if (patch.slug) {
+    const existing = await deps.sponsorRepo.findBySlug(patch.slug);
+    if (existing && existing.id !== id) {
+      throw new SponsorValidationError("slug_taken");
+    }
+  }
   return deps.sponsorRepo.update(id, patch);
 }
 
-export async function setSponsorActive(
-  id: string,
-  isActive: boolean,
-  deps: SponsorDeps,
-): Promise<Sponsor> {
-  return deps.sponsorRepo.setActive(id, isActive);
+// Helper used by the admin create-on-the-fly modal: build a slug from the
+// name. Lowercase alphanumerics + hyphen, trim leading/trailing hyphens.
+export function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }

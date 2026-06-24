@@ -213,11 +213,35 @@ export type Database = {
       sponsors: {
         Row: {
           id: string;
-          event_id: string;
+          slug: string;
           name: string;
-          tier: string | null;
           logo_url: string | null;
           description: string | null;
+          website_url: string | null;
+          default_tier: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          name: string;
+          logo_url?: string | null;
+          description?: string | null;
+          website_url?: string | null;
+          default_tier?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["sponsors"]["Insert"]>;
+        Relationships: [];
+      };
+      event_sponsors: {
+        Row: {
+          id: string;
+          event_id: string;
+          sponsor_id: string;
+          tier: string | null;
           booth_label: string | null;
           is_active: boolean;
           created_at: string;
@@ -225,15 +249,15 @@ export type Database = {
         Insert: {
           id?: string;
           event_id: string;
-          name: string;
+          sponsor_id: string;
           tier?: string | null;
-          logo_url?: string | null;
-          description?: string | null;
           booth_label?: string | null;
           is_active?: boolean;
           created_at?: string;
         };
-        Update: Partial<Database["public"]["Tables"]["sponsors"]["Insert"]>;
+        Update: Partial<
+          Database["public"]["Tables"]["event_sponsors"]["Insert"]
+        >;
         Relationships: [];
       };
       activities: {

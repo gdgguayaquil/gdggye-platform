@@ -23,7 +23,13 @@ export type {
   SponsorRepository,
   CreateSponsorInput,
   UpdateSponsorInput,
+  SearchSponsorsInput,
 } from "./SponsorRepository";
+export type {
+  EventSponsorRepository,
+  AttachSponsorInput,
+  UpdateEventSponsorInput,
+} from "./EventSponsorRepository";
 export type {
   ActivityRepository,
   CreateActivityInput,

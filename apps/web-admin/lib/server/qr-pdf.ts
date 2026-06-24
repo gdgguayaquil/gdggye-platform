@@ -7,6 +7,7 @@ import {
   signQrToken,
   type Activity,
   type Event,
+  type EventSponsor,
   type QrPayload,
   type Sponsor,
 } from "@gdggye/backend-core";
@@ -44,19 +45,30 @@ interface Target {
   detail: string | null; // booth label / points
 }
 
+// QR sheet input. A "sponsor target" is now an EventSponsor (the
+// attachment) joined with the global Sponsor identity, so the QR encodes
+// the global sponsor.id while the printed label can show event-specific
+// tier/booth alongside the canonical name.
+export interface AttachedSponsorInput {
+  attachment: EventSponsor;
+  sponsor: Sponsor;
+}
+
 function targetsFromInputs(
-  sponsors: Sponsor[],
+  attached: AttachedSponsorInput[],
   activities: Activity[],
 ): Target[] {
-  const sponsorName = new Map(sponsors.map((s) => [s.id, s.name]));
-  const sponsorTargets: Target[] = sponsors
-    .filter((s) => s.isActive)
-    .map((s) => ({
+  const sponsorName = new Map(
+    attached.map(({ sponsor }) => [sponsor.id, sponsor.name]),
+  );
+  const sponsorTargets: Target[] = attached
+    .filter(({ attachment }) => attachment.isActive)
+    .map(({ attachment, sponsor }) => ({
       type: "sponsor",
-      id: s.id,
-      title: s.name,
-      subtitle: s.tier ? `Sponsor · ${s.tier}` : "Sponsor",
-      detail: s.boothLabel,
+      id: sponsor.id,
+      title: sponsor.name,
+      subtitle: attachment.tier ? `Sponsor · ${attachment.tier}` : "Sponsor",
+      detail: attachment.boothLabel,
     }));
   const activityTargets: Target[] = activities
     .filter((a) => a.isActive)
@@ -92,11 +104,11 @@ async function renderQrPng(token: string): Promise<Uint8Array> {
 
 export async function generateQrSheetPdf(
   event: Event,
-  sponsors: Sponsor[],
+  attachedSponsors: AttachedSponsorInput[],
   activities: Activity[],
 ): Promise<Uint8Array> {
   const secret = readQrSecret();
-  const targets = targetsFromInputs(sponsors, activities);
+  const targets = targetsFromInputs(attachedSponsors, activities);
 
   const doc = await PDFDocument.create();
   doc.setTitle(`${event.name} ${event.year} — QR sheet`);

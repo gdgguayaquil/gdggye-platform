@@ -3,10 +3,12 @@ import "server-only";
 import {
   createSponsor as createSponsorUseCase,
   getSponsor as getSponsorUseCase,
-  listSponsorsForEvent as listSponsorsForEventUseCase,
-  setSponsorActive as setSponsorActiveUseCase,
+  getSponsorBySlug as getSponsorBySlugUseCase,
+  listAllSponsors as listAllSponsorsUseCase,
+  searchSponsors as searchSponsorsUseCase,
   updateSponsor as updateSponsorUseCase,
   type CreateSponsorInput,
+  type SearchSponsorsInput,
   type UpdateSponsorInput,
 } from "@gdggye/backend-core";
 import { SupabaseSponsorRepository } from "@gdggye/supabase-adapters";
@@ -18,12 +20,20 @@ async function deps() {
   return { sponsorRepo: new SupabaseSponsorRepository(supabase) };
 }
 
-export async function listSponsorsForEvent(eventId: string) {
-  return listSponsorsForEventUseCase(eventId, await deps());
+export async function listAllSponsors() {
+  return listAllSponsorsUseCase(await deps());
+}
+
+export async function searchSponsors(input: SearchSponsorsInput) {
+  return searchSponsorsUseCase(input, await deps());
 }
 
 export async function getSponsor(id: string) {
   return getSponsorUseCase(id, await deps());
+}
+
+export async function getSponsorBySlug(slug: string) {
+  return getSponsorBySlugUseCase(slug, await deps());
 }
 
 export async function createSponsor(input: CreateSponsorInput) {
@@ -32,8 +42,4 @@ export async function createSponsor(input: CreateSponsorInput) {
 
 export async function updateSponsor(id: string, patch: UpdateSponsorInput) {
   return updateSponsorUseCase(id, patch, await deps());
-}
-
-export async function setSponsorActive(id: string, isActive: boolean) {
-  return setSponsorActiveUseCase(id, isActive, await deps());
 }

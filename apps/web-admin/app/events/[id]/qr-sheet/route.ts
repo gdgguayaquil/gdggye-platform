@@ -4,9 +4,9 @@ import { NextResponse } from "next/server";
 
 import { listActivitiesForEvent } from "@/lib/server/activities";
 import { requireStaff } from "@/lib/server/auth";
+import { listAttachedSponsors } from "@/lib/server/event-sponsors";
 import { findEventById } from "@/lib/server/events";
 import { generateQrSheetPdf } from "@/lib/server/qr-pdf";
-import { listSponsorsForEvent } from "@/lib/server/sponsors";
 
 // GET /events/[id]/qr-sheet
 // Staff-only. Builds a printable PDF of every active sponsor + activity QR
@@ -19,14 +19,14 @@ export async function GET(
   await requireStaff();
   const { id } = await params;
 
-  const [event, sponsors, activities] = await Promise.all([
+  const [event, attached, activities] = await Promise.all([
     findEventById(id),
-    listSponsorsForEvent(id),
+    listAttachedSponsors(id),
     listActivitiesForEvent(id),
   ]);
   if (!event) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const bytes = await generateQrSheetPdf(event, sponsors, activities);
+  const bytes = await generateQrSheetPdf(event, attached, activities);
   const filename = `${event.slug}-qr-sheet.pdf`;
 
   return new NextResponse(bytes as BodyInit, {

@@ -13,6 +13,7 @@
     "./consents": "./src/application/use-cases/consents/index.ts",
     "./registrations": "./src/application/use-cases/registrations/index.ts",
     "./sponsors": "./src/application/use-cases/sponsors/index.ts",
+    "./event-sponsors": "./src/application/use-cases/event-sponsors/index.ts",
     "./activities": "./src/application/use-cases/activities/index.ts",
     "./domain": "./src/domain/index.ts",
     "./ports": "./src/application/ports/index.ts"

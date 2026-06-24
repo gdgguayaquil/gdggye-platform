@@ -1,6 +1,7 @@
 import type { Database } from "@gdggye/types";
 import type {
   CreateSponsorInput,
+  SearchSponsorsInput,
   Sponsor,
   SponsorRepository,
   UpdateSponsorInput,
@@ -18,37 +19,36 @@ type SponsorUpdate = Database["public"]["Tables"]["sponsors"]["Update"];
 function rowToSponsor(row: SponsorRow): Sponsor {
   return {
     id: row.id,
-    eventId: row.event_id,
+    slug: row.slug,
     name: row.name,
-    tier: row.tier,
     logoUrl: row.logo_url,
     description: row.description,
-    boothLabel: row.booth_label,
-    isActive: row.is_active,
+    websiteUrl: row.website_url,
+    defaultTier: row.default_tier,
     createdAt: new Date(row.created_at),
+    updatedAt: new Date(row.updated_at),
   };
 }
 
 function createInputToInsert(input: CreateSponsorInput): SponsorInsert {
   return {
-    event_id: input.eventId,
+    slug: input.slug,
     name: input.name,
-    tier: input.tier ?? null,
     logo_url: input.logoUrl ?? null,
     description: input.description ?? null,
-    booth_label: input.boothLabel ?? null,
-    is_active: input.isActive,
+    website_url: input.websiteUrl ?? null,
+    default_tier: input.defaultTier ?? null,
   };
 }
 
 function updateInputToPatch(patch: UpdateSponsorInput): SponsorUpdate {
   const out: SponsorUpdate = {};
+  if (patch.slug !== undefined) out.slug = patch.slug;
   if (patch.name !== undefined) out.name = patch.name;
-  if (patch.tier !== undefined) out.tier = patch.tier;
   if (patch.logoUrl !== undefined) out.logo_url = patch.logoUrl;
   if (patch.description !== undefined) out.description = patch.description;
-  if (patch.boothLabel !== undefined) out.booth_label = patch.boothLabel;
-  if (patch.isActive !== undefined) out.is_active = patch.isActive;
+  if (patch.websiteUrl !== undefined) out.website_url = patch.websiteUrl;
+  if (patch.defaultTier !== undefined) out.default_tier = patch.defaultTier;
   return out;
 }
 
@@ -74,16 +74,43 @@ export class SupabaseSponsorRepository implements SponsorRepository {
     return data ? rowToSponsor(data) : null;
   }
 
-  async listForEvent(eventId: string): Promise<Sponsor[]> {
+  async findBySlug(slug: string): Promise<Sponsor | null> {
     const { data, error } = await this.client
       .from("sponsors")
       .select("*")
-      .eq("event_id", eventId)
-      .order("created_at", { ascending: true });
+      .eq("slug", slug)
+      .maybeSingle();
     if (error)
-      throw new Error(
-        `SupabaseSponsorRepository.listForEvent: ${error.message}`,
-      );
+      throw new Error(`SupabaseSponsorRepository.findBySlug: ${error.message}`);
+    return data ? rowToSponsor(data) : null;
+  }
+
+  async list(): Promise<Sponsor[]> {
+    const { data, error } = await this.client
+      .from("sponsors")
+      .select("*")
+      .order("name", { ascending: true });
+    if (error)
+      throw new Error(`SupabaseSponsorRepository.list: ${error.message}`);
+    return (data ?? []).map(rowToSponsor);
+  }
+
+  async search(input: SearchSponsorsInput): Promise<Sponsor[]> {
+    const limit = input.limit ?? 20;
+    const trimmed = input.query.trim();
+    let query = this.client
+      .from("sponsors")
+      .select("*")
+      .order("name", { ascending: true })
+      .limit(limit);
+    if (trimmed.length > 0) {
+      // Escape PostgREST `or` reserved characters in user input.
+      const safe = trimmed.replace(/[,()*]/g, " ");
+      query = query.or(`name.ilike.%${safe}%,slug.ilike.%${safe}%`);
+    }
+    const { data, error } = await query;
+    if (error)
+      throw new Error(`SupabaseSponsorRepository.search: ${error.message}`);
     return (data ?? []).map(rowToSponsor);
   }
 
@@ -107,18 +134,6 @@ export class SupabaseSponsorRepository implements SponsorRepository {
       .single();
     if (error)
       throw new Error(`SupabaseSponsorRepository.update: ${error.message}`);
-    return rowToSponsor(data);
-  }
-
-  async setActive(id: string, isActive: boolean): Promise<Sponsor> {
-    const { data, error } = await this.client
-      .from("sponsors")
-      .update({ is_active: isActive })
-      .eq("id", id)
-      .select("*")
-      .single();
-    if (error)
-      throw new Error(`SupabaseSponsorRepository.setActive: ${error.message}`);
     return rowToSponsor(data);
   }
 }

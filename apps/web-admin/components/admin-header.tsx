@@ -57,6 +57,7 @@ export function AdminHeader({ user }: { user: AdminHeaderUser | null }) {
         {user ? (
           <div className="flex items-center gap-2">
             {link("/events", "Events")}
+            {link("/sponsors", "Sponsors")}
             <span className="mx-2 h-5 w-px bg-[var(--c-border)]" />
             <span
               className="font-mono text-[11px] uppercase tracking-wider"

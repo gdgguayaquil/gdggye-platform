@@ -4,10 +4,15 @@ import { EventSubNav } from "@/components/event-sub-nav";
 import { PageHeader } from "@/components/page-header";
 import { getActivity } from "@/lib/server/activities";
 import { requireStaff } from "@/lib/server/auth";
+import { listAttachedSponsors } from "@/lib/server/event-sponsors";
 import { findEventById } from "@/lib/server/events";
-import { listSponsorsForEvent } from "@/lib/server/sponsors";
+import { getSponsor } from "@/lib/server/sponsors";
 
-import { ActivityForm, type ActivityFormValues } from "../../ActivityForm";
+import {
+  ActivityForm,
+  type ActivityFormValues,
+  type SponsorOption,
+} from "../../ActivityForm";
 
 function toLocalInput(d: Date): string {
   const off = d.getTimezoneOffset() * 60_000;
@@ -22,12 +27,28 @@ export default async function EditActivityPage({
   await requireStaff();
   const { id, activityId } = await params;
 
-  const [event, activity, sponsors] = await Promise.all([
+  const [event, activity, attached] = await Promise.all([
     findEventById(id),
     getActivity(activityId),
-    listSponsorsForEvent(id),
+    listAttachedSponsors(id),
   ]);
   if (!event || !activity || activity.eventId !== id) notFound();
+
+  const sponsors: SponsorOption[] = attached.map((a) => ({
+    id: a.sponsor.id,
+    name: a.sponsor.name,
+  }));
+
+  // If the activity's sponsor has been detached since creation, fetch its
+  // identity directly so the disabled select still shows the name instead
+  // of a bare UUID.
+  if (
+    activity.sponsorId &&
+    !sponsors.some((s) => s.id === activity.sponsorId)
+  ) {
+    const orphan = await getSponsor(activity.sponsorId);
+    if (orphan) sponsors.push({ id: orphan.id, name: orphan.name });
+  }
 
   const initial: ActivityFormValues = {
     id: activity.id,

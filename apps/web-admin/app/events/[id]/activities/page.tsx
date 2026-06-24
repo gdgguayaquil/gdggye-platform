@@ -7,8 +7,8 @@ import { EventSubNav } from "@/components/event-sub-nav";
 import { PageHeader } from "@/components/page-header";
 import { listActivitiesForEvent } from "@/lib/server/activities";
 import { requireStaff } from "@/lib/server/auth";
+import { listAttachedSponsors } from "@/lib/server/event-sponsors";
 import { findEventById } from "@/lib/server/events";
-import { listSponsorsForEvent } from "@/lib/server/sponsors";
 
 // See sponsors/page.tsx for the rationale on inline grid templates.
 const ACTIVITY_COLS = "minmax(0, 2fr) minmax(0, 1fr) 100px 120px 120px";
@@ -21,17 +21,17 @@ export default async function ActivitiesListPage({
   await requireStaff();
   const { id } = await params;
 
-  const [event, activities, sponsors] = await Promise.all([
+  const [event, activities, attached] = await Promise.all([
     findEventById(id),
     listActivitiesForEvent(id),
-    listSponsorsForEvent(id),
+    listAttachedSponsors(id),
   ]);
   if (!event) notFound();
 
   const sponsorName = (sponsorId: string) =>
-    sponsors.find((s) => s.id === sponsorId)?.name ?? sponsorId;
+    attached.find((a) => a.sponsor.id === sponsorId)?.sponsor.name ?? sponsorId;
 
-  const noSponsors = sponsors.length === 0;
+  const noSponsors = attached.length === 0;
 
   return (
     <div className="container-x py-12">
@@ -45,8 +45,8 @@ export default async function ActivitiesListPage({
         subtitle={`${activities.length} activit${activities.length === 1 ? "y" : "ies"}.`}
         actions={
           noSponsors ? (
-            <Link href={`/events/${id}/sponsors/new`}>
-              <Button variant="secondary">+ Add a sponsor first</Button>
+            <Link href={`/events/${id}/sponsors`}>
+              <Button variant="secondary">+ Attach a sponsor first</Button>
             </Link>
           ) : (
             <Link href={`/events/${id}/activities/new`}>

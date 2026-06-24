@@ -1,15 +1,14 @@
-// Sponsor — a partner attached to an event. Tier is free-text in v1
-// (typical values: platinum, gold, silver, community) so chapters can
-// adjust without a migration.
+// Sponsor — global identity. Reusable across events. The per-event
+// attachment (with tier + booth label) lives in EventSponsor.
 
 export interface Sponsor {
   id: string;
-  eventId: string;
+  slug: string; // stable, unique
   name: string;
-  tier: string | null;
   logoUrl: string | null;
   description: string | null;
-  boothLabel: string | null;
-  isActive: boolean;
+  websiteUrl: string | null;
+  defaultTier: string | null; // pre-fill hint when attaching
   createdAt: Date;
+  updatedAt: Date;
 }

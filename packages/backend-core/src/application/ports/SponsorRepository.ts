@@ -1,28 +1,33 @@
 import type { Sponsor } from "../../domain/entities/Sponsor";
 
 export interface CreateSponsorInput {
-  eventId: string;
+  slug: string;
   name: string;
-  tier?: string | null;
   logoUrl?: string | null;
   description?: string | null;
-  boothLabel?: string | null;
-  isActive?: boolean;
+  websiteUrl?: string | null;
+  defaultTier?: string | null;
 }
 
 export interface UpdateSponsorInput {
+  slug?: string;
   name?: string;
-  tier?: string | null;
   logoUrl?: string | null;
   description?: string | null;
-  boothLabel?: string | null;
-  isActive?: boolean;
+  websiteUrl?: string | null;
+  defaultTier?: string | null;
+}
+
+export interface SearchSponsorsInput {
+  query: string;
+  limit?: number;
 }
 
 export interface SponsorRepository {
   findById(id: string): Promise<Sponsor | null>;
-  listForEvent(eventId: string): Promise<Sponsor[]>;
+  findBySlug(slug: string): Promise<Sponsor | null>;
+  list(): Promise<Sponsor[]>;
+  search(input: SearchSponsorsInput): Promise<Sponsor[]>;
   create(input: CreateSponsorInput): Promise<Sponsor>;
   update(id: string, patch: UpdateSponsorInput): Promise<Sponsor>;
-  setActive(id: string, isActive: boolean): Promise<Sponsor>;
 }

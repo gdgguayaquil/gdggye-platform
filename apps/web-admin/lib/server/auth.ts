@@ -20,7 +20,10 @@ export async function getCurrentAuthUser() {
 
 export async function getCurrentUser(): Promise<User | null> {
   const authUser = await getCurrentAuthUser();
-  if (!authUser) return null;
+  if (!authUser) {
+    console.log("[auth-debug] getCurrentAuthUser → null (no session)");
+    return null;
+  }
 
   const { userRepo } = await getSupabaseRepos();
   const existing = await userRepo.findById(authUser.id);

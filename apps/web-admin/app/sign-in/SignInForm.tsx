@@ -12,8 +12,11 @@ export function SignInForm({ next }: { next?: string }) {
   const [emailLoading, setEmailLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
+  // /events is the admin home (the root page redirects to it for staff).
+  // /profile is a leftover from the attendee app and doesn't exist here —
+  // landing on it 404s and looks like auth failed.
   const destination =
-    next && next.startsWith("/") && !next.startsWith("//") ? next : "/profile";
+    next && next.startsWith("/") && !next.startsWith("//") ? next : "/events";
 
   const signInWithGoogle = async () => {
     setGoogleLoading(true);
@@ -21,9 +24,8 @@ export function SignInForm({ next }: { next?: string }) {
     try {
       const supabase = createSupabaseBrowserClient();
       const redirectTo = new URL("/auth/callback", window.location.origin);
-      if (destination !== "/profile") {
-        redirectTo.searchParams.set("next", destination);
-      }
+      // Always send `next` through so the callback doesn't fall back to /profile.
+      redirectTo.searchParams.set("next", destination);
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: redirectTo.toString() },

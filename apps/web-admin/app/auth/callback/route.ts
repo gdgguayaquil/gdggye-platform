@@ -11,7 +11,10 @@ import { getSupabaseServerClient } from "@/lib/server/supabase";
 export async function GET(req: NextRequest) {
   const url = req.nextUrl;
   const code = url.searchParams.get("code");
-  const next = url.searchParams.get("next") ?? "/profile";
+  // /events is the admin landing page for staff. /profile is an attendee
+  // route that doesn't exist here; keeping it as the default would 404 any
+  // OAuth callback that arrives without an explicit `next` param.
+  const next = url.searchParams.get("next") ?? "/events";
 
   if (!code) {
     return NextResponse.redirect(new URL("/sign-in?error=missing_code", url));

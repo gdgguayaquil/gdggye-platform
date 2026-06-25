@@ -20,3 +20,7 @@ export { SupabaseRegistrationRepository } from "./repositories/SupabaseRegistrat
 export { SupabaseSponsorRepository } from "./repositories/SupabaseSponsorRepository";
 export { SupabaseEventSponsorRepository } from "./repositories/SupabaseEventSponsorRepository";
 export { SupabaseActivityRepository } from "./repositories/SupabaseActivityRepository";
+export { SupabaseScanTargetRepository } from "./repositories/SupabaseScanTargetRepository";
+export { SupabaseScanRepository } from "./repositories/SupabaseScanRepository";
+export { SystemClock } from "./clock/SystemClock";
+export { buildScanDeps } from "./composition/buildScanDeps";

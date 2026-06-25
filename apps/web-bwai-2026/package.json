@@ -19,6 +19,7 @@
     "@gdggye/types": "*",
     "@gdggye/ui-kit": "*",
     "clsx": "^2.1.1",
+    "html5-qrcode": "^2.3.8",
     "next": "16.2.4",
     "qrcode": "^1.5.4",
     "react": "19.2.4",

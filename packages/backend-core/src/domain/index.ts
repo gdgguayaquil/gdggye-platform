@@ -7,3 +7,5 @@ export * from "./entities/Sponsor";
 export * from "./entities/EventSponsor";
 export * from "./entities/Activity";
 export * from "./qr-token";
+export * from "./errors/ScanRejected";
+export * from "./rules/scoringRules";

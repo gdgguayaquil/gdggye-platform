@@ -35,3 +35,12 @@ export type {
   CreateActivityInput,
   UpdateActivityInput,
 } from "./ActivityRepository";
+export type {
+  ScanTargetRepository,
+  ScanTargetType,
+} from "./ScanTargetRepository";
+export type {
+  ScanRepository,
+  RecordAcceptedScanInput,
+  RecordRejectedScanInput,
+} from "./ScanRepository";

@@ -7,3 +7,4 @@ export * from "./application/use-cases/registrations";
 export * from "./application/use-cases/sponsors";
 export * from "./application/use-cases/event-sponsors";
 export * from "./application/use-cases/activities";
+export * from "./application/use-cases/scans";

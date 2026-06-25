@@ -8,7 +8,11 @@ import {
   SupabaseConsentRepository,
   SupabaseEventContentRepository,
   SupabaseEventRepository,
+  SupabaseEventSpeakerRepository,
+  SupabaseEventSponsorRepository,
   SupabaseRegistrationRepository,
+  SupabaseSpeakerRepository,
+  SupabaseSponsorRepository,
   SupabaseUserRepository,
 } from "@gdggye/supabase-adapters";
 
@@ -44,6 +48,10 @@ export async function getSupabaseRepos() {
     userRepo: new SupabaseUserRepository(supabase),
     consentRepo: new SupabaseConsentRepository(supabase),
     registrationRepo: new SupabaseRegistrationRepository(supabase),
+    speakerRepo: new SupabaseSpeakerRepository(supabase),
+    eventSpeakerRepo: new SupabaseEventSpeakerRepository(supabase),
+    sponsorRepo: new SupabaseSponsorRepository(supabase),
+    eventSponsorRepo: new SupabaseEventSponsorRepository(supabase),
   };
 }
 

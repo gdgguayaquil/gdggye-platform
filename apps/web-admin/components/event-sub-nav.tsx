@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-export type EventSubNavKey = "details" | "sponsors" | "activities";
+export type EventSubNavKey = "details" | "sponsors" | "speakers" | "activities";
 
 interface Tab {
   key: EventSubNavKey;
@@ -16,6 +16,11 @@ const TABS: Tab[] = [
     key: "sponsors",
     label: "Sponsors",
     href: (id) => `/events/${id}/sponsors`,
+  },
+  {
+    key: "speakers",
+    label: "Speakers",
+    href: (id) => `/events/${id}/speakers`,
   },
   {
     key: "activities",

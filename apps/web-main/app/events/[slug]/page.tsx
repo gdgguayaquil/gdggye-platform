@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { EventDetailView } from "@/components/views/event-detail-view";
-import { findEventBySlug, findEventContent } from "@/lib/server/events";
+import { findEventDetail } from "@/lib/server/events";
 
 export default async function EventDetailPage({
   params,
@@ -9,11 +9,7 @@ export default async function EventDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const event = await findEventBySlug(slug);
-  if (!event) {
-    notFound();
-  }
-  const detail = await findEventContent(slug);
-
-  return <EventDetailView event={event} detail={detail} />;
+  const found = await findEventDetail(slug);
+  if (!found) notFound();
+  return <EventDetailView event={found.event} detail={found.detail} />;
 }

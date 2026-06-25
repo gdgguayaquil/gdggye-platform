@@ -4,8 +4,6 @@ import type {
   EventContent,
   AgendaSlot,
   FAQ,
-  Speaker,
-  SponsorTiers,
 } from "@gdggye/backend-core";
 
 type EventRow = Database["public"]["Tables"]["events"]["Row"];
@@ -40,14 +38,11 @@ export function rowToEvent(row: EventRow): Event {
   };
 }
 
-function emptyTiers(): SponsorTiers {
-  return { platinum: [], gold: [], silver: [], community: [] };
-}
-
 // JSONB columns come back as `Json`, which is a recursive union. We narrow
 // to the expected shape at the boundary. If the data is malformed, the
 // downstream typed fields just come back empty — better than crashing the
-// render.
+// render. Speakers + sponsors no longer live here (see 0007); they're
+// hydrated via SupabaseEventDetailRepository.
 export function rowToEventContent(row: EventContentRow): EventContent {
   return {
     eventId: row.event_id,
@@ -55,15 +50,6 @@ export function rowToEventContent(row: EventContentRow): EventContent {
     agenda: Array.isArray(row.agenda)
       ? (row.agenda as unknown as AgendaSlot[])
       : [],
-    speakers: Array.isArray(row.speakers)
-      ? (row.speakers as unknown as Speaker[])
-      : [],
-    sponsors:
-      row.sponsors &&
-      typeof row.sponsors === "object" &&
-      !Array.isArray(row.sponsors)
-        ? { ...emptyTiers(), ...(row.sponsors as unknown as SponsorTiers) }
-        : emptyTiers(),
     gallery: Array.isArray(row.gallery) ? row.gallery : [],
     faq: Array.isArray(row.faq) ? (row.faq as unknown as FAQ[]) : [],
   };

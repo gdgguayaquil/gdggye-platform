@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { Button } from "@gdggye/ui-kit";
 
-import type { Event, EventContent } from "@gdggye/backend-core";
+import type { Event, EventDetail } from "@gdggye/backend-core";
 
 import { useApp } from "../providers";
 import { Countdown } from "../countdown";
@@ -34,7 +34,7 @@ export function EventDetailView({
   isRegistered = false,
 }: {
   event: Event;
-  detail: EventContent | null;
+  detail: EventDetail | null;
   hideBackLink?: boolean;
   isRegistered?: boolean;
 }) {
@@ -84,13 +84,13 @@ export function EventDetailView({
 
   const tagline = detail
     ? lang === "es"
-      ? detail.hero.tagline_es
-      : detail.hero.tagline_en
+      ? detail.content.hero.tagline_es
+      : detail.content.hero.tagline_en
     : null;
   const lede = detail
     ? lang === "es"
-      ? detail.hero.lede_es
-      : detail.hero.lede_en
+      ? detail.content.hero.lede_es
+      : detail.content.hero.lede_en
     : null;
 
   return (
@@ -317,7 +317,7 @@ export function EventDetailView({
   );
 }
 
-function AgendaSection({ detail }: { detail: EventContent }) {
+function AgendaSection({ detail }: { detail: EventDetail }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
 
@@ -350,7 +350,7 @@ function AgendaSection({ detail }: { detail: EventContent }) {
         </div>
 
         <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)] bg-[var(--c-bg)]">
-          {detail.agenda.map((slot, i) => {
+          {detail.content.agenda.map((slot, i) => {
             const trackColor = slot.track ? TRACK_COLORS[slot.track] : null;
             const trackVar = trackColor
               ? `var(--c-${trackColor})`
@@ -418,9 +418,11 @@ function AgendaSection({ detail }: { detail: EventContent }) {
   );
 }
 
-function SpeakersSection({ detail }: { detail: EventContent }) {
+function SpeakersSection({ detail }: { detail: EventDetail }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
+
+  if (detail.speakers.length === 0) return null;
 
   return (
     <section
@@ -436,37 +438,67 @@ function SpeakersSection({ detail }: { detail: EventContent }) {
         />
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {detail.speakers.map((sp) => (
-            <div
-              key={sp.name}
-              className="cursor-pointer rounded-[var(--r-lg)] border border-[var(--c-border)] bg-[var(--c-bg)] p-5 transition-all hover:border-[var(--c-border-strong)]"
-            >
-              <div className="placeholder mb-4" style={{ aspectRatio: "1" }}>
-                <span>speaker photo</span>
+          {detail.speakers.map((row) => {
+            const sp = row.speaker;
+            const role = lang === "es" ? sp.roleEs : sp.roleEn;
+            return (
+              <div
+                key={row.attachmentId}
+                className="cursor-pointer rounded-[var(--r-lg)] border border-[var(--c-border)] bg-[var(--c-bg)] p-5 transition-all hover:border-[var(--c-border-strong)]"
+              >
+                <div
+                  className="mb-4 overflow-hidden rounded-[var(--r-md)] bg-[var(--c-surface)]"
+                  style={{ aspectRatio: "1" }}
+                >
+                  {sp.photoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={sp.photoUrl}
+                      alt={sp.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="placeholder h-full w-full">
+                      <span>{sp.name.slice(0, 1)}</span>
+                    </div>
+                  )}
+                </div>
+                <h3 className="m-0 font-display text-[18px] font-semibold tracking-tight">
+                  {sp.name}
+                  {row.isHeadliner ? (
+                    <span
+                      className="ml-2 align-middle font-mono text-[10px] uppercase tracking-wider"
+                      style={{ color: "var(--c-blue)" }}
+                    >
+                      ★ keynote
+                    </span>
+                  ) : null}
+                </h3>
+                {role ? (
+                  <div className="mt-1 text-[13px] text-[var(--c-text-muted)]">
+                    {role}
+                  </div>
+                ) : null}
+                {sp.city ? (
+                  <div className="mt-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-subtle)]">
+                    📍 {sp.city}
+                  </div>
+                ) : null}
               </div>
-              <h3 className="m-0 font-display text-[18px] font-semibold tracking-tight">
-                {sp.name}
-              </h3>
-              <div className="mt-1 text-[13px] text-[var(--c-text-muted)]">
-                {lang === "es" ? sp.role_es : sp.role_en}
-              </div>
-              <div className="mt-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-subtle)]">
-                📍 {sp.city}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
   );
 }
 
-function SponsorsSection({ detail }: { detail: EventContent }) {
+function SponsorsSection({ detail }: { detail: EventDetail }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
 
   const tiers: Array<{
-    id: keyof EventContent["sponsors"];
+    id: "platinum" | "gold" | "silver" | "community";
     height: number;
     cols: number;
     fontSize: number;
@@ -476,6 +508,14 @@ function SponsorsSection({ detail }: { detail: EventContent }) {
     { id: "silver", height: 70, cols: 4, fontSize: 15 },
     { id: "community", height: 56, cols: 6, fontSize: 15 },
   ];
+
+  const totalSponsors =
+    detail.sponsorTiers.platinum.length +
+    detail.sponsorTiers.gold.length +
+    detail.sponsorTiers.silver.length +
+    detail.sponsorTiers.community.length +
+    detail.sponsorTiers.other.length;
+  if (totalSponsors === 0) return null;
 
   return (
     <section className="section" id="anchor-sponsors">
@@ -489,7 +529,7 @@ function SponsorsSection({ detail }: { detail: EventContent }) {
 
         <div className="grid gap-8">
           {tiers.map((tier) => {
-            const sponsors = detail.sponsors[tier.id] || [];
+            const sponsors = detail.sponsorTiers[tier.id] ?? [];
             if (sponsors.length === 0) return null;
             const tierLabel = t.sponsorsTier[tier.id];
 
@@ -513,24 +553,36 @@ function SponsorsSection({ detail }: { detail: EventContent }) {
                     gridTemplateColumns: `repeat(${tier.cols}, minmax(0, 1fr))`,
                   }}
                 >
-                  {sponsors.map((sp) => (
-                    <div
-                      key={sp.name}
-                      className="flex cursor-pointer items-center justify-center rounded-[var(--r-md)] border border-[var(--c-border)] bg-[var(--c-bg)] transition-all hover:-translate-y-0.5 hover:border-[var(--c-border-strong)] hover:shadow-[var(--shadow-sm)]"
-                      style={{ height: tier.height }}
-                    >
-                      <span
-                        className="font-display font-medium"
-                        style={{
-                          fontSize: tier.fontSize,
-                          color: "var(--c-text-muted)",
-                          letterSpacing: "-0.01em",
-                        }}
+                  {sponsors.map((row) => {
+                    const sp = row.sponsor;
+                    return (
+                      <div
+                        key={row.attachmentId}
+                        className="flex cursor-pointer items-center justify-center rounded-[var(--r-md)] border border-[var(--c-border)] bg-[var(--c-bg)] p-3 transition-all hover:-translate-y-0.5 hover:border-[var(--c-border-strong)] hover:shadow-[var(--shadow-sm)]"
+                        style={{ height: tier.height }}
                       >
-                        {sp.name}
-                      </span>
-                    </div>
-                  ))}
+                        {sp.logoUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={sp.logoUrl}
+                            alt={sp.name}
+                            className="max-h-full max-w-full object-contain"
+                          />
+                        ) : (
+                          <span
+                            className="font-display font-medium"
+                            style={{
+                              fontSize: tier.fontSize,
+                              color: "var(--c-text-muted)",
+                              letterSpacing: "-0.01em",
+                            }}
+                          >
+                            {sp.name}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             );
@@ -718,7 +770,7 @@ function VenueSection({ event }: { event: Event }) {
   );
 }
 
-function FAQSection({ detail }: { detail: EventContent }) {
+function FAQSection({ detail }: { detail: EventDetail }) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
 
@@ -759,7 +811,7 @@ function FAQSection({ detail }: { detail: EventContent }) {
           </div>
 
           <div className="border-b border-[var(--c-border)]">
-            {detail.faq.map((f, i) => (
+            {detail.content.faq.map((f, i) => (
               <FAQItem
                 key={i}
                 q={lang === "es" ? f.q_es : f.q_en}

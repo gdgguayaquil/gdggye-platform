@@ -13,6 +13,7 @@ export {
   type GetEventContentInput,
   type GetEventContentDeps,
 } from "./getEventContent";
+export { getEventDetail, type GetEventDetailDeps } from "./getEventDetail";
 export {
   createEvent,
   EventValidationError,

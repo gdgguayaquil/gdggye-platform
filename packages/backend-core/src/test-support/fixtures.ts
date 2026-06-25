@@ -34,8 +34,6 @@ export function makeContent(
     eventId: "evt-1",
     hero: {},
     agenda: [],
-    speakers: [],
-    sponsors: { platinum: [], gold: [], silver: [], community: [] },
     gallery: [],
     faq: [],
     ...overrides,

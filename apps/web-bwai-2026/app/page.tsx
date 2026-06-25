@@ -4,7 +4,7 @@ import { RegistrationBlocked } from "@gdggye/backend-core";
 
 import { EventDetailView } from "@/components/views/event-detail-view";
 import { getCurrentUser } from "@/lib/server/auth";
-import { findEventBySlug, findEventContent } from "@/lib/server/events";
+import { findEventDetail } from "@/lib/server/events";
 import { ensureRegistration } from "@/lib/server/registrations";
 
 // The bwai-2026 app *is* the BWAI 2026 event. The slug is hard-coded; the
@@ -13,13 +13,12 @@ import { ensureRegistration } from "@/lib/server/registrations";
 const EVENT_SLUG = "bwai-2026";
 
 export default async function HomePage() {
-  const event = await findEventBySlug(EVENT_SLUG);
-  if (!event) notFound();
-
-  const [detail, user] = await Promise.all([
-    findEventContent(EVENT_SLUG),
+  const [found, user] = await Promise.all([
+    findEventDetail(EVENT_SLUG),
     getCurrentUser(),
   ]);
+  if (!found) notFound();
+  const { event, detail } = found;
 
   let isRegistered = false;
   if (user) {

@@ -19,6 +19,8 @@ export { SupabaseConsentRepository } from "./repositories/SupabaseConsentReposit
 export { SupabaseRegistrationRepository } from "./repositories/SupabaseRegistrationRepository";
 export { SupabaseSponsorRepository } from "./repositories/SupabaseSponsorRepository";
 export { SupabaseEventSponsorRepository } from "./repositories/SupabaseEventSponsorRepository";
+export { SupabaseSpeakerRepository } from "./repositories/SupabaseSpeakerRepository";
+export { SupabaseEventSpeakerRepository } from "./repositories/SupabaseEventSpeakerRepository";
 export { SupabaseActivityRepository } from "./repositories/SupabaseActivityRepository";
 export { SupabaseScanTargetRepository } from "./repositories/SupabaseScanTargetRepository";
 export { SupabaseScanRepository } from "./repositories/SupabaseScanRepository";

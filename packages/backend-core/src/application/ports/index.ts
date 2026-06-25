@@ -31,6 +31,17 @@ export type {
   UpdateEventSponsorInput,
 } from "./EventSponsorRepository";
 export type {
+  SpeakerRepository,
+  CreateSpeakerInput,
+  UpdateSpeakerInput,
+  SearchSpeakersInput,
+} from "./SpeakerRepository";
+export type {
+  EventSpeakerRepository,
+  AttachSpeakerInput,
+  UpdateEventSpeakerInput,
+} from "./EventSpeakerRepository";
+export type {
   ActivityRepository,
   CreateActivityInput,
   UpdateActivityInput,

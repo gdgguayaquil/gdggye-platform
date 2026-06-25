@@ -52,7 +52,9 @@ insert into public.events (
 );
 
 -- ─────────────── event_content for bwai-2026 ───────────────
-insert into public.event_content (event_id, hero, agenda, speakers, sponsors, gallery, faq)
+-- Speakers + sponsors live in real tables since migrations 0006/0007;
+-- event_content only carries hero / agenda / gallery / faq now.
+insert into public.event_content (event_id, hero, agenda, gallery, faq)
 select
   e.id,
   jsonb_build_object(
@@ -75,22 +77,6 @@ select
     {"time":"17:00","dur":30,"title_es":"Lightning talks comunitarias","title_en":"Community lightning talks","track":"Plenaria","room":"Auditorio A"},
     {"time":"18:00","dur":60,"title_es":"Cierre + after en planta baja","title_en":"Closing + after-party downstairs","track":null,"room":"Patio"}
   ]'::jsonb,
-  '[
-    {"name":"María Cabrera","role_es":"Staff AI Eng · Mercado Libre","role_en":"Staff AI Eng · Mercado Libre","city":"Bogotá"},
-    {"name":"Diego Salinas","role_es":"GDE Cloud · Independiente","role_en":"GDE Cloud · Independent","city":"Quito"},
-    {"name":"Lucía Vega","role_es":"Senior ML Eng · Kushki","role_en":"Senior ML Eng · Kushki","city":"Guayaquil"},
-    {"name":"Andrés Pacheco","role_es":"Founding Eng · Truora","role_en":"Founding Eng · Truora","city":"Lima"},
-    {"name":"Camila Ruiz","role_es":"Customer Eng · Google Cloud","role_en":"Customer Eng · Google Cloud","city":"CDMX"},
-    {"name":"Joel Mendoza","role_es":"CTO · Banco Pichincha Labs","role_en":"CTO · Banco Pichincha Labs","city":"Guayaquil"},
-    {"name":"Valentina Soto","role_es":"Founder · evals.dev","role_en":"Founder · evals.dev","city":"Santiago"},
-    {"name":"Rafael Castro","role_es":"AI PM · Despegar","role_en":"AI PM · Despegar","city":"BA"}
-  ]'::jsonb,
-  '{
-    "platinum":  [{"name":"Banco Pichincha"},{"name":"Kushki"}],
-    "gold":      [{"name":"Pacifico Cloud"},{"name":"Truora"},{"name":"Despegar"}],
-    "silver":    [{"name":"evals.dev"},{"name":"Innopolis"},{"name":"Aeris"},{"name":"Forma.ai"}],
-    "community": [{"name":"ESPOL"},{"name":"GDG Quito"},{"name":"GDG Lima"},{"name":"WTM Ecuador"},{"name":"Laboratoria"},{"name":"Platzi"}]
-  }'::jsonb,
   '[]'::jsonb,
   '[
     {"q_es":"¿Hay que saber programar para asistir?","q_en":"Do I need to know how to code to attend?","a_es":"Las charlas plenarias son accesibles para cualquier perfil técnico. Los workshops de la sala Hands-on requieren saber al menos un lenguaje (Python o JS recomendado) y traer laptop.","a_en":"The plenary talks are accessible to any technical profile. The Hands-on room workshops require at least one language (Python or JS recommended) and a laptop."},
@@ -102,3 +88,59 @@ select
   ]'::jsonb
 from public.events e
 where e.slug = 'bwai-2026';
+
+-- ─────────────── speakers (global identity) ───────────────
+insert into public.speakers (slug, name, role_es, role_en, city) values
+  ('maria-cabrera',   'María Cabrera',   'Staff AI Eng · Mercado Libre', 'Staff AI Eng · Mercado Libre', 'Bogotá'),
+  ('diego-salinas',   'Diego Salinas',   'GDE Cloud · Independiente',    'GDE Cloud · Independent',      'Quito'),
+  ('lucia-vega',      'Lucía Vega',      'Senior ML Eng · Kushki',       'Senior ML Eng · Kushki',       'Guayaquil'),
+  ('andres-pacheco',  'Andrés Pacheco',  'Founding Eng · Truora',        'Founding Eng · Truora',        'Lima'),
+  ('camila-ruiz',     'Camila Ruiz',     'Customer Eng · Google Cloud',  'Customer Eng · Google Cloud',  'CDMX'),
+  ('joel-mendoza',    'Joel Mendoza',    'CTO · Banco Pichincha Labs',   'CTO · Banco Pichincha Labs',   'Guayaquil'),
+  ('valentina-soto',  'Valentina Soto',  'Founder · evals.dev',          'Founder · evals.dev',          'Santiago'),
+  ('rafael-castro',   'Rafael Castro',   'AI PM · Despegar',             'AI PM · Despegar',             'BA')
+on conflict (slug) do nothing;
+
+-- attach all speakers to bwai-2026 in display order
+insert into public.event_speakers (event_id, speaker_id, display_order, is_headliner)
+select e.id, s.id, pos.display_order, (s.slug = 'maria-cabrera')
+from public.events e
+cross join (values
+  ('maria-cabrera',  0),
+  ('diego-salinas',  1),
+  ('lucia-vega',     2),
+  ('andres-pacheco', 3),
+  ('camila-ruiz',    4),
+  ('joel-mendoza',   5),
+  ('valentina-soto', 6),
+  ('rafael-castro',  7)
+) as pos(slug, display_order)
+join public.speakers s on s.slug = pos.slug
+where e.slug = 'bwai-2026'
+on conflict (event_id, speaker_id) do nothing;
+
+-- ─────────────── sponsors (global identity) ───────────────
+insert into public.sponsors (slug, name, default_tier) values
+  ('banco-pichincha', 'Banco Pichincha', 'platinum'),
+  ('kushki',          'Kushki',          'platinum'),
+  ('pacifico-cloud',  'Pacifico Cloud',  'gold'),
+  ('truora',          'Truora',          'gold'),
+  ('despegar',        'Despegar',        'gold'),
+  ('evals-dev',       'evals.dev',       'silver'),
+  ('innopolis',       'Innopolis',       'silver'),
+  ('aeris',           'Aeris',           'silver'),
+  ('forma-ai',        'Forma.ai',        'silver'),
+  ('espol',           'ESPOL',           'community'),
+  ('gdg-quito',       'GDG Quito',       'community'),
+  ('gdg-lima',        'GDG Lima',        'community'),
+  ('wtm-ecuador',     'WTM Ecuador',     'community'),
+  ('laboratoria',     'Laboratoria',     'community'),
+  ('platzi',          'Platzi',          'community')
+on conflict (slug) do nothing;
+
+-- attach all sponsors to bwai-2026 with the tier they belong to
+insert into public.event_sponsors (event_id, sponsor_id, tier, is_active)
+select e.id, s.id, s.default_tier, true
+from public.events e, public.sponsors s
+where e.slug = 'bwai-2026'
+on conflict (event_id, sponsor_id) do nothing;

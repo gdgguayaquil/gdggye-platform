@@ -62,3 +62,9 @@ export function getSupabaseServiceRepos() {
     registrationRepo: new SupabaseRegistrationRepository(supabase),
   };
 }
+
+// Bare service-role client for non-repository writes (e.g. Supabase Storage
+// uploads). Same blast-radius warning as getSupabaseServiceRepos applies.
+export function getSupabaseServiceClient() {
+  return createSupabaseServiceClient();
+}

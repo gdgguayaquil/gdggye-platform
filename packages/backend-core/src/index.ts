@@ -9,5 +9,6 @@ export * from "./application/use-cases/event-sponsors";
 export * from "./application/use-cases/speakers";
 export * from "./application/use-cases/event-speakers";
 export * from "./application/use-cases/agenda";
+export * from "./application/use-cases/leaderboard";
 export * from "./application/use-cases/activities";
 export * from "./application/use-cases/scans";

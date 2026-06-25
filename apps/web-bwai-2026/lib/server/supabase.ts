@@ -11,6 +11,8 @@ import {
   SupabaseEventRepository,
   SupabaseEventSpeakerRepository,
   SupabaseEventSponsorRepository,
+  SupabaseLeaderboardRepository,
+  SupabasePointTransactionRepository,
   SupabaseRegistrationRepository,
   SupabaseSpeakerRepository,
   SupabaseSponsorRepository,
@@ -54,6 +56,8 @@ export async function getSupabaseRepos() {
     sponsorRepo: new SupabaseSponsorRepository(supabase),
     eventSponsorRepo: new SupabaseEventSponsorRepository(supabase),
     agendaSlotRepo: new SupabaseAgendaSlotRepository(supabase),
+    leaderboardRepo: new SupabaseLeaderboardRepository(supabase),
+    pointTxRepo: new SupabasePointTransactionRepository(supabase),
   };
 }
 

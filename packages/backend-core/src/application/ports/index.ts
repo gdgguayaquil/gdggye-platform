@@ -48,6 +48,11 @@ export type {
   SpeakerAssignment,
 } from "./AgendaSlotRepository";
 export type {
+  LeaderboardRepository,
+  UserRankSummary,
+} from "./LeaderboardRepository";
+export type { PointTransactionRepository } from "./PointTransactionRepository";
+export type {
   ActivityRepository,
   CreateActivityInput,
   UpdateActivityInput,

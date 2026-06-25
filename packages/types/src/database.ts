@@ -706,6 +706,23 @@ export type Database = {
     };
     Functions: {
       custom_access_token_hook: { Args: { event: Json }; Returns: Json };
+      get_event_leaderboard: {
+        Args: { p_event_id: string; p_limit?: number };
+        Returns: {
+          full_name: string;
+          photo_url: string;
+          rank: number;
+          total_points: number;
+          user_id: string;
+        }[];
+      };
+      get_user_event_rank: {
+        Args: { p_event_id: string; p_user_id: string };
+        Returns: {
+          rank: number;
+          total_points: number;
+        }[];
+      };
       is_admin: { Args: never; Returns: boolean };
       is_staff: { Args: never; Returns: boolean };
     };

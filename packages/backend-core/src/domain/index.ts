@@ -10,6 +10,7 @@ export * from "./entities/EventSpeaker";
 export * from "./entities/AgendaSlot";
 export * from "./entities/AgendaSlotSpeaker";
 export * from "./entities/EventDetail";
+export * from "./entities/Leaderboard";
 export * from "./entities/Activity";
 export * from "./qr-token";
 export * from "./errors/ScanRejected";

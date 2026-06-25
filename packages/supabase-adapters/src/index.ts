@@ -22,6 +22,8 @@ export { SupabaseEventSponsorRepository } from "./repositories/SupabaseEventSpon
 export { SupabaseSpeakerRepository } from "./repositories/SupabaseSpeakerRepository";
 export { SupabaseEventSpeakerRepository } from "./repositories/SupabaseEventSpeakerRepository";
 export { SupabaseAgendaSlotRepository } from "./repositories/SupabaseAgendaSlotRepository";
+export { SupabaseLeaderboardRepository } from "./repositories/SupabaseLeaderboardRepository";
+export { SupabasePointTransactionRepository } from "./repositories/SupabasePointTransactionRepository";
 export { SupabaseActivityRepository } from "./repositories/SupabaseActivityRepository";
 export { SupabaseScanTargetRepository } from "./repositories/SupabaseScanTargetRepository";
 export { SupabaseScanRepository } from "./repositories/SupabaseScanRepository";

@@ -16,6 +16,7 @@
     "./event-sponsors": "./src/application/use-cases/event-sponsors/index.ts",
     "./speakers": "./src/application/use-cases/speakers/index.ts",
     "./event-speakers": "./src/application/use-cases/event-speakers/index.ts",
+    "./agenda": "./src/application/use-cases/agenda/index.ts",
     "./activities": "./src/application/use-cases/activities/index.ts",
     "./scans": "./src/application/use-cases/scans/index.ts",
     "./domain": "./src/domain/index.ts",

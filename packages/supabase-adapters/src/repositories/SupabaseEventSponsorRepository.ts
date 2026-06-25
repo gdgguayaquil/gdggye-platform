@@ -150,13 +150,22 @@ export class SupabaseEventSponsorRepository implements EventSponsorRepository {
   }
 
   async detach(id: string): Promise<void> {
-    const { error } = await this.client
+    // Use `count: 'exact'` so RLS-silent deletes (where the row exists but
+    // the policy denies the operation) become a loud error instead of an
+    // appearing-to-succeed no-op. If a caller has stale state they'll see
+    // the error; if the row genuinely never existed they'll still see it.
+    const { error, count } = await this.client
       .from("event_sponsors")
-      .delete()
+      .delete({ count: "exact" })
       .eq("id", id);
     if (error)
       throw new Error(
         `SupabaseEventSponsorRepository.detach: ${error.message}`,
       );
+    if ((count ?? 0) === 0) {
+      throw new Error(
+        "SupabaseEventSponsorRepository.detach: no row affected (already detached, or insufficient permissions).",
+      );
+    }
   }
 }

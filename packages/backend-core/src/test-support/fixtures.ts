@@ -33,7 +33,6 @@ export function makeContent(
   return {
     eventId: "evt-1",
     hero: {},
-    agenda: [],
     gallery: [],
     faq: [],
     ...overrides,

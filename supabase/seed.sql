@@ -52,9 +52,9 @@ insert into public.events (
 );
 
 -- ─────────────── event_content for bwai-2026 ───────────────
--- Speakers + sponsors live in real tables since migrations 0006/0007;
--- event_content only carries hero / agenda / gallery / faq now.
-insert into public.event_content (event_id, hero, agenda, gallery, faq)
+-- Speakers + sponsors live in real tables since 0006/0007; agenda since
+-- 0009. event_content only carries hero / gallery / faq now.
+insert into public.event_content (event_id, hero, gallery, faq)
 select
   e.id,
   jsonb_build_object(
@@ -63,20 +63,6 @@ select
     'lede_es', 'Un sábado completo dedicado a llevar IA generativa más allá del demo: arquitectura, costos, evals y entrega real. Con speakers de Ecuador, Colombia y Perú.',
     'lede_en', 'A full Saturday dedicated to taking generative AI past the demo: architecture, cost, evals, and real shipping. Speakers from Ecuador, Colombia, and Peru.'
   ),
-  '[
-    {"time":"09:00","dur":30,"title_es":"Registro y desayuno","title_en":"Check-in & breakfast","track":null,"room":"Lobby"},
-    {"time":"09:30","dur":30,"title_es":"Bienvenida + estado del capítulo","title_en":"Welcome + chapter update","track":"Plenaria","room":"Auditorio A"},
-    {"time":"10:00","dur":50,"title_es":"Keynote: Agentes en producción, lecciones de un año","title_en":"Keynote: Agents in production, a year of lessons","track":"Plenaria","room":"Auditorio A","speaker":"María Cabrera"},
-    {"time":"11:00","dur":45,"title_es":"Workshop: Gemini API + tool use desde cero","title_en":"Workshop: Gemini API + tool use from scratch","track":"Hands-on","room":"Sala 1","speaker":"Diego Salinas"},
-    {"time":"11:00","dur":45,"title_es":"Talk: Evals que no mienten","title_en":"Talk: Evals that don''t lie","track":"AI Engineering","room":"Auditorio A","speaker":"Lucía Vega"},
-    {"time":"12:00","dur":60,"title_es":"Almuerzo + networking","title_en":"Lunch + networking","track":null,"room":"Patio"},
-    {"time":"13:00","dur":45,"title_es":"Talk: RAG en español, lo que rompe","title_en":"Talk: RAG in Spanish, what breaks","track":"AI Engineering","room":"Auditorio A","speaker":"Andrés Pacheco"},
-    {"time":"13:00","dur":45,"title_es":"Workshop: Fine-tuning con Vertex AI","title_en":"Workshop: Fine-tuning with Vertex AI","track":"Hands-on","room":"Sala 1","speaker":"Camila Ruiz"},
-    {"time":"14:00","dur":45,"title_es":"Panel: Costos reales de IA en startups latam","title_en":"Panel: Real AI costs at LatAm startups","track":"Plenaria","room":"Auditorio A"},
-    {"time":"15:00","dur":60,"title_es":"Hackathon flash: agentes con propósito","title_en":"Flash hackathon: agents with purpose","track":"Hands-on","room":"Sala 1+2"},
-    {"time":"17:00","dur":30,"title_es":"Lightning talks comunitarias","title_en":"Community lightning talks","track":"Plenaria","room":"Auditorio A"},
-    {"time":"18:00","dur":60,"title_es":"Cierre + after en planta baja","title_en":"Closing + after-party downstairs","track":null,"room":"Patio"}
-  ]'::jsonb,
   '[]'::jsonb,
   '[
     {"q_es":"¿Hay que saber programar para asistir?","q_en":"Do I need to know how to code to attend?","a_es":"Las charlas plenarias son accesibles para cualquier perfil técnico. Los workshops de la sala Hands-on requieren saber al menos un lenguaje (Python o JS recomendado) y traer laptop.","a_en":"The plenary talks are accessible to any technical profile. The Hands-on room workshops require at least one language (Python or JS recommended) and a laptop."},
@@ -144,3 +130,52 @@ select e.id, s.id, s.default_tier, true
 from public.events e, public.sponsors s
 where e.slug = 'bwai-2026'
 on conflict (event_id, sponsor_id) do nothing;
+
+-- ─────────────── agenda for bwai-2026 ───────────────
+-- start_at is computed from the event's date + the clock time of day at
+-- the event's timezone, so the migrated instants are timezone-safe.
+with slot_data (time_of_day, dur, title_es, title_en, track, room, display_order) as (
+  values
+    ('09:00'::time, 30, 'Registro y desayuno',                                   'Check-in & breakfast',                          null::text,        'Lobby',       0),
+    ('09:30'::time, 30, 'Bienvenida + estado del capítulo',                      'Welcome + chapter update',                      'Plenaria',        'Auditorio A', 1),
+    ('10:00'::time, 50, 'Keynote: Agentes en producción, lecciones de un año',   'Keynote: Agents in production, a year of lessons','Plenaria',       'Auditorio A', 2),
+    ('11:00'::time, 45, 'Workshop: Gemini API + tool use desde cero',            'Workshop: Gemini API + tool use from scratch',  'Hands-on',        'Sala 1',      3),
+    ('11:00'::time, 45, 'Talk: Evals que no mienten',                            'Talk: Evals that don''t lie',                   'AI Engineering',  'Auditorio A', 4),
+    ('12:00'::time, 60, 'Almuerzo + networking',                                 'Lunch + networking',                            null,              'Patio',       5),
+    ('13:00'::time, 45, 'Talk: RAG en español, lo que rompe',                    'Talk: RAG in Spanish, what breaks',             'AI Engineering',  'Auditorio A', 6),
+    ('13:00'::time, 45, 'Workshop: Fine-tuning con Vertex AI',                   'Workshop: Fine-tuning with Vertex AI',          'Hands-on',        'Sala 1',      7),
+    ('14:00'::time, 45, 'Panel: Costos reales de IA en startups latam',          'Panel: Real AI costs at LatAm startups',        'Plenaria',        'Auditorio A', 8),
+    ('15:00'::time, 60, 'Hackathon flash: agentes con propósito',                'Flash hackathon: agents with purpose',          'Hands-on',        'Sala 1+2',    9),
+    ('17:00'::time, 30, 'Lightning talks comunitarias',                          'Community lightning talks',                     'Plenaria',        'Auditorio A', 10),
+    ('18:00'::time, 60, 'Cierre + after en planta baja',                         'Closing + after-party downstairs',              null,              'Patio',       11)
+)
+insert into public.agenda_slots
+  (event_id, start_at, duration_minutes, title_es, title_en, track, room, display_order)
+select
+  e.id,
+  ((e.start_at at time zone e.timezone)::date + s.time_of_day) at time zone e.timezone,
+  s.dur, s.title_es, s.title_en, s.track, s.room, s.display_order
+from public.events e
+cross join slot_data s
+where e.slug = 'bwai-2026';
+
+-- Speaker assignments per slot (by display_order ↔ speaker slug).
+-- The panel demonstrates a multi-speaker slot (Joel + Valentina + Rafael).
+with assignments (slot_order, speaker_slug, speaker_order) as (
+  values
+    (2,  'maria-cabrera',  0),
+    (3,  'diego-salinas',  0),
+    (4,  'lucia-vega',     0),
+    (6,  'andres-pacheco', 0),
+    (7,  'camila-ruiz',    0),
+    (8,  'joel-mendoza',   0),
+    (8,  'valentina-soto', 1),
+    (8,  'rafael-castro',  2)
+)
+insert into public.agenda_slot_speakers (slot_id, speaker_id, display_order)
+select s.id, sp.id, a.speaker_order
+from public.agenda_slots s
+join public.events       e  on e.id = s.event_id and e.slug = 'bwai-2026'
+join assignments         a  on a.slot_order = s.display_order
+join public.speakers     sp on sp.slug = a.speaker_slug
+on conflict (slot_id, speaker_id) do nothing;

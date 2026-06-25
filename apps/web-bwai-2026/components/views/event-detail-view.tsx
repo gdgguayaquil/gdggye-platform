@@ -296,7 +296,7 @@ export function EventDetailView({
 
       {detail ? (
         <>
-          <AgendaSection detail={detail} />
+          <AgendaSection detail={detail} event={event} />
           <SpeakersSection detail={detail} />
           <SponsorsSection detail={detail} />
           <VenueSection event={event} />
@@ -317,9 +317,24 @@ export function EventDetailView({
   );
 }
 
-function AgendaSection({ detail }: { detail: EventDetail }) {
+function AgendaSection({
+  detail,
+  event,
+}: {
+  detail: EventDetail;
+  event: Event;
+}) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail;
+
+  if (detail.agenda.length === 0) return null;
+
+  const timeFmt = new Intl.DateTimeFormat(lang === "es" ? "es-EC" : "en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: event.timezone,
+  });
 
   return (
     <section className="section" id="anchor-agenda">
@@ -350,16 +365,16 @@ function AgendaSection({ detail }: { detail: EventDetail }) {
         </div>
 
         <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)] bg-[var(--c-bg)]">
-          {detail.content.agenda.map((slot, i) => {
+          {detail.agenda.map((slot, i) => {
             const trackColor = slot.track ? TRACK_COLORS[slot.track] : null;
             const trackVar = trackColor
               ? `var(--c-${trackColor})`
               : "var(--c-text-subtle)";
-            const title = lang === "es" ? slot.title_es : slot.title_en;
+            const title = lang === "es" ? slot.titleEs : slot.titleEn;
 
             return (
               <div
-                key={i}
+                key={slot.id}
                 className="grid items-center gap-6 px-7 py-5 transition-colors hover:bg-[var(--c-surface)]"
                 style={{
                   gridTemplateColumns: "90px 4px 1fr auto",
@@ -374,10 +389,10 @@ function AgendaSection({ detail }: { detail: EventDetail }) {
                       fontVariantNumeric: "tabular-nums",
                     }}
                   >
-                    {slot.time}
+                    {timeFmt.format(slot.startAt)}
                   </div>
                   <div className="mt-0.5 font-mono text-[11px] text-[var(--c-text-subtle)]">
-                    {slot.dur} min
+                    {slot.durationMinutes} min
                   </div>
                 </div>
 
@@ -393,14 +408,36 @@ function AgendaSection({ detail }: { detail: EventDetail }) {
                   >
                     {title}
                   </div>
-                  <div className="flex flex-wrap gap-4 text-[13px] text-[var(--c-text-muted)]">
+                  <div className="flex flex-wrap items-center gap-3 text-[13px] text-[var(--c-text-muted)]">
                     {slot.track ? <span>{slot.track}</span> : null}
-                    {slot.speaker ? (
+                    {slot.speakers.length > 0 ? (
                       <>
-                        <span>·</span>
-                        <span className="font-medium text-[var(--c-text)]">
-                          {slot.speaker}
-                        </span>
+                        {slot.track ? <span>·</span> : null}
+                        <div className="flex flex-wrap items-center gap-3">
+                          {slot.speakers.map((sp) => (
+                            <span
+                              key={sp.speakerId}
+                              className="inline-flex items-center gap-1.5"
+                            >
+                              <span
+                                className="inline-block overflow-hidden rounded-full border border-[var(--c-border)] bg-[var(--c-surface)] align-middle"
+                                style={{ width: 20, height: 20 }}
+                              >
+                                {sp.photoUrl ? (
+                                  /* eslint-disable-next-line @next/next/no-img-element */
+                                  <img
+                                    src={sp.photoUrl}
+                                    alt=""
+                                    className="h-full w-full object-cover"
+                                  />
+                                ) : null}
+                              </span>
+                              <span className="font-medium text-[var(--c-text)]">
+                                {sp.name}
+                              </span>
+                            </span>
+                          ))}
+                        </div>
                       </>
                     ) : null}
                   </div>

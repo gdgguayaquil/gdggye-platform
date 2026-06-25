@@ -42,6 +42,12 @@ export type {
   UpdateEventSpeakerInput,
 } from "./EventSpeakerRepository";
 export type {
+  AgendaSlotRepository,
+  CreateAgendaSlotInput,
+  UpdateAgendaSlotInput,
+  SpeakerAssignment,
+} from "./AgendaSlotRepository";
+export type {
   ActivityRepository,
   CreateActivityInput,
   UpdateActivityInput,

@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import {
   createSupabaseServerClient,
   createSupabaseServiceClient,
+  SupabaseAgendaSlotRepository,
   SupabaseConsentRepository,
   SupabaseEventContentRepository,
   SupabaseEventRepository,
@@ -52,6 +53,7 @@ export async function getSupabaseRepos() {
     eventSpeakerRepo: new SupabaseEventSpeakerRepository(supabase),
     sponsorRepo: new SupabaseSponsorRepository(supabase),
     eventSponsorRepo: new SupabaseEventSponsorRepository(supabase),
+    agendaSlotRepo: new SupabaseAgendaSlotRepository(supabase),
   };
 }
 

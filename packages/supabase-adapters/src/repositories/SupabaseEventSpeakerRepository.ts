@@ -155,13 +155,19 @@ export class SupabaseEventSpeakerRepository implements EventSpeakerRepository {
   }
 
   async detach(id: string): Promise<void> {
-    const { error } = await this.client
+    // See SupabaseEventSponsorRepository.detach for the count rationale.
+    const { error, count } = await this.client
       .from("event_speakers")
-      .delete()
+      .delete({ count: "exact" })
       .eq("id", id);
     if (error)
       throw new Error(
         `SupabaseEventSpeakerRepository.detach: ${error.message}`,
       );
+    if ((count ?? 0) === 0) {
+      throw new Error(
+        "SupabaseEventSpeakerRepository.detach: no row affected (already detached, or insufficient permissions).",
+      );
+    }
   }
 }

@@ -1,7 +1,7 @@
-// Hydrated read model for the marketing pages. EventContent (hero/agenda/
-// gallery/faq) is one row in JSONB; speakers + sponsors are now joined from
-// real tables. This shape gives the view code everything it needs to render
-// /events/[slug] in one pass.
+// Hydrated read model for the marketing pages. EventContent (hero / gallery
+// / faq) is one row in JSONB; agenda, speakers and sponsors are all joined
+// from real tables. This shape gives the view code everything it needs to
+// render /events/[slug] in one pass.
 //
 // Marketing views consume this; admin uses the underlying entities directly.
 
@@ -21,9 +21,7 @@ export interface EventDetailSpeaker {
   isActive: boolean;
 }
 
-// What the marketing site needs per sponsor at this event. Same idea as
-// EventDetailSpeaker: per-event tier + booth + active, plus the global
-// sponsor identity for logo/name/website.
+// What the marketing site needs per sponsor at this event.
 export interface EventDetailSponsor {
   attachmentId: string;
   sponsor: {
@@ -49,8 +47,31 @@ export interface EventDetailSponsorTiers {
   other: EventDetailSponsor[];
 }
 
+// Per-agenda-slot speaker summary. Just the bits the view needs — avoid
+// dragging the full Speaker shape (bio, all socials) through the agenda
+// row when only name + photo + slug are rendered.
+export interface EventDetailAgendaSpeaker {
+  speakerId: string;
+  slug: string;
+  name: string;
+  photoUrl: string | null;
+}
+
+export interface EventDetailAgendaSlot {
+  id: string;
+  startAt: Date;
+  durationMinutes: number;
+  titleEs: string;
+  titleEn: string;
+  track: string | null;
+  room: string;
+  displayOrder: number;
+  speakers: EventDetailAgendaSpeaker[];
+}
+
 export interface EventDetail {
   content: EventContent;
+  agenda: EventDetailAgendaSlot[];
   speakers: EventDetailSpeaker[];
   sponsorTiers: EventDetailSponsorTiers;
 }

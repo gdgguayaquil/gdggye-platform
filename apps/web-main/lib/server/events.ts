@@ -44,6 +44,7 @@ export async function findEventDetail(slug: string) {
     speakerRepo: repos.speakerRepo,
     eventSponsorRepo: repos.eventSponsorRepo,
     sponsorRepo: repos.sponsorRepo,
+    agendaSlotRepo: repos.agendaSlotRepo,
   });
   return { event, detail };
 }

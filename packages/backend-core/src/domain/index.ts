@@ -7,6 +7,8 @@ export * from "./entities/Sponsor";
 export * from "./entities/EventSponsor";
 export * from "./entities/Speaker";
 export * from "./entities/EventSpeaker";
+export * from "./entities/AgendaSlot";
+export * from "./entities/AgendaSlotSpeaker";
 export * from "./entities/EventDetail";
 export * from "./entities/Activity";
 export * from "./qr-token";

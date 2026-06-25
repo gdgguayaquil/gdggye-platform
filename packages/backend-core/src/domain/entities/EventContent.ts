@@ -1,23 +1,13 @@
 // Domain entity: EventContent
-// JSONB content blocks attached to an event. As of 0007 this only carries
-// hero / agenda / gallery / faq — speakers and sponsors are first-class
-// relational entities reached via their own joins.
+// JSONB content blocks attached to an event. As of 0007 and 0009, this
+// only carries hero / gallery / faq — agenda, speakers and sponsors are
+// all first-class relational entities reached via their own joins.
 
 export interface EventHero {
   tagline_es?: string;
   tagline_en?: string;
   lede_es?: string;
   lede_en?: string;
-}
-
-export interface AgendaSlot {
-  time: string;
-  dur: number;
-  title_es: string;
-  title_en: string;
-  track: string | null;
-  room: string;
-  speaker?: string;
 }
 
 export interface FAQ {
@@ -30,7 +20,6 @@ export interface FAQ {
 export interface EventContent {
   eventId: string;
   hero: EventHero;
-  agenda: AgendaSlot[];
   gallery: unknown[];
   faq: FAQ[];
 }

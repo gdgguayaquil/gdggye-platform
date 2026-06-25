@@ -88,6 +88,95 @@ export type Database = {
           },
         ];
       };
+      agenda_slot_speakers: {
+        Row: {
+          created_at: string;
+          display_order: number;
+          id: string;
+          slot_id: string;
+          speaker_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          display_order?: number;
+          id?: string;
+          slot_id: string;
+          speaker_id: string;
+        };
+        Update: {
+          created_at?: string;
+          display_order?: number;
+          id?: string;
+          slot_id?: string;
+          speaker_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "agenda_slot_speakers_slot_id_fkey";
+            columns: ["slot_id"];
+            isOneToOne: false;
+            referencedRelation: "agenda_slots";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "agenda_slot_speakers_speaker_id_fkey";
+            columns: ["speaker_id"];
+            isOneToOne: false;
+            referencedRelation: "speakers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      agenda_slots: {
+        Row: {
+          created_at: string;
+          display_order: number;
+          duration_minutes: number;
+          event_id: string;
+          id: string;
+          room: string;
+          start_at: string;
+          title_en: string;
+          title_es: string;
+          track: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          display_order?: number;
+          duration_minutes?: number;
+          event_id: string;
+          id?: string;
+          room?: string;
+          start_at: string;
+          title_en: string;
+          title_es: string;
+          track?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          display_order?: number;
+          duration_minutes?: number;
+          event_id?: string;
+          id?: string;
+          room?: string;
+          start_at?: string;
+          title_en?: string;
+          title_es?: string;
+          track?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "agenda_slots_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       consent_records: {
         Row: {
           accepted_at: string;
@@ -122,7 +211,6 @@ export type Database = {
       };
       event_content: {
         Row: {
-          agenda: Json;
           event_id: string;
           faq: Json;
           gallery: Json;
@@ -130,7 +218,6 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          agenda?: Json;
           event_id: string;
           faq?: Json;
           gallery?: Json;
@@ -138,7 +225,6 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          agenda?: Json;
           event_id?: string;
           faq?: Json;
           gallery?: Json;

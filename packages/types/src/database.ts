@@ -454,6 +454,82 @@ export type Database = {
           },
         ];
       };
+      pre_checkin_submissions: {
+        Row: {
+          badge_name: string;
+          created_at: string;
+          dietary: string | null;
+          event_id: string;
+          id: string;
+          notes: string | null;
+          photo_consent: boolean;
+          review_notes: string | null;
+          reviewed_at: string | null;
+          reviewer_user_id: string | null;
+          status: Database["public"]["Enums"]["pre_checkin_status"];
+          submitted_at: string;
+          tshirt_size: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          badge_name: string;
+          created_at?: string;
+          dietary?: string | null;
+          event_id: string;
+          id?: string;
+          notes?: string | null;
+          photo_consent: boolean;
+          review_notes?: string | null;
+          reviewed_at?: string | null;
+          reviewer_user_id?: string | null;
+          status?: Database["public"]["Enums"]["pre_checkin_status"];
+          submitted_at?: string;
+          tshirt_size?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          badge_name?: string;
+          created_at?: string;
+          dietary?: string | null;
+          event_id?: string;
+          id?: string;
+          notes?: string | null;
+          photo_consent?: boolean;
+          review_notes?: string | null;
+          reviewed_at?: string | null;
+          reviewer_user_id?: string | null;
+          status?: Database["public"]["Enums"]["pre_checkin_status"];
+          submitted_at?: string;
+          tshirt_size?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pre_checkin_submissions_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pre_checkin_submissions_reviewer_user_id_fkey";
+            columns: ["reviewer_user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pre_checkin_submissions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       registrations: {
         Row: {
           approved_at: string | null;
@@ -744,6 +820,7 @@ export type Database = {
         | "networking"
         | "bonus"
         | "admin_adjustment";
+      pre_checkin_status: "pending" | "approved" | "rejected";
       precheckin_status: "not_submitted" | "pending" | "approved" | "rejected";
       scan_result: "accepted" | "rejected";
       scan_target_type: "sponsor" | "activity" | "attendee";
@@ -900,6 +977,7 @@ export const Constants = {
         "bonus",
         "admin_adjustment",
       ],
+      pre_checkin_status: ["pending", "approved", "rejected"],
       precheckin_status: ["not_submitted", "pending", "approved", "rejected"],
       scan_result: ["accepted", "rejected"],
       scan_target_type: ["sponsor", "activity", "attendee"],

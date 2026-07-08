@@ -18,6 +18,7 @@
     "./event-speakers": "./src/application/use-cases/event-speakers/index.ts",
     "./agenda": "./src/application/use-cases/agenda/index.ts",
     "./leaderboard": "./src/application/use-cases/leaderboard/index.ts",
+    "./pre-checkin": "./src/application/use-cases/pre-checkin/index.ts",
     "./activities": "./src/application/use-cases/activities/index.ts",
     "./scans": "./src/application/use-cases/scans/index.ts",
     "./domain": "./src/domain/index.ts",

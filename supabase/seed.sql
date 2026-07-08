@@ -179,3 +179,9 @@ join public.events       e  on e.id = s.event_id and e.slug = 'bwai-2026'
 join assignments         a  on a.slot_order = s.display_order
 join public.speakers     sp on sp.slug = a.speaker_slug
 on conflict (slot_id, speaker_id) do nothing;
+
+-- ─────────────── pre-checkin deadlines ───────────────
+-- Set a far-future deadline so the pre-checkin flow is testable in dev.
+-- Organizers tighten these via the admin UI for real events.
+update public.events set pre_checkin_deadline = '2027-12-31 23:59:00-05'
+where slug in ('bwai-2026', 'devfest-2026');

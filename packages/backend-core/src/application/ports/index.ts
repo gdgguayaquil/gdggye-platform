@@ -53,6 +53,12 @@ export type {
 } from "./LeaderboardRepository";
 export type { PointTransactionRepository } from "./PointTransactionRepository";
 export type {
+  PreCheckinSubmissionRepository,
+  UpsertOwnPreCheckinInput,
+  ReviewPreCheckinInput,
+  ListPreCheckinFilter,
+} from "./PreCheckinSubmissionRepository";
+export type {
   ActivityRepository,
   CreateActivityInput,
   UpdateActivityInput,

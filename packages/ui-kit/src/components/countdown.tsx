@@ -2,9 +2,6 @@
 
 import * as React from "react";
 
-import { useApp } from "./providers";
-import { COPY } from "@gdggye/i18n";
-
 // Sentinel for the server snapshot. SSR/hydration render "00 00 00 00";
 // once mounted, useSyncExternalStore re-renders with Date.now().
 const SERVER_SNAPSHOT = 0;
@@ -22,17 +19,26 @@ function getServerSnapshot() {
   return SERVER_SNAPSHOT;
 }
 
+export interface CountdownLabels {
+  d: string;
+  h: string;
+  m: string;
+  s: string;
+}
+
+// Presentational live countdown. i18n stays in the app: pass the localized
+// unit labels rather than reading an app-specific context, so this can live
+// in the shared kit. `variant="panel"` renders translucent currentColor
+// cells for use on an accent panel, where theme bg/border would vanish.
 export function Countdown({
   target,
+  labels,
   variant = "default",
 }: {
   target: Date;
-  // "panel" renders on an accent-panel surface (home hero): translucent
-  // currentColor cells instead of theme bg/border, which would vanish there.
+  labels: CountdownLabels;
   variant?: "default" | "panel";
 }) {
-  const { lang } = useApp();
-  const t = COPY[lang].eventDetail.countdown;
   const now = React.useSyncExternalStore(
     subscribe,
     getSnapshot,
@@ -88,10 +94,10 @@ export function Countdown({
 
   return (
     <div className={onPanel ? "flex gap-2.5" : "flex max-w-[420px] gap-2"}>
-      {cell(d, t.d)}
-      {cell(h, t.h)}
-      {cell(m, t.m)}
-      {cell(s, t.s)}
+      {cell(d, labels.d)}
+      {cell(h, labels.h)}
+      {cell(m, labels.m)}
+      {cell(s, labels.s)}
     </div>
   );
 }

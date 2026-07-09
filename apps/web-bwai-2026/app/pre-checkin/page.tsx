@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/server/auth";
 import { findEventBySlug } from "@/lib/server/events";
 import { getMyPreCheckin } from "@/lib/server/pre-checkin";
-import { isPreCheckinClosed } from "@/lib/event-presentation";
+import { isPreCheckinClosed } from "@gdggye/event-presentation";
 
 import { PreCheckinForm, type PreCheckinFormValues } from "./PreCheckinForm";
 

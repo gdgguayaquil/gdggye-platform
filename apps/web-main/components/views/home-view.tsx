@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 
-import { Button } from "@gdggye/ui-kit";
+import { Button, Countdown } from "@gdggye/ui-kit";
 import type { Event } from "@gdggye/backend-core";
 
 import { useApp } from "../providers";
 import { EventCard } from "../event-card";
 import { SectionHeader } from "../section-header";
-import { Countdown } from "../countdown";
 import { COPY } from "@gdggye/i18n";
 import {
   eventAccent,
@@ -16,7 +15,7 @@ import {
   isUpcomingEvent,
   pickFeaturedEvent,
   shortVenue,
-} from "@/lib/event-presentation";
+} from "@gdggye/event-presentation";
 
 type Lang = keyof typeof COPY;
 
@@ -298,7 +297,13 @@ function FeaturedHero({ event, lang }: { event: Event; lang: Lang }) {
                 </span>
               </div>
 
-              {upcoming ? <Countdown target={startAt} variant="panel" /> : null}
+              {upcoming ? (
+                <Countdown
+                  target={startAt}
+                  labels={t.eventDetail.countdown}
+                  variant="panel"
+                />
+              ) : null}
 
               <div className="font-mono text-[12.5px] uppercase tracking-[0.06em] opacity-80">
                 {[

@@ -3,16 +3,15 @@
 import * as React from "react";
 import Link from "next/link";
 
-import { Button } from "@gdggye/ui-kit";
+import { Button, Countdown } from "@gdggye/ui-kit";
 
 import type { Event, EventDetail } from "@gdggye/backend-core";
 
 import { useApp } from "../providers";
-import { Countdown } from "../countdown";
 import { FAQItem } from "../faq-item";
 import { SectionHeader } from "../section-header";
 import { COPY } from "@gdggye/i18n";
-import { eventAccent, isUpcomingEvent } from "@/lib/event-presentation";
+import { eventAccent, isUpcomingEvent } from "@gdggye/event-presentation";
 
 // Translucent pill for status tags shown ON an accent panel, where the
 // soft-fill `.chip-*` classes would be illegible. Uses currentColor so it
@@ -243,7 +242,11 @@ export function EventDetailView({
                     <div className="mb-2.5 font-mono text-[10px] uppercase tracking-[0.14em] opacity-70">
                       {lang === "es" ? "Faltan" : "Countdown"}
                     </div>
-                    <Countdown target={startAt} variant="panel" />
+                    <Countdown
+                      target={startAt}
+                      labels={t.countdown}
+                      variant="panel"
+                    />
                   </div>
                 ) : null}
 

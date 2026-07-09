@@ -3,7 +3,7 @@
 import * as React from "react";
 import QRCode from "qrcode";
 
-import type { EventAccent } from "@/lib/event-presentation";
+import type { EventAccent } from "@gdggye/event-presentation";
 
 interface Props {
   token: string;

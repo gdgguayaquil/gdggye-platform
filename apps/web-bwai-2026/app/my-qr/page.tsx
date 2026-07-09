@@ -6,7 +6,7 @@ import { requireUser } from "@/lib/server/auth";
 import { findEventBySlug } from "@/lib/server/events";
 import { mintAttendeeQrToken } from "@/lib/server/qr";
 import { ensureRegistration } from "@/lib/server/registrations";
-import { eventAccent } from "@/lib/event-presentation";
+import { eventAccent } from "@gdggye/event-presentation";
 
 import { MyQrCard } from "./MyQrCard";
 

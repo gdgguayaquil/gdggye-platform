@@ -11,7 +11,7 @@ import {
   eventSummary,
   eventTypeLabel,
   shortVenue,
-} from "@/lib/event-presentation";
+} from "@gdggye/event-presentation";
 
 // Event card styled as an attendee credential: punch slot + saturated color
 // band on top, tear-line above the RSVP row. Accent comes from the event

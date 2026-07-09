@@ -65,7 +65,7 @@ Consequence worth memorizing:
   `.panel-pop` already do this.
 
 **Event accent** is presentation derived from event type
-(`eventAccent()` in `apps/web-main/lib/event-presentation.ts`):
+(`eventAccent()` in `@gdggye/event-presentation`):
 Build with AI → blue, I/O Extended → yellow, DevFest → green, generic
 community events → red.
 
@@ -92,9 +92,11 @@ the palette discipline is what keeps it clean.
 
 ## 5. Components
 
-Utility classes currently live in `apps/web-main/app/globals.css`. Reusable
-React pieces live in `apps/web-main/components/`. See [§10](#10-implementation-backlog)
-for promoting them to shared packages.
+Pattern utility classes live in `packages/ui-kit/src/styles/patterns.css`
+(imported by each app's `globals.css`). Shared React pieces (`Countdown`) and
+pure helpers (`@gdggye/event-presentation`) are in packages too; app-specific
+pieces (`EventCard`, `Ticker`) still live under `apps/*/components/` until a
+second app needs them. See [§10](#10-implementation-backlog).
 
 ### 5.1 Accent panel (`.accent-panel-{blue|green|yellow|red}`)
 
@@ -110,8 +112,10 @@ A full-saturation rounded surface (radius 28px) in the event's accent color.
 - Optional "stage grid" backdrop: 44px CSS grid lines at
   `color-mix(in srgb, currentColor 8%, transparent)`, masked with a radial
   gradient so it fades out (see `FeaturedHero` in `home-view.tsx`).
-- Countdown on a panel: `<Countdown variant="panel" />` — translucent
-  `currentColor` cells, works on any accent.
+- Countdown on a panel: `<Countdown variant="panel" labels={…} />` from
+  `@gdggye/ui-kit` — translucent `currentColor` cells, works on any accent.
+  Pass localized unit labels (e.g. `COPY[lang].eventDetail.countdown`); the
+  component holds no i18n itself.
 
 **Hero recipe** (see `FeaturedHero`): eyebrow with pulsing dot → headline with
 `.panel-pop` year → summary → CTAs → giant date + countdown + mono
@@ -180,7 +184,7 @@ add an animation outside that safety net.
 React's purity lint forbids `Date.now()` inside component render. Patterns:
 
 - Selection logic ("which event is next?") lives in plain lib functions:
-  `pickFeaturedEvent()`, `isUpcomingEvent()` in `lib/event-presentation.ts`.
+  `pickFeaturedEvent()`, `isUpcomingEvent()` in `@gdggye/event-presentation`.
 - Live-updating UI subscribes to a clock via `useSyncExternalStore`
   (see `countdown.tsx`).
 - Never render a countdown to a past date (a row of zeros); gate it with
@@ -236,20 +240,22 @@ The utilities were built app-local first. To reuse across apps, in order:
    live in `packages/ui-kit/src/styles/patterns.css`. Each app's `globals.css`
    pulls them in with `@import "../../../packages/ui-kit/src/styles/patterns.css";`
    right after `@import "tailwindcss";`. Add that one line to any new app.
-2. **Promote React pieces to `ui-kit` patterns** — `EventCard` (badge card),
-   `Countdown`, and an `AccentPanel` wrapper belong in
-   `packages/ui-kit/src/patterns/` once a second app needs them. `Ticker` can
-   move as a pattern that takes `items: { accent, label }[]`.
-3. **Share presentation helpers** — `eventAccent`, `eventTypeLabel`,
-   `pickFeaturedEvent`, `isUpcomingEvent` move from `apps/web-main/lib/` to
-   `packages/utils` (they're pure and framework-free) when a second app needs
-   them.
+2. **Promote React pieces to `ui-kit`** — `Countdown` is **done**: it lives in
+   `@gdggye/ui-kit` as a presentational component taking a `labels` prop (i18n
+   stays in the app). Still app-local until a second app needs them: `EventCard`
+   (badge card) and `Ticker` — when promoted, `Ticker` should take
+   `items: { accent, label }[]`, and an `AccentPanel` wrapper is worth
+   extracting at the same time.
+3. ~~**Share presentation helpers**~~ — **Done.** `eventAccent`,
+   `eventTypeLabel`, `isUpcomingEvent`, `pickFeaturedEvent`, `isPreCheckinClosed`,
+   `shortVenue`, `eventSummary` live in `@gdggye/event-presentation` (pure,
+   framework-free). Both apps import from there; no app-local copies remain.
 4. Copy for new surfaces goes in `packages/i18n/src/copy.ts` (es + en, same
    shape both languages).
 
 ## 11. Do / Don't
 
-#### Do
+### Do
 
 - Spend the color budget on one panel per screen.
 - Use `clamp()` display sizes; let type be the spectacle.
@@ -257,7 +263,7 @@ The utilities were built app-local first. To reuse across apps, in order:
 - Write copy that ties form to meaning ("Tu credencial te espera" over badge
   cards).
 
-#### Don't
+### Don't
 
 - Put two accent panels in one viewport.
 - Hardcode brand hex values in components (derived inks live only in the

@@ -3,16 +3,15 @@
 import * as React from "react";
 import Link from "next/link";
 
-import { Button } from "@gdggye/ui-kit";
+import { Button, Countdown } from "@gdggye/ui-kit";
 
 import type { Event, EventDetail } from "@gdggye/backend-core";
 
 import { useApp } from "../providers";
-import { Countdown } from "../countdown";
 import { FAQItem } from "../faq-item";
 import { SectionHeader } from "../section-header";
 import { COPY } from "@gdggye/i18n";
-import { eventAccent } from "@/lib/event-presentation";
+import { eventAccent } from "@gdggye/event-presentation";
 
 const TRACK_COLORS: Record<string, string> = {
   Plenaria: "blue",
@@ -252,7 +251,7 @@ export function EventDetailView({
                 >
                   {lang === "es" ? "Faltan" : "Countdown"}
                 </div>
-                <Countdown target={startAt} />
+                <Countdown target={startAt} labels={t.countdown} />
               </div>
             </div>
           </div>

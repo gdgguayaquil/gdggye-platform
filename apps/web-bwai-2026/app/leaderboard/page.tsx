@@ -5,7 +5,7 @@ import { DEFAULT_LEADERBOARD_LIMIT } from "@gdggye/backend-core";
 import { getCurrentAuthUser } from "@/lib/server/auth";
 import { findEventBySlug } from "@/lib/server/events";
 import { getEventLeaderboard, getMyEventStats } from "@/lib/server/leaderboard";
-import { eventAccent } from "@/lib/event-presentation";
+import { eventAccent } from "@gdggye/event-presentation";
 
 import { LeaderboardClient } from "./LeaderboardClient";
 

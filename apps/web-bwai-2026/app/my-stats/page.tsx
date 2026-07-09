@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/server/auth";
 import { findEventBySlug } from "@/lib/server/events";
 import { getMyEventStats } from "@/lib/server/leaderboard";
-import { eventAccent } from "@/lib/event-presentation";
+import { eventAccent } from "@gdggye/event-presentation";
 
 const EVENT_SLUG = "bwai-2026";
 

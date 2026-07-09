@@ -14,7 +14,7 @@ import {
   eventSummary,
   eventTypeLabel,
   shortVenue,
-} from "@/lib/event-presentation";
+} from "@gdggye/event-presentation";
 
 type Filter = "all" | EventType;
 

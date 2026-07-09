@@ -125,8 +125,8 @@ export function SiteFooter({ events }: SiteFooterProps) {
           </div>
         </div>
 
-        <div className="mb-10 flex flex-wrap items-center gap-6 rounded-[var(--r-lg)] border border-[var(--c-border)] bg-[var(--c-bg)] px-8 py-6">
-          <div className="min-w-[280px] flex-1">
+        <div className="mb-10 flex flex-wrap items-center gap-6 rounded-[var(--r-lg)] border border-[var(--c-border)] bg-[var(--c-bg)] px-5 py-5 sm:px-8 sm:py-6">
+          <div className="min-w-[220px] flex-1">
             <div className="font-display text-lg font-semibold">
               {t.newsletter}
             </div>
@@ -136,13 +136,13 @@ export function SiteFooter({ events }: SiteFooterProps) {
           </div>
           <form
             onSubmit={(e) => e.preventDefault()}
-            className="flex max-w-[480px] flex-1 gap-2"
-            style={{ minWidth: "320px" }}
+            className="flex w-full flex-col gap-2 sm:w-auto sm:max-w-[480px] sm:flex-1 sm:flex-row"
           >
             <Input
               type="email"
               placeholder={t.emailPlaceholder}
-              className="flex-1"
+              aria-label={t.emailPlaceholder}
+              className="sm:flex-1"
             />
             <Button type="submit" variant="primary">
               {t.subscribe}

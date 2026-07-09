@@ -30,10 +30,10 @@ export default async function SpeakersListPage() {
         }
       />
 
-      <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
+      <div className="overflow-x-auto rounded-[var(--r-lg)] border border-[var(--c-border)]">
         <div
           className="grid gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]"
-          style={{ gridTemplateColumns: SPEAKER_COLS }}
+          style={{ gridTemplateColumns: SPEAKER_COLS, minWidth: 720 }}
         >
           <div />
           <div>Name</div>
@@ -50,7 +50,7 @@ export default async function SpeakersListPage() {
             <div
               key={s.id}
               className="grid items-center gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
-              style={{ gridTemplateColumns: SPEAKER_COLS }}
+              style={{ gridTemplateColumns: SPEAKER_COLS, minWidth: 720 }}
             >
               <div
                 className="overflow-hidden rounded-full border border-[var(--c-border)] bg-[var(--c-surface)]"

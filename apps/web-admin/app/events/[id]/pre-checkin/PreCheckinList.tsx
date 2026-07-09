@@ -111,10 +111,10 @@ export function PreCheckinList({
         state={state}
       />
 
-      <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
+      <div className="overflow-x-auto rounded-[var(--r-lg)] border border-[var(--c-border)]">
         <div
           className="grid gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]"
-          style={{ gridTemplateColumns: SLOT_COLS }}
+          style={{ gridTemplateColumns: SLOT_COLS, minWidth: 1010 }}
         >
           <div>
             <input
@@ -153,6 +153,7 @@ export function PreCheckinList({
                 className="grid items-start gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
                 style={{
                   gridTemplateColumns: SLOT_COLS,
+                  minWidth: 1010,
                   background: isSelected
                     ? "color-mix(in srgb, var(--c-primary) 6%, transparent)"
                     : "transparent",
@@ -329,7 +330,7 @@ function BulkBar({
             placeholder="Reason (shown to every rejected attendee)"
             className="flex-1 min-w-[280px] rounded-[var(--r-md)] border border-[var(--c-border)] bg-[var(--c-bg)] px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-primary)]"
           />
-          <Button type="submit" variant="ghost" disabled={pending}>
+          <Button type="submit" variant="danger" disabled={pending}>
             {pending && bulkMode === "rejecting"
               ? "..."
               : `Confirm reject ${selectedCount}`}

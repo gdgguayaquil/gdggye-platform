@@ -135,7 +135,7 @@ export function EventDetailView({
 
               <h1
                 className="h-display mb-6"
-                style={{ fontSize: "clamp(48px, 7vw, 96px)" }}
+                style={{ fontSize: "clamp(38px, 7vw, 96px)" }}
               >
                 {event.name}
                 <span

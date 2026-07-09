@@ -88,12 +88,12 @@ export function HomeView({ events }: { events: Event[] }) {
             ].map((s, i) => (
               <div
                 key={s.l}
-                className={`py-9 ${i > 0 ? "border-l border-[var(--c-border)] pl-8" : ""}`}
+                className={`py-6 md:py-9 ${i > 0 ? "border-l border-[var(--c-border)] pl-4 md:pl-8" : ""}`}
               >
                 <div
                   className="font-display font-semibold leading-none"
                   style={{
-                    fontSize: "clamp(36px, 5vw, 56px)",
+                    fontSize: "clamp(26px, 5vw, 56px)",
                     letterSpacing: "-0.03em",
                   }}
                 >

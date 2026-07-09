@@ -32,10 +32,10 @@ export default async function SponsorsListPage() {
         }
       />
 
-      <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
+      <div className="overflow-x-auto rounded-[var(--r-lg)] border border-[var(--c-border)]">
         <div
           className="grid gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]"
-          style={{ gridTemplateColumns: SPONSOR_COLS }}
+          style={{ gridTemplateColumns: SPONSOR_COLS, minWidth: 660 }}
         >
           <div>Name</div>
           <div>Slug</div>
@@ -51,7 +51,7 @@ export default async function SponsorsListPage() {
             <div
               key={s.id}
               className="grid items-center gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
-              style={{ gridTemplateColumns: SPONSOR_COLS }}
+              style={{ gridTemplateColumns: SPONSOR_COLS, minWidth: 660 }}
             >
               <div>
                 <div className="font-display font-semibold">{s.name}</div>

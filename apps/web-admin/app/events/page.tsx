@@ -38,10 +38,10 @@ export default async function EventsPage() {
         }
       />
 
-      <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
+      <div className="overflow-x-auto rounded-[var(--r-lg)] border border-[var(--c-border)]">
         <div
           className="grid gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]"
-          style={{ gridTemplateColumns: EVENT_COLS }}
+          style={{ gridTemplateColumns: EVENT_COLS, minWidth: 760 }}
         >
           <div>Name</div>
           <div>Type</div>
@@ -58,7 +58,7 @@ export default async function EventsPage() {
             <div
               key={e.id}
               className="grid items-center gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
-              style={{ gridTemplateColumns: EVENT_COLS }}
+              style={{ gridTemplateColumns: EVENT_COLS, minWidth: 760 }}
             >
               <div>
                 <div className="font-display font-semibold">{e.name}</div>

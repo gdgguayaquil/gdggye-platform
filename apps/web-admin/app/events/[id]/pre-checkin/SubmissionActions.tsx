@@ -51,7 +51,7 @@ export function SubmissionActions({
             placeholder="Reason (will be shown to attendee)"
             className="w-[260px] rounded-[var(--r-md)] border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-primary)]"
           />
-          <Button type="submit" variant="ghost" disabled={rejecting}>
+          <Button type="submit" variant="danger" disabled={rejecting}>
             {rejecting ? "..." : "Confirm reject"}
           </Button>
         </form>

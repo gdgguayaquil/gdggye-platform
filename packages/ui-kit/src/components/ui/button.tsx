@@ -4,33 +4,54 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 
 const buttonVariants = cva(
-  // Inline-flex with items-center handles vertical centering — no leading-none,
-  // which can squish text under Tailwind v4. Padding values use the canonical
-  // Tailwind scale so they survive purging cleanly. Colors come from the
-  // @theme bridge (`--color-text`, `--color-bg`, etc. in globals.css).
+  // Every color below reads a `--c-*` token injected by the theme engine, so
+  // buttons restyle themselves across themes and light/dark with no
+  // component-level work. Interaction model: hover shifts a surface, active
+  // presses (scale), focus draws a token ring. `transition-all` covers the
+  // v4 `translate`/`scale` properties the press/lift states animate.
   [
-    "inline-flex items-center justify-center gap-2",
-    "whitespace-nowrap rounded-full font-medium transition-all",
+    "inline-flex select-none items-center justify-center gap-2",
+    "whitespace-nowrap rounded-full font-medium",
     "border border-transparent",
+    "transition-all duration-150 ease-out",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-    "focus-visible:ring-[var(--c-primary)]",
-    "disabled:pointer-events-none disabled:opacity-50",
+    "focus-visible:ring-[var(--c-primary)] focus-visible:ring-offset-[var(--c-bg)]",
+    "active:scale-[0.98]",
+    "disabled:pointer-events-none disabled:opacity-45",
   ].join(" "),
   {
     variants: {
       variant: {
-        primary:
-          "bg-text text-bg hover:-translate-y-px hover:shadow-[var(--shadow-md)]",
-        secondary:
-          "bg-surface text-text border-border hover:bg-surface-alt hover:border-border-strong",
-        ghost: "bg-transparent text-text hover:bg-surface",
-        outline:
-          "bg-transparent text-text border-border hover:border-border-strong",
+        primary: [
+          "bg-[var(--c-text)] text-[var(--c-bg)]",
+          "hover:-translate-y-px hover:shadow-[var(--shadow-md)]",
+          "hover:bg-[color-mix(in_srgb,var(--c-text)_88%,var(--c-bg))]",
+          "active:translate-y-0 active:shadow-none",
+        ].join(" "),
+        secondary: [
+          "border-[var(--c-border)] bg-[var(--c-surface)] text-[var(--c-text)]",
+          "hover:border-[var(--c-border-strong)] hover:bg-[var(--c-surface-alt)]",
+        ].join(" "),
+        ghost: [
+          "bg-transparent text-[var(--c-text-muted)]",
+          "hover:bg-[var(--c-surface-alt)] hover:text-[var(--c-text)]",
+        ].join(" "),
+        outline: [
+          "border-[var(--c-border)] bg-transparent text-[var(--c-text)]",
+          "hover:border-[var(--c-border-strong)] hover:bg-[var(--c-surface)]",
+        ].join(" "),
+        // Destructive actions (admin: Detach, Delete). Soft field + deep red
+        // text — same recipe as .chip-red, sized up to a control.
+        danger: [
+          "bg-[var(--c-red-soft)] text-[#a8261c] dark:text-[var(--c-red)]",
+          "hover:bg-[color-mix(in_srgb,var(--c-red-soft)_82%,var(--c-red))]",
+          "focus-visible:ring-[var(--c-red)]",
+        ].join(" "),
       },
       size: {
+        sm: "h-8 gap-1.5 px-3.5 text-[13px]",
         default: "h-10 px-5 text-sm",
-        sm: "h-9 px-3 text-xs",
-        lg: "h-12 px-6 text-base",
+        lg: "h-12 px-7 text-[15px]",
         icon: "h-10 w-10",
       },
     },

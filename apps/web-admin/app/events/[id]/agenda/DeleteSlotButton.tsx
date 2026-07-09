@@ -28,7 +28,7 @@ export function DeleteSlotButton({
     <form action={formAction} onSubmit={confirmSubmit}>
       <input type="hidden" name="id" value={slotId} />
       <input type="hidden" name="eventId" value={eventId} />
-      <Button type="submit" variant="ghost" disabled={pending}>
+      <Button type="submit" variant="danger" disabled={pending}>
         {pending ? "Deleting…" : "Delete"}
       </Button>
       {state.error ? (

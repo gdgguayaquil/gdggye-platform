@@ -59,14 +59,16 @@ export function AdminHeader({ user }: { user: AdminHeaderUser | null }) {
             {link("/events", "Events")}
             {link("/sponsors", "Sponsors")}
             {link("/speakers", "Speakers")}
-            <span className="mx-2 h-5 w-px bg-[var(--c-border)]" />
+            <span className="mx-2 hidden h-5 w-px bg-[var(--c-border)] md:block" />
             <span
-              className="font-mono text-[11px] uppercase tracking-wider"
+              className="hidden font-mono text-[11px] uppercase tracking-wider md:inline"
               style={{ color: "var(--c-text-muted)" }}
             >
               {user.systemRole}
             </span>
-            <span className="text-sm">{user.fullName || user.email}</span>
+            <span className="hidden text-sm lg:inline">
+              {user.fullName || user.email}
+            </span>
             <form action="/auth/signout" method="post">
               <Button type="submit" variant="secondary">
                 Sign out

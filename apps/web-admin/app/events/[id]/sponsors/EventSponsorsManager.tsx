@@ -53,10 +53,10 @@ export function EventSponsorsManager({
   return (
     <>
       {/* Existing attachments */}
-      <div className="mb-10 overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
+      <div className="mb-10 overflow-x-auto rounded-[var(--r-lg)] border border-[var(--c-border)]">
         <div
           className="grid gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]"
-          style={{ gridTemplateColumns: ATTACHMENT_COLS }}
+          style={{ gridTemplateColumns: ATTACHMENT_COLS, minWidth: 760 }}
         >
           <div>Sponsor</div>
           <div>Tier</div>
@@ -96,7 +96,7 @@ function AttachmentRowView({
   return (
     <div
       className="grid items-center gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
-      style={{ gridTemplateColumns: ATTACHMENT_COLS }}
+      style={{ gridTemplateColumns: ATTACHMENT_COLS, minWidth: 760 }}
     >
       <div>
         <div className="font-display font-semibold">
@@ -126,7 +126,7 @@ function AttachmentRowView({
         <form action={detach}>
           <input type="hidden" name="id" value={attachment.id} />
           <input type="hidden" name="eventId" value={eventId} />
-          <Button type="submit" variant="ghost" disabled={detaching}>
+          <Button type="submit" variant="danger" disabled={detaching}>
             {detaching ? "Detaching…" : "Detach"}
           </Button>
         </form>

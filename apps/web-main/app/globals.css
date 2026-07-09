@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Tailwind only auto-scans this app's own files. The shared components in
+ * @gdggye/ui-kit style themselves with Tailwind utilities, so their sources
+ * must be declared explicitly or Button/Input/Badge/Card ship UNSTYLED. */
+@source "../../../packages/ui-kit/src";
+
+/* Dark mode is toggled via data-theme (see ThemeProvider), not
+ * prefers-color-scheme — bind Tailwind's `dark:` variant to it. */
+@custom-variant dark ([data-theme="dark"] &);
+
 /* ─────────── GDG Guayaquil — App-side CSS ───────────
  * Token VALUES live in @gdggye/themes and are injected at runtime by
  * <ThemeStyles /> in app/layout.tsx. This file keeps:
@@ -267,4 +276,17 @@ img {
 /* Anchor offset for in-page nav */
 [id^="anchor-"] {
   scroll-margin-top: calc(var(--nav-h) + 64px);
+}
+
+/* Quality floor: honor reduced-motion — kills the pulse/fade/lift
+ * animations for users who ask the OS for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -113,9 +113,9 @@ export function EventsView({ events }: { events: Event[] }) {
                 <Link
                   key={ev.id}
                   href={`/events/${ev.slug}`}
-                  className="block border-b border-[var(--c-border)] py-10 transition-colors hover:bg-[var(--c-surface)]"
+                  className="block border-b border-[var(--c-border)] py-8 transition-colors hover:bg-[var(--c-surface)] md:py-10"
                 >
-                  <div className="grid items-center gap-10 md:grid-cols-[120px_1fr_auto]">
+                  <div className="grid items-center gap-5 md:grid-cols-[120px_1fr_auto] md:gap-10">
                     <div>
                       <div
                         className="font-display font-semibold"
@@ -160,8 +160,12 @@ export function EventsView({ events }: { events: Event[] }) {
                       </div>
                     </div>
 
-                    <span className={buttonVariants({ variant: "secondary" })}>
-                      {t.eventsPage.details} →
+                    <span className="hidden md:block">
+                      <span
+                        className={buttonVariants({ variant: "secondary" })}
+                      >
+                        {t.eventsPage.details} →
+                      </span>
                     </span>
                   </div>
                 </Link>

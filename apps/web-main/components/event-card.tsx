@@ -41,8 +41,8 @@ export function EventCard({ event, featured = false }: EventCardProps) {
         href={`/events/${event.slug}`}
         className="block overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)] bg-[var(--c-bg)] transition-all hover:border-[var(--c-border-strong)] md:col-span-2"
       >
-        <article className="grid min-h-[360px] md:grid-cols-[1.1fr_1fr]">
-          <div className="flex flex-col justify-between p-10">
+        <article className="grid md:min-h-[360px] md:grid-cols-[1.1fr_1fr]">
+          <div className="flex flex-col justify-between p-6 sm:p-10">
             <div>
               <div className="mb-5 flex gap-2">
                 <span className={`chip chip-${accent}`}>
@@ -67,7 +67,7 @@ export function EventCard({ event, featured = false }: EventCardProps) {
               </p>
             </div>
 
-            <div className="mt-8 flex gap-8 text-[13px]">
+            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-4 text-[13px]">
               <div>
                 <div className="eyebrow mb-1.5">
                   {lang === "es" ? "Fecha" : "Date"}
@@ -90,14 +90,14 @@ export function EventCard({ event, featured = false }: EventCardProps) {
           </div>
 
           <div
-            className="relative flex items-center justify-center overflow-hidden"
+            className="relative flex min-h-[220px] items-center justify-center overflow-hidden py-8 md:min-h-0 md:py-0"
             style={{ background: accentSoft }}
           >
             <div className="relative z-[2] text-center">
               <div
                 className="font-display font-semibold"
                 style={{
-                  fontSize: "clamp(120px, 14vw, 180px)",
+                  fontSize: "clamp(96px, 14vw, 180px)",
                   color: accentVar,
                   lineHeight: 0.9,
                   letterSpacing: "-0.04em",

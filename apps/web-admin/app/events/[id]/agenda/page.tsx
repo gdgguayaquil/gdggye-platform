@@ -71,10 +71,10 @@ export default async function AgendaListPage({
 
       <EventSubNav eventId={id} active="agenda" />
 
-      <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
+      <div className="overflow-x-auto rounded-[var(--r-lg)] border border-[var(--c-border)]">
         <div
           className="grid gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]"
-          style={{ gridTemplateColumns: SLOT_COLS }}
+          style={{ gridTemplateColumns: SLOT_COLS, minWidth: 940 }}
         >
           <div>Start</div>
           <div>Dur</div>
@@ -96,7 +96,7 @@ export default async function AgendaListPage({
               <div
                 key={slot.id}
                 className="grid items-start gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
-                style={{ gridTemplateColumns: SLOT_COLS }}
+                style={{ gridTemplateColumns: SLOT_COLS, minWidth: 940 }}
               >
                 <div className="font-mono text-sm font-medium">
                   {timeFmt.format(slot.startAt)}

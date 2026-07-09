@@ -60,10 +60,10 @@ export default async function ActivitiesListPage({
 
       <EventSubNav eventId={id} active="activities" />
 
-      <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
+      <div className="overflow-x-auto rounded-[var(--r-lg)] border border-[var(--c-border)]">
         <div
           className="grid gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]"
-          style={{ gridTemplateColumns: ACTIVITY_COLS }}
+          style={{ gridTemplateColumns: ACTIVITY_COLS, minWidth: 700 }}
         >
           <div>Name</div>
           <div>Sponsor</div>
@@ -80,7 +80,7 @@ export default async function ActivitiesListPage({
             <div
               key={a.id}
               className="grid items-center gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
-              style={{ gridTemplateColumns: ACTIVITY_COLS }}
+              style={{ gridTemplateColumns: ACTIVITY_COLS, minWidth: 700 }}
             >
               <div className="font-display font-semibold">{a.name}</div>
               <div className="text-sm">{sponsorName(a.sponsorId)}</div>

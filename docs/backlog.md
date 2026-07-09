@@ -34,6 +34,17 @@ only when a second consumer appears — moving early adds coupling for no payoff
 - [ ] **`AccentPanel`** wrapper → extract alongside the above (the hero/panel
       markup is hand-rolled in each view today).
 
+## Deferred features (built-around, revisit when prioritized)
+
+- [ ] **Pre-checkin notifications** — deferred. The pre-checkin workflow
+      (attendee form + admin approve/reject review) is live, but attendees are
+      **not notified** when their submission is approved or rejected. Nothing
+      to "turn off" — no email/notification path was ever wired; the flow just
+      updates status in the DB and the attendee sees it next time they open
+      `/pre-checkin`. Blocked on **`CLAUDE.md` open decision #4** (pick an
+      email/notification provider: Resend / Postmark / Supabase native). Wire
+      this to close Phase 3 fully.
+
 ## Nice-to-haves / cleanups
 
 - [ ] Tailwind "canonical class" lint suggestions (e.g. `bg-[var(--c-bg)]` →

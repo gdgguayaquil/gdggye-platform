@@ -1,7 +1,7 @@
 # Phase 2 — Remaining work
 
 Snapshot of what's left after Sprint 4 (scanner) landed. The full spec lives
-in `Claude phase2.md`; this file is the short, current punch-list.
+in `CLAUDE-phase2.md`; this file is the short, current punch-list.
 
 ## 1. Sprint 4 — manual smoke test (verify before declaring done)
 
@@ -97,9 +97,9 @@ Open follow-ups (not blocking Phase 2):
   `validateAndRecordScan` full rejection order (incl. the 23505 race +
   rejection-log swallow), `submitPreCheckin` guards, `reviewPreCheckin`
   transitions, and leaderboard limit clamping.
-- **Phase 2 acceptance criteria** (`Claude phase2.md` §"Phase 2 acceptance
+- **Phase 2 acceptance criteria** (`CLAUDE-phase2.md` §"Phase 2 acceptance
   criteria"). Walk the list once Sprint 5 is in.
-- **Risk register sweep** (`Claude phase2.md` §"Risk register").
+- **Risk register sweep** (`CLAUDE-phase2.md` §"Risk register").
   Especially the iOS Safari camera permission flow — verify on a real
   iPhone, not desktop dev tools.
 

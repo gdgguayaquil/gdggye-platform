@@ -13,16 +13,16 @@ A digital platform for **GDG Guayaquil** with two purposes:
 
 ## Phase map
 
-| Phase | Focus                                | Detailed spec                                              |
-| ----- | ------------------------------------ | ---------------------------------------------------------- |
-| **1** | Foundation + public platform         | This file (below)                                          |
-| **2** | Auth + attendee gamification         | **`CLAUDE-phase2.md`** ← read this when working on Phase 2 |
-| 3     | Pre-checkin workflow                 | TBD                                                        |
-| 4     | Full admin suite                     | TBD                                                        |
-| 5     | Networking + badges                  | TBD                                                        |
-| 6     | Reports + global ranking + hardening | TBD                                                        |
+| Phase | Focus                                | Status                          | Notes                                                                                                                                                                                                     |
+| ----- | ------------------------------------ | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1** | Foundation + public platform         | ✅ Shipped                      | This file (below).                                                                                                                                                                                        |
+| **2** | Auth + attendee gamification         | ✅ Shipped                      | Google + email/password auth, consents, QR scans, per-event leaderboard. Detailed spec: **`CLAUDE-phase2.md`**.                                                                                           |
+| **3** | Pre-checkin workflow                 | 🟡 Shipped except notifications | Attendee form + admin approve/reject review are live. Attendee **notifications are deferred** — tracked in `docs/backlog.md` (needs decision #4).                                                         |
+| **4** | Full admin suite                     | 🟡 Partial                      | Shipped: event CRUD + status, speakers/sponsors (global + per-event), agenda, activities, pre-checkin review. Missing: attendee/registration mgmt, points-adjustment UI, reporting. Full scope still TBD. |
+| **5** | Networking + badges                  | ⬜ Not started                  | Scan model scaffolds an `attendee` target (0 pts today); no badges/achievements yet.                                                                                                                      |
+| **6** | Reports + global ranking + hardening | ⬜ Not started                  | Leaderboard is per-event only; no cross-event ranking, reports, or hardening pass.                                                                                                                        |
 
-> When the user asks for Phase 2 work, open `CLAUDE-phase2.md` for the full spec (locked decisions, migration `0002`, RLS, scan use-case, sprint backlog). This file remains the source of truth for locked decisions and architectural rules that apply across **all** phases.
+> Phases 1–3 are largely built (see **Status** above); 4 is a partial; 5–6 are not started. When working on Phase 2, read **`CLAUDE-phase2.md`** for the full spec, and `PHASE2-REMAINING.md` for the short punch-list of what's left. This file (`CLAUDE.md`) remains the source of truth for locked decisions and architectural rules that apply across **all** phases.
 
 > **Outstanding non-phase work** (design-adoption remnants, shared-package consolidation, cleanups) is tracked in **`docs/backlog.md`**. The visual language it draws on is documented in **`docs/design-system.md`**.
 
@@ -524,7 +524,7 @@ Surface these and ask before assuming.
 1. **Bingo / games mechanic** — undefined. Blueprint specifies QR scans → points → leaderboard. If a bingo-card mechanic is wanted on top, the data model needs `Challenge` and `ChallengeCard` entities and Phase 2 grows. Confirm before scoping Phase 2.
 2. **Hosting** — assumed Vercel + Supabase Cloud. Confirm.
 3. **Domain strategy** — confirm `gdggye.org` and `2026.<event>.gdggye.org` patterns are owned and DNS configurable.
-4. **Email / notifications provider** — needed by Phase 3. Resend, Postmark, or Supabase native?
+4. **Email / notifications provider** — Resend, Postmark, or Supabase native? **Pre-checkin notifications are deferred until this is decided** (tracked in `docs/backlog.md`); Phase 3 otherwise ships without them.
 5. **Image hosting** — Supabase Storage + Next Image, or a separate CDN (Cloudinary, imgix)?
 
 ---

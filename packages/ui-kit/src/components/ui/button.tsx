@@ -44,18 +44,40 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends
     React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {}
+    VariantProps<typeof buttonVariants> {
+  /**
+   * Render the button's styles onto the single child element instead of a
+   * native `<button>`. Use this to style a `<Link>`/`<a>` as a button without
+   * nesting a `<button>` inside an `<a>` (invalid HTML). shadcn calls this
+   * pattern `asChild`; we implement it dependency-free via `cloneElement`.
+   */
+  asChild?: boolean;
+}
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, type = "button", ...props }, ref) => {
-    return (
-      <button
-        ref={ref}
-        type={type}
-        className={cn(buttonVariants({ variant, size }), className)}
-        {...props}
-      />
-    );
+  (
+    { className, variant, size, type = "button", asChild = false, ...props },
+    ref,
+  ) => {
+    const classes = cn(buttonVariants({ variant, size }), className);
+
+    if (asChild) {
+      const { children, ...rest } = props;
+      if (!React.isValidElement(children)) {
+        throw new Error(
+          "Button: `asChild` expects a single React element child.",
+        );
+      }
+      const child = children as React.ReactElement<{ className?: string }>;
+      return React.cloneElement(child, {
+        ...rest,
+        ...child.props,
+        ref,
+        className: cn(classes, child.props.className),
+      } as Record<string, unknown>);
+    }
+
+    return <button ref={ref} type={type} className={classes} {...props} />;
   },
 );
 Button.displayName = "Button";

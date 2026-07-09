@@ -45,13 +45,15 @@ export default async function ActivitiesListPage({
         subtitle={`${activities.length} activit${activities.length === 1 ? "y" : "ies"}.`}
         actions={
           noSponsors ? (
-            <Link href={`/events/${id}/sponsors`}>
-              <Button variant="secondary">+ Attach a sponsor first</Button>
-            </Link>
+            <Button asChild variant="secondary">
+              <Link href={`/events/${id}/sponsors`}>
+                + Attach a sponsor first
+              </Link>
+            </Button>
           ) : (
-            <Link href={`/events/${id}/activities/new`}>
-              <Button variant="primary">+ New activity</Button>
-            </Link>
+            <Button asChild variant="primary">
+              <Link href={`/events/${id}/activities/new`}>+ New activity</Link>
+            </Button>
           )
         }
       />
@@ -93,9 +95,11 @@ export default async function ActivitiesListPage({
                 </span>
               </div>
               <div className="text-right">
-                <Link href={`/events/${id}/activities/${a.id}/edit`}>
-                  <Button variant="secondary">Edit</Button>
-                </Link>
+                <Button asChild variant="secondary">
+                  <Link href={`/events/${id}/activities/${a.id}/edit`}>
+                    Edit
+                  </Link>
+                </Button>
               </div>
             </div>
           ))

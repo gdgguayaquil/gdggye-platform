@@ -26,9 +26,9 @@ export default async function SponsorsListPage() {
           </>
         }
         actions={
-          <Link href="/sponsors/new">
-            <Button variant="primary">+ New sponsor</Button>
-          </Link>
+          <Button asChild variant="primary">
+            <Link href="/sponsors/new">+ New sponsor</Link>
+          </Button>
         }
       />
 
@@ -68,9 +68,9 @@ export default async function SponsorsListPage() {
                 {s.defaultTier ?? "—"}
               </div>
               <div className="text-right">
-                <Link href={`/sponsors/${s.id}/edit`}>
-                  <Button variant="secondary">Edit</Button>
-                </Link>
+                <Button asChild variant="secondary">
+                  <Link href={`/sponsors/${s.id}/edit`}>Edit</Link>
+                </Button>
               </div>
             </div>
           ))

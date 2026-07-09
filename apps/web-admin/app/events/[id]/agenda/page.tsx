@@ -63,9 +63,9 @@ export default async function AgendaListPage({
         title="Agenda"
         subtitle={`${slots.length} slot${slots.length === 1 ? "" : "s"}. Times shown in ${event.timezone}.`}
         actions={
-          <Link href={`/events/${id}/agenda/new`}>
-            <Button variant="primary">+ New slot</Button>
-          </Link>
+          <Button asChild variant="primary">
+            <Link href={`/events/${id}/agenda/new`}>+ New slot</Link>
+          </Button>
         }
       />
 
@@ -130,9 +130,11 @@ export default async function AgendaListPage({
                   ) : null}
                 </div>
                 <div className="flex items-center justify-end gap-2">
-                  <Link href={`/events/${id}/agenda/${slot.id}/edit`}>
-                    <Button variant="secondary">Edit</Button>
-                  </Link>
+                  <Button asChild variant="secondary">
+                    <Link href={`/events/${id}/agenda/${slot.id}/edit`}>
+                      Edit
+                    </Link>
+                  </Button>
                   <DeleteSlotButton slotId={slot.id} eventId={id} />
                 </div>
               </div>

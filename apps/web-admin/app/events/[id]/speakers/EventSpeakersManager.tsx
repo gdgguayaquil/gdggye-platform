@@ -148,9 +148,11 @@ function AttachmentRowView({
         </span>
       </div>
       <div className="flex items-center justify-end gap-2">
-        <Link href={`/events/${eventId}/speakers/${attachment.id}/edit`}>
-          <Button variant="secondary">Edit</Button>
-        </Link>
+        <Button asChild variant="secondary">
+          <Link href={`/events/${eventId}/speakers/${attachment.id}/edit`}>
+            Edit
+          </Link>
+        </Button>
         <form action={detach}>
           <input type="hidden" name="id" value={attachment.id} />
           <input type="hidden" name="eventId" value={eventId} />

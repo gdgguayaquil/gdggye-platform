@@ -47,17 +47,15 @@ export function HomeView({ events }: { events: Event[] }) {
           </p>
 
           <div className="flex flex-wrap gap-3">
-            <Link href="/events">
-              <Button variant="primary" size="lg">
+            <Button asChild variant="primary" size="lg">
+              <Link href="/events">
                 {t.hero.ctaPrimary}
                 <span>→</span>
-              </Button>
-            </Link>
-            <Link href="#anchor-about">
-              <Button variant="secondary" size="lg">
-                {t.hero.ctaSecondary}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
+            <Button asChild variant="secondary" size="lg">
+              <Link href="#anchor-about">{t.hero.ctaSecondary}</Link>
+            </Button>
           </div>
         </div>
 
@@ -116,9 +114,9 @@ export function HomeView({ events }: { events: Event[] }) {
             title={t.upcoming.title}
             sub={t.upcoming.sub}
             action={
-              <Link href="/events">
-                <Button variant="ghost">{t.upcoming.viewAll} →</Button>
-              </Link>
+              <Button asChild variant="ghost">
+                <Link href="/events">{t.upcoming.viewAll} →</Link>
+              </Button>
             }
           />
 

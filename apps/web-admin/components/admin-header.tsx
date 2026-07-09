@@ -74,9 +74,9 @@ export function AdminHeader({ user }: { user: AdminHeaderUser | null }) {
             </form>
           </div>
         ) : (
-          <Link href="/sign-in">
-            <Button variant="primary">Sign in</Button>
-          </Link>
+          <Button asChild variant="primary">
+            <Link href="/sign-in">Sign in</Link>
+          </Button>
         )}
       </div>
     </header>

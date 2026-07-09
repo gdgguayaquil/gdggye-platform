@@ -32,9 +32,9 @@ export default async function EventsPage() {
           </>
         }
         actions={
-          <Link href="/events/new">
-            <Button variant="primary">+ New event</Button>
-          </Link>
+          <Button asChild variant="primary">
+            <Link href="/events/new">+ New event</Link>
+          </Button>
         }
       />
 
@@ -78,9 +78,9 @@ export default async function EventsPage() {
                 </span>
               </div>
               <div className="text-right">
-                <Link href={`/events/${e.id}/edit`}>
-                  <Button variant="secondary">Open</Button>
-                </Link>
+                <Button asChild variant="secondary">
+                  <Link href={`/events/${e.id}/edit`}>Open</Link>
+                </Button>
               </div>
             </div>
           ))

@@ -27,6 +27,11 @@ function prettifyType(type: string) {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+/** Format a date as the compact UTC stamp Google Calendar expects. */
+function gcalDate(value: Date | string) {
+  return new Date(value).toISOString().replace(/[-:]|\.\d{3}/g, "");
+}
+
 export function EventDetailView({
   event,
   detail,
@@ -151,13 +156,21 @@ export function EventDetailView({
               ) : null}
 
               <div className="mb-9 flex flex-wrap gap-3">
-                <a href={event.ticketUrl ?? "#"}>
-                  <Button variant="primary" size="lg">
-                    {t.getTickets} →
-                  </Button>
-                </a>
-                <Button variant="secondary" size="lg">
-                  {t.addCalendar}
+                <Button asChild variant="primary" size="lg">
+                  <a href={event.ticketUrl ?? "#"}>{t.getTickets} →</a>
+                </Button>
+                <Button asChild variant="secondary" size="lg">
+                  <a
+                    href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+                      `${event.name} ${event.year}`,
+                    )}&dates=${gcalDate(event.startAt)}/${gcalDate(
+                      event.endAt,
+                    )}&location=${encodeURIComponent(event.venueName ?? "")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {t.addCalendar}
+                  </a>
                 </Button>
               </div>
 
@@ -551,7 +564,13 @@ function SponsorsSection({ detail }: { detail: EventDetail }) {
           eyebrow="03 / Sponsors"
           title={t.sections.sponsors}
           sub={t.sponsorsSub}
-          action={<Button variant="secondary">{t.becomeSponsor} →</Button>}
+          action={
+            <Button asChild variant="secondary">
+              <a href="mailto:hi@gdggye.org?subject=Sponsorship">
+                {t.becomeSponsor} →
+              </a>
+            </Button>
+          }
         />
 
         <div className="grid gap-8">
@@ -692,8 +711,19 @@ function VenueSection({ event }: { event: Event }) {
               ))}
             </div>
 
-            <Button variant="secondary">
-              {lang === "es" ? "Cómo llegar" : "Get directions"} ↗
+            <Button asChild variant="secondary">
+              <a
+                href={
+                  event.venueMapUrl ??
+                  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                    event.venueAddress ?? event.venueName ?? "",
+                  )}`
+                }
+                target="_blank"
+                rel="noreferrer"
+              >
+                {lang === "es" ? "Cómo llegar" : "Get directions"} ↗
+              </a>
             </Button>
           </div>
 

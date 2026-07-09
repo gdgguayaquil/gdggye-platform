@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 
-import { Button } from "@gdggye/ui-kit";
+import { buttonVariants } from "@gdggye/ui-kit";
 
 import type { Event, EventType } from "@gdggye/backend-core";
 
@@ -160,9 +160,9 @@ export function EventsView({ events }: { events: Event[] }) {
                       </div>
                     </div>
 
-                    <Button variant="secondary">
+                    <span className={buttonVariants({ variant: "secondary" })}>
                       {t.eventsPage.details} →
-                    </Button>
+                    </span>
                   </div>
                 </Link>
               );

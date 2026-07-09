@@ -141,12 +141,12 @@ export function SiteHeader({ user }: { user: SiteHeaderUser | null }) {
               </form>
             </>
           ) : (
-            <Link href="/sign-in">
-              <Button variant="primary">
+            <Button asChild variant="primary">
+              <Link href="/sign-in">
                 {t.signIn}
                 <span className="text-xs opacity-70">↗</span>
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           )}
         </div>
       </div>

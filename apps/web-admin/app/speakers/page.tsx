@@ -24,9 +24,9 @@ export default async function SpeakersListPage() {
           </>
         }
         actions={
-          <Link href="/speakers/new">
-            <Button variant="primary">+ New speaker</Button>
-          </Link>
+          <Button asChild variant="primary">
+            <Link href="/speakers/new">+ New speaker</Link>
+          </Button>
         }
       />
 
@@ -84,9 +84,9 @@ export default async function SpeakersListPage() {
                 {s.city ?? "—"}
               </div>
               <div className="text-right">
-                <Link href={`/speakers/${s.id}/edit`}>
-                  <Button variant="secondary">Edit</Button>
-                </Link>
+                <Button asChild variant="secondary">
+                  <Link href={`/speakers/${s.id}/edit`}>Edit</Link>
+                </Button>
               </div>
             </div>
           ))

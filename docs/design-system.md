@@ -204,24 +204,19 @@ React's purity lint forbids `Date.now()` inside component render. Patterns:
 
 ## 9. Applying it per app
 
-**`web-main` (done: homepage).** Remaining pages:
+**`web-main` — done:** homepage; `/events/[slug]` (accent-panel hero with
+panel-variant countdown gated by `isUpcomingEvent`, numbered section eyebrows
+dropped); `/events` list (calendar rows kept as the quiet register, day
+numbers switched to `.accent-ink-*` so yellow/red stay legible in both themes).
+Remaining: auth/profile pages — quiet register only, at most a four-color rule.
 
-- `/events` — keep the calendar-row layout (it's the quiet register working
-  well) or migrate to a badge-card wall; either way adopt shared
-  `eventTypeLabel` chips and `.accent-ink-*` links.
-- `/events/[slug]` — hero becomes an accent panel for the event (same recipe
-  as `FeaturedHero`, minus the "próximo evento" eyebrow); countdown already
-  exists, switch to `variant="panel"` inside the hero.
-- Auth/profile pages — quiet register only; at most a four-color rule.
+**Event-year apps — `web-bwai-2026` done:** event home hero (accent panel +
+countdown); `my-qr` (credential badge card); `leaderboard` / `my-stats`
+(accent-panel headers, quiet rows). Remaining / future:
 
-**Event-year apps (`web-bwai-2026`, future).** Highest-value fits:
-
-- Event home hero → accent panel in the event's accent (BWAI = blue) with
-  countdown.
-- `my-qr` → the personal QR _is_ a credential: render it as a badge card
-  (punch slot, event color band, dashed tear line above the identity row).
-- `leaderboard` / `my-stats` → panel header in event accent; rows stay quiet.
 - Ticker → live announcements during the event ("Track 2 starts 14:00").
+- `scanner`, `pre-checkin`, auth pages — quiet register; a panel header where
+  a page has a clear hero stat.
 - These apps run their own theme (`bwai-2026`); everything here works
   unmodified because it's token-driven.
 

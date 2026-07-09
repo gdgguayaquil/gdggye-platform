@@ -83,7 +83,6 @@ export function EventsView({ events }: { events: Event[] }) {
           <div className="border-t border-[var(--c-border)]">
             {filtered.map((ev) => {
               const accent = eventAccent(ev);
-              const accentVar = `var(--c-${accent})`;
               const startAt = new Date(ev.startAt);
               const day = startAt.getDate();
               const month = startAt
@@ -104,10 +103,9 @@ export function EventsView({ events }: { events: Event[] }) {
                   <div className="grid items-center gap-5 md:grid-cols-[120px_1fr_auto] md:gap-10">
                     <div>
                       <div
-                        className="font-display font-semibold"
+                        className={`accent-ink-${accent} font-display font-semibold`}
                         style={{
                           fontSize: 64,
-                          color: accentVar,
                           lineHeight: 0.9,
                           letterSpacing: "-0.04em",
                         }}

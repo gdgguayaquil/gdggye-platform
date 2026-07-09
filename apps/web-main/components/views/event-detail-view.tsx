@@ -11,7 +11,23 @@ import { useApp } from "../providers";
 import { FAQItem } from "../faq-item";
 import { SectionHeader } from "../section-header";
 import { COPY } from "@gdggye/i18n";
-import { eventAccent } from "@gdggye/event-presentation";
+import { eventAccent, isUpcomingEvent } from "@gdggye/event-presentation";
+
+// Translucent pill for status tags shown ON an accent panel, where the
+// soft-fill `.chip-*` classes would be illegible. Uses currentColor so it
+// stays correct whatever the panel accent is.
+function PanelPill({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider"
+      style={{
+        background: "color-mix(in srgb, currentColor 14%, transparent)",
+      }}
+    >
+      {children}
+    </span>
+  );
+}
 
 const TRACK_COLORS: Record<string, string> = {
   Plenaria: "blue",
@@ -43,18 +59,16 @@ export function EventDetailView({
   const [activeSection, setActiveSection] = React.useState<SectionId>("agenda");
 
   const accent = eventAccent(event);
-  const accentVar = `var(--c-${accent})`;
-  const accentSoft = `var(--c-${accent}-soft)`;
   const locale = lang === "es" ? "es-EC" : "en-US";
 
   const startAt = new Date(event.startAt);
   const endAt = new Date(event.endAt);
-  const dateLong = startAt.toLocaleDateString(locale, {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  const day = startAt.getDate();
+  const monthShort = startAt
+    .toLocaleDateString(locale, { month: "short" })
+    .replace(".", "")
+    .toUpperCase();
+  const weekdayLong = startAt.toLocaleDateString(locale, { weekday: "long" });
   const timeRange = `${startAt.toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
@@ -62,6 +76,7 @@ export function EventDetailView({
     hour: "2-digit",
     minute: "2-digit",
   })}`;
+  const upcoming = isUpcomingEvent(event);
 
   React.useEffect(() => {
     const obs = new IntersectionObserver(
@@ -105,60 +120,73 @@ export function EventDetailView({
         </Link>
       </div>
 
-      {/* HERO */}
-      <section className="pb-12 pt-10">
+      {/* HERO — accent panel (the event's own color as the stage screen) */}
+      <section className="pb-12 pt-4">
         <div className="container-x">
-          <div className="grid items-start gap-12 md:grid-cols-[1.4fr_1fr]">
-            <div>
-              <div className="mb-6 flex flex-wrap gap-2">
-                <span className={`chip chip-${accent}`}>
-                  {prettifyType(event.type)}
-                </span>
-                <span className="chip chip-neutral">{event.year}</span>
-                {event.leaderboardEnabled ? (
-                  <span className="chip chip-neutral">
-                    🏆 {lang === "es" ? "Leaderboard activo" : "Leaderboard on"}
-                  </span>
-                ) : null}
-              </div>
+          <div
+            className={`accent-panel-${accent} relative overflow-hidden rounded-[28px] px-6 py-10 sm:px-10 md:px-14 md:py-14`}
+          >
+            {/* Faint stage grid, fading out from the top-right */}
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(color-mix(in srgb, currentColor 8%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, currentColor 8%, transparent) 1px, transparent 1px)",
+                backgroundSize: "44px 44px",
+                maskImage:
+                  "radial-gradient(ellipse at 78% 15%, black 20%, transparent 72%)",
+                WebkitMaskImage:
+                  "radial-gradient(ellipse at 78% 15%, black 20%, transparent 72%)",
+              }}
+            />
 
-              <h1
-                className="h-display mb-6"
-                style={{ fontSize: "clamp(38px, 7vw, 96px)" }}
-              >
-                {event.name}
-                <span
-                  className="mt-1 block font-medium"
+            <div className="relative grid gap-10 md:grid-cols-[1.35fr_1fr] md:items-end md:gap-12">
+              <div>
+                <div className="mb-6 flex flex-wrap gap-2">
+                  <PanelPill>{prettifyType(event.type)}</PanelPill>
+                  {event.leaderboardEnabled ? (
+                    <PanelPill>
+                      🏆{" "}
+                      {lang === "es" ? "Leaderboard activo" : "Leaderboard on"}
+                    </PanelPill>
+                  ) : null}
+                </div>
+
+                <h1
+                  className="h-display mb-5"
                   style={{
-                    color: accentVar,
-                    fontSize: "0.55em",
-                    letterSpacing: "-0.02em",
+                    fontSize: "clamp(44px, 8vw, 104px)",
+                    lineHeight: 0.95,
                   }}
                 >
-                  {event.year}
-                </span>
-              </h1>
+                  {event.name}{" "}
+                  <span className="panel-pop">
+                    ’{String(event.year).slice(-2)}
+                  </span>
+                </h1>
 
-              {tagline ? (
-                <p
-                  className="mb-5 max-w-[560px] font-display text-[22px] font-medium leading-tight text-[var(--c-text)]"
-                  style={{ letterSpacing: "-0.01em" }}
-                >
-                  {tagline}
-                </p>
-              ) : null}
+                {tagline ? (
+                  <p
+                    className="mb-4 max-w-[540px] font-display text-[22px] font-medium leading-tight"
+                    style={{ letterSpacing: "-0.01em" }}
+                  >
+                    {tagline}
+                  </p>
+                ) : null}
 
-              {lede ? (
-                <p className="mb-8 max-w-[580px] text-[17px] leading-relaxed text-[var(--c-text-muted)]">
-                  {lede}
-                </p>
-              ) : null}
+                {lede ? (
+                  <p className="mb-8 max-w-[560px] text-[16px] leading-relaxed opacity-90">
+                    {lede}
+                  </p>
+                ) : null}
 
-              <div className="mb-9 flex flex-wrap gap-3">
-                <Button asChild variant="primary" size="lg">
-                  <a href={event.ticketUrl ?? "#"}>{t.getTickets} →</a>
-                </Button>
-                <Button asChild variant="secondary" size="lg">
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    href={event.ticketUrl ?? "#"}
+                    className="panel-btn panel-btn-solid"
+                  >
+                    {t.getTickets} <span aria-hidden="true">→</span>
+                  </a>
                   <a
                     href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
                       `${event.name} ${event.year}`,
@@ -167,91 +195,75 @@ export function EventDetailView({
                     )}&location=${encodeURIComponent(event.venueName ?? "")}`}
                     target="_blank"
                     rel="noreferrer"
+                    className="panel-btn panel-btn-ghost"
                   >
                     {t.addCalendar}
                   </a>
-                </Button>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-6 border-t border-[var(--c-border)] pt-7 sm:grid-cols-3">
-                {[
-                  {
-                    l: lang === "es" ? "Fecha" : "Date",
-                    v: dateLong,
-                  },
-                  {
-                    l: lang === "es" ? "Hora" : "Time",
-                    v: `${timeRange} · ${event.timezone ?? "GYE"}`,
-                  },
-                  {
-                    l: lang === "es" ? "Lugar" : "Venue",
-                    v: event.venueName ?? "",
-                  },
-                ].map((m) => (
-                  <div key={m.l}>
-                    <div className="eyebrow mb-1.5">{m.l}</div>
-                    <div className="text-sm font-medium">{m.v}</div>
+              {/* Giant date, countdown, venue/time facts */}
+              <div className="flex flex-col gap-6">
+                <div className="flex items-baseline gap-3.5 leading-none">
+                  <span
+                    className="font-display font-semibold"
+                    style={{
+                      fontSize: "clamp(96px, 12vw, 160px)",
+                      letterSpacing: "-0.04em",
+                    }}
+                  >
+                    {day}
+                  </span>
+                  <span className="panel-pop font-mono text-[15px] uppercase tracking-[0.18em]">
+                    {monthShort}
+                    <br />
+                    {event.year}
+                  </span>
+                </div>
+
+                {upcoming ? (
+                  <div>
+                    <div className="mb-2.5 font-mono text-[10px] uppercase tracking-[0.14em] opacity-70">
+                      {lang === "es" ? "Faltan" : "Countdown"}
+                    </div>
+                    <Countdown
+                      target={startAt}
+                      labels={t.countdown}
+                      variant="panel"
+                    />
                   </div>
-                ))}
-              </div>
-            </div>
+                ) : null}
 
-            {/* Big date block + countdown */}
-            <div
-              className="relative flex min-h-[480px] flex-col justify-between overflow-hidden rounded-[var(--r-xl)] p-8"
-              style={{ background: accentSoft }}
-            >
-              <div
-                className="absolute inset-0 opacity-[0.07]"
-                style={{
-                  backgroundImage: `linear-gradient(${accentVar} 1px, transparent 1px), linear-gradient(90deg, ${accentVar} 1px, transparent 1px)`,
-                  backgroundSize: "32px 32px",
-                }}
-              />
-
-              <div className="relative z-[2]">
                 <div
-                  className="font-mono text-xs font-medium uppercase tracking-widest"
-                  style={{ color: accentVar }}
-                >
-                  {startAt.toLocaleDateString(locale, {
-                    weekday: "long",
-                  })}
-                </div>
-                <div
-                  className="mt-1 font-display font-semibold"
+                  className="grid gap-2.5 border-t pt-5 font-mono text-[12.5px] uppercase tracking-[0.05em]"
                   style={{
-                    fontSize: "clamp(120px, 16vw, 220px)",
-                    color: accentVar,
-                    lineHeight: 0.85,
-                    letterSpacing: "-0.05em",
+                    borderColor:
+                      "color-mix(in srgb, currentColor 22%, transparent)",
                   }}
                 >
-                  {startAt.getDate()}
+                  <div className="flex justify-between gap-4">
+                    <span className="opacity-70">
+                      {lang === "es" ? "Día" : "Day"}
+                    </span>
+                    <span className="text-right">{weekdayLong}</span>
+                  </div>
+                  <div className="flex justify-between gap-4">
+                    <span className="opacity-70">
+                      {lang === "es" ? "Hora" : "Time"}
+                    </span>
+                    <span className="text-right">
+                      {timeRange} · {event.timezone ?? "GYE"}
+                    </span>
+                  </div>
+                  {event.venueName ? (
+                    <div className="flex justify-between gap-4">
+                      <span className="opacity-70">
+                        {lang === "es" ? "Lugar" : "Venue"}
+                      </span>
+                      <span className="text-right">{event.venueName}</span>
+                    </div>
+                  ) : null}
                 </div>
-                <div
-                  className="mt-1 font-display font-medium"
-                  style={{
-                    fontSize: 28,
-                    color: accentVar,
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  {startAt.toLocaleDateString(locale, {
-                    month: "long",
-                  })}{" "}
-                  {event.year}
-                </div>
-              </div>
-
-              <div className="relative z-[2] mt-8">
-                <div
-                  className="eyebrow mb-3"
-                  style={{ color: accentVar, opacity: 0.8 }}
-                >
-                  {lang === "es" ? "Faltan" : "Countdown"}
-                </div>
-                <Countdown target={startAt} labels={t.countdown} />
               </div>
             </div>
           </div>
@@ -342,7 +354,7 @@ function AgendaSection({
     <section className="section" id="anchor-agenda">
       <div className="container-x">
         <SectionHeader
-          eyebrow="01 / Programa"
+          eyebrow="Programa"
           title={t.sections.agenda}
           sub={t.agendaSub}
         />
@@ -471,7 +483,7 @@ function SpeakersSection({ detail }: { detail: EventDetail }) {
     >
       <div className="container-x">
         <SectionHeader
-          eyebrow="02 / Ponentes"
+          eyebrow="Ponentes"
           title={t.sections.speakers}
           sub={t.speakersSub}
         />
@@ -560,7 +572,7 @@ function SponsorsSection({ detail }: { detail: EventDetail }) {
     <section className="section" id="anchor-sponsors">
       <div className="container-x">
         <SectionHeader
-          eyebrow="03 / Sponsors"
+          eyebrow="Sponsors"
           title={t.sections.sponsors}
           sub={t.sponsorsSub}
           action={
@@ -680,7 +692,7 @@ function VenueSection({ event }: { event: Event }) {
     >
       <div className="container-x">
         <SectionHeader
-          eyebrow="04 / Sede"
+          eyebrow="Sede"
           title={t.sections.venue}
           sub={t.venueSub}
         />
@@ -835,7 +847,7 @@ function FAQSection({ detail }: { detail: EventDetail }) {
       <div className="container-x">
         <div className="grid items-start gap-12 md:grid-cols-[1fr_1.6fr]">
           <div className="md:sticky md:top-[130px]">
-            <div className="eyebrow mb-3.5">05 / FAQ</div>
+            <div className="eyebrow mb-3.5">FAQ</div>
             <h2
               className="h-section"
               style={{ fontSize: "clamp(32px, 4.5vw, 56px)" }}

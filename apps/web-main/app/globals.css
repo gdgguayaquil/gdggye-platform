@@ -283,6 +283,164 @@ body {
   }
 }
 
+/* ── Accent panels — saturated event-color surfaces (hero, badge bands).
+ * Light uses the core brand colors. Dark swaps to the `-half` step, which
+ * the dark themes map back to the core values, so panels stay saturated
+ * (never neon-halftone) on black. Yellow flips to dark ink for contrast. */
+.accent-panel-blue {
+  background: var(--c-blue);
+  color: #ffffff;
+}
+.accent-panel-green {
+  background: var(--c-green);
+  color: #ffffff;
+}
+.accent-panel-yellow {
+  background: var(--c-yellow);
+  color: #1e1e1e;
+}
+.accent-panel-red {
+  background: var(--c-red);
+  color: #ffffff;
+}
+[data-theme="dark"] .accent-panel-blue {
+  background: var(--c-blue-half);
+}
+[data-theme="dark"] .accent-panel-green {
+  background: var(--c-green-half);
+}
+[data-theme="dark"] .accent-panel-yellow {
+  background: var(--c-yellow-half);
+}
+[data-theme="dark"] .accent-panel-red {
+  background: var(--c-red-half);
+}
+
+/* Pop color for the year/date highlight inside a panel. `-half` resolves to
+ * halftone yellow on light panels and core yellow on dark ones. */
+.panel-pop {
+  color: var(--c-yellow-half);
+}
+.accent-panel-yellow .panel-pop {
+  color: inherit;
+}
+
+/* Buttons that sit ON an accent panel (theme tokens would vanish there). */
+.panel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 14px 26px;
+  border-radius: var(--r-pill);
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    border-color 150ms ease;
+}
+.panel-btn:hover {
+  transform: translateY(-2px);
+}
+.panel-btn-solid {
+  background: #ffffff;
+  color: #1e1e1e;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+.accent-panel-yellow .panel-btn-solid {
+  background: #1e1e1e;
+  color: #ffffff;
+}
+.panel-btn-ghost {
+  border: 2px solid color-mix(in srgb, currentColor 50%, transparent);
+  color: inherit;
+}
+.panel-btn-ghost:hover {
+  border-color: currentColor;
+}
+
+/* Badge cards: the punch slot at the top of the color band. Matches the
+ * page background so it reads as a hole punched through the credential. */
+.badge-slot {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 9px;
+  border-radius: var(--r-pill);
+  background: var(--c-bg);
+}
+
+/* Accent-colored small text on the page background — same derived inks the
+ * chips use in light mode, halftones in dark. */
+.accent-ink-blue {
+  color: #1b4fa8;
+}
+.accent-ink-green {
+  color: #1b6f30;
+}
+.accent-ink-yellow {
+  color: #8a5d00;
+}
+.accent-ink-red {
+  color: #a8261c;
+}
+[data-theme="dark"] .accent-ink-blue {
+  color: var(--c-blue);
+}
+[data-theme="dark"] .accent-ink-green {
+  color: var(--c-green);
+}
+[data-theme="dark"] .accent-ink-yellow {
+  color: var(--c-yellow);
+}
+[data-theme="dark"] .accent-ink-red {
+  color: var(--c-red);
+}
+
+/* ── Ticker — venue-signage marquee. Inverted strip: ink on light theme,
+ * paper on dark. Pauses on hover; reduced-motion kills it below. */
+.ticker {
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 13px 0;
+  background: var(--c-text);
+  color: var(--c-bg);
+}
+.ticker-track {
+  display: inline-flex;
+  animation: marquee 36s linear infinite;
+}
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 20px;
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+}
+.ticker-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 /* Anchor offset for in-page nav */
 [id^="anchor-"] {
   scroll-margin-top: calc(var(--nav-h) + 64px);

@@ -22,7 +22,15 @@ function getServerSnapshot() {
   return SERVER_SNAPSHOT;
 }
 
-export function Countdown({ target }: { target: Date }) {
+export function Countdown({
+  target,
+  variant = "default",
+}: {
+  target: Date;
+  // "panel" renders on an accent-panel surface (home hero): translucent
+  // currentColor cells instead of theme bg/border, which would vanish there.
+  variant?: "default" | "panel";
+}) {
   const { lang } = useApp();
   const t = COPY[lang].eventDetail.countdown;
   const now = React.useSyncExternalStore(
@@ -38,8 +46,24 @@ export function Countdown({ target }: { target: Date }) {
   const m = Math.floor((diff / (1000 * 60)) % 60);
   const s = Math.floor((diff / 1000) % 60);
 
+  const onPanel = variant === "panel";
+
   const cell = (val: number, label: string) => (
-    <div className="min-w-[70px] flex-1 rounded-[var(--r-md)] border border-[var(--c-border)] bg-[var(--c-bg)] px-3 py-3.5 text-center">
+    <div
+      className={
+        onPanel
+          ? "min-w-0 flex-1 rounded-[var(--r-md)] border px-2 py-3 text-center"
+          : "min-w-[70px] flex-1 rounded-[var(--r-md)] border border-[var(--c-border)] bg-[var(--c-bg)] px-3 py-3.5 text-center"
+      }
+      style={
+        onPanel
+          ? {
+              background: "color-mix(in srgb, currentColor 12%, transparent)",
+              borderColor: "color-mix(in srgb, currentColor 28%, transparent)",
+            }
+          : undefined
+      }
+    >
       <div
         className="font-display font-semibold leading-none"
         style={{
@@ -50,14 +74,20 @@ export function Countdown({ target }: { target: Date }) {
       >
         {String(val).padStart(2, "0")}
       </div>
-      <div className="mt-1.5 font-mono text-[10px] uppercase tracking-widest text-[var(--c-text-muted)]">
+      <div
+        className={
+          onPanel
+            ? "mt-1.5 font-mono text-[10px] uppercase tracking-widest opacity-70"
+            : "mt-1.5 font-mono text-[10px] uppercase tracking-widest text-[var(--c-text-muted)]"
+        }
+      >
         {label}
       </div>
     </div>
   );
 
   return (
-    <div className="flex max-w-[420px] gap-2">
+    <div className={onPanel ? "flex gap-2.5" : "flex max-w-[420px] gap-2"}>
       {cell(d, t.d)}
       {cell(h, t.h)}
       {cell(m, t.m)}

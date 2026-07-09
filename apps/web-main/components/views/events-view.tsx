@@ -12,25 +12,11 @@ import { COPY } from "@gdggye/i18n";
 import {
   eventAccent,
   eventSummary,
+  eventTypeLabel,
   shortVenue,
 } from "@/lib/event-presentation";
 
 type Filter = "all" | EventType;
-
-const TYPE_LABELS: Record<EventType, string> = {
-  build_with_ai: "Build with AI",
-  devfest: "DevFest",
-  google_io: "I/O Extended",
-  meetup: "Meetup",
-  tech_talk: "Tech Talk",
-  conference: "Conference",
-  workshop: "Workshop",
-  hackathon: "Hackathon",
-};
-
-function prettifyType(type: EventType) {
-  return TYPE_LABELS[type];
-}
 
 export function EventsView({ events }: { events: Event[] }) {
   const { lang } = useApp();
@@ -50,7 +36,7 @@ export function EventsView({ events }: { events: Event[] }) {
 
   const filters: { id: Filter; label: string }[] = [
     { id: "all", label: t.eventsPage.filterAll },
-    ...presentTypes.map((type) => ({ id: type, label: TYPE_LABELS[type] })),
+    ...presentTypes.map((type) => ({ id: type, label: eventTypeLabel(type) })),
   ];
 
   const locale = lang === "es" ? "es-EC" : "en-US";
@@ -136,7 +122,7 @@ export function EventsView({ events }: { events: Event[] }) {
                     <div>
                       <div className="mb-2 flex items-center gap-2.5">
                         <span className={`chip chip-${accent}`}>
-                          {prettifyType(ev.type)}
+                          {eventTypeLabel(ev.type)}
                         </span>
                         <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-subtle)]">
                           {dayOfWeek}

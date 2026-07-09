@@ -31,10 +31,13 @@ export function SiteHeader({ user }: { user: SiteHeaderUser | null }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Navigating closes the mobile menu.
-  React.useEffect(() => {
+  // Navigating closes the mobile menu — adjusted during render (not in an
+  // effect) so it doesn't trigger a cascading re-render.
+  const [lastPathname, setLastPathname] = React.useState(pathname);
+  if (lastPathname !== pathname) {
+    setLastPathname(pathname);
     setMenuOpen(false);
-  }, [pathname]);
+  }
 
   const isHome = pathname === "/";
   const isEvents = pathname.startsWith("/events");

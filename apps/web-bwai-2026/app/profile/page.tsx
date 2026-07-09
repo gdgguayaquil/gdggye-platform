@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { canParticipateInEvents } from "@gdggye/backend-core";
 
 import { requireUser } from "@/lib/server/auth";
@@ -48,6 +50,26 @@ export default async function ProfilePage() {
           ✓ Cuenta habilitada para eventos.
         </div>
       )}
+
+      {eligible ? (
+        <Link
+          href="/my-stats"
+          className="mb-8 flex items-center justify-between gap-4 rounded-[var(--r-md)] border border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-4 transition-colors hover:border-[var(--c-text)]"
+        >
+          <div>
+            <div className="font-display font-semibold">Mis puntos</div>
+            <div className="text-xs text-[var(--c-text-muted)]">
+              Ve tu total, tu posición en la tabla y el desglose por fuente.
+            </div>
+          </div>
+          <span
+            className="font-mono text-xs uppercase tracking-wider text-[var(--c-text-muted)]"
+            aria-hidden
+          >
+            Ver →
+          </span>
+        </Link>
+      ) : null}
 
       <ProfileForm
         initialFullName={user.fullName}

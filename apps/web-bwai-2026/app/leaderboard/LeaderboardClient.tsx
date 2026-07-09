@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import * as React from "react";
 
 import {
@@ -128,10 +129,16 @@ export function LeaderboardClient({
 
       {showMePinned ? (
         <div className="mt-6">
-          <div className="mb-2 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-subtle)]">
-            Tu posición
+          <div className="mb-2 flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-subtle)]">
+            <span>Tu posición</span>
+            <Link href="/my-stats" className="hover:text-[var(--c-text)]">
+              Ver mis puntos →
+            </Link>
           </div>
-          <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
+          <Link
+            href="/my-stats"
+            className="block overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)] transition-colors hover:border-[var(--c-text)]"
+          >
             <LeaderboardRow
               row={{
                 userId: currentUserId!,
@@ -142,7 +149,19 @@ export function LeaderboardClient({
               }}
               isYou
             />
-          </div>
+          </Link>
+        </div>
+      ) : currentUserId ? (
+        // Viewer is already in top-N (or unranked but signed in). Give
+        // them a discoverable path to /my-stats without duplicating the
+        // pinned row.
+        <div className="mt-6 text-center">
+          <Link
+            href="/my-stats"
+            className="inline-flex items-center gap-2 rounded-full border border-[var(--c-border)] px-4 py-2 font-mono text-xs uppercase tracking-wider text-[var(--c-text-muted)] transition-colors hover:border-[var(--c-text)] hover:text-[var(--c-text)]"
+          >
+            Ver mis puntos →
+          </Link>
         </div>
       ) : null}
     </div>

@@ -98,4 +98,48 @@ export async function reviewPreCheckin(
   return deps.preCheckinRepo.reviewByStaff(input);
 }
 
+export interface BulkReviewPreCheckinInput {
+  ids: string[];
+  reviewerUserId: string;
+  status: Extract<PreCheckinStatus, "approved" | "rejected">;
+  reviewNotes?: string | null;
+}
+
+export interface BulkReviewPreCheckinResult {
+  id: string;
+  ok: boolean;
+  error?: string;
+}
+
+// Bulk staff review. Runs each row through the same reviewByStaff path
+// so the per-row "not pending" guard still fires — we return per-ID
+// success/failure instead of failing the whole batch so an already-
+// finalized row doesn't block the rest. Sequenced (not parallel) to keep
+// the DB load predictable and to make the failure mode easy to explain
+// to organizers: batches process top-to-bottom.
+export async function bulkReviewPreCheckin(
+  input: BulkReviewPreCheckinInput,
+  deps: PreCheckinDeps,
+): Promise<BulkReviewPreCheckinResult[]> {
+  const results: BulkReviewPreCheckinResult[] = [];
+  for (const id of input.ids) {
+    try {
+      await deps.preCheckinRepo.reviewByStaff({
+        id,
+        reviewerUserId: input.reviewerUserId,
+        status: input.status,
+        reviewNotes: input.reviewNotes ?? null,
+      });
+      results.push({ id, ok: true });
+    } catch (e) {
+      results.push({
+        id,
+        ok: false,
+        error: e instanceof Error ? e.message : String(e),
+      });
+    }
+  }
+  return results;
+}
+
 export type { PreCheckinStatus };

@@ -6,6 +6,7 @@ import { makeEvent } from "../../../test-support/fixtures";
 import { InMemoryEventRepository } from "../../../test-support/InMemoryEventRepository";
 import { InMemoryPreCheckinSubmissionRepository } from "../../../test-support/InMemoryPreCheckinSubmissionRepository";
 import {
+  bulkReviewPreCheckin,
   getMyPreCheckin,
   listPreCheckinForEvent,
   PreCheckinValidationError,
@@ -314,5 +315,72 @@ describe("reviewPreCheckin", () => {
         { preCheckinRepo },
       ),
     ).rejects.toThrow(/not pending/);
+  });
+});
+
+describe("bulkReviewPreCheckin", () => {
+  it("approves every pending row in the batch", async () => {
+    const { preCheckinRepo } = scaffold({}, [
+      makeSubmission({ id: "p1", userId: "u1", status: "pending" }),
+      makeSubmission({ id: "p2", userId: "u2", status: "pending" }),
+      makeSubmission({ id: "p3", userId: "u3", status: "pending" }),
+    ]);
+    const results = await bulkReviewPreCheckin(
+      {
+        ids: ["p1", "p2", "p3"],
+        reviewerUserId: "staff-1",
+        status: "approved",
+      },
+      { preCheckinRepo },
+    );
+    expect(results.every((r) => r.ok)).toBe(true);
+    expect(preCheckinRepo.rows.every((r) => r.status === "approved")).toBe(
+      true,
+    );
+  });
+
+  it("returns per-row failures without aborting the batch", async () => {
+    const { preCheckinRepo } = scaffold({}, [
+      makeSubmission({ id: "p1", userId: "u1", status: "pending" }),
+      makeSubmission({ id: "p2", userId: "u2", status: "approved" }),
+      makeSubmission({ id: "p3", userId: "u3", status: "pending" }),
+    ]);
+    const results = await bulkReviewPreCheckin(
+      {
+        ids: ["p1", "p2", "p3"],
+        reviewerUserId: "staff-1",
+        status: "approved",
+      },
+      { preCheckinRepo },
+    );
+    expect(results.map((r) => r.ok)).toEqual([true, false, true]);
+    expect(results[1]?.error).toMatch(/not pending/);
+    // p1 + p3 flipped; p2 stayed approved (unchanged).
+    expect(preCheckinRepo.rows.find((r) => r.id === "p1")?.status).toBe(
+      "approved",
+    );
+    expect(preCheckinRepo.rows.find((r) => r.id === "p3")?.status).toBe(
+      "approved",
+    );
+  });
+
+  it("passes reviewNotes to every rejection in the batch", async () => {
+    const { preCheckinRepo } = scaffold({}, [
+      makeSubmission({ id: "p1", userId: "u1", status: "pending" }),
+      makeSubmission({ id: "p2", userId: "u2", status: "pending" }),
+    ]);
+    await bulkReviewPreCheckin(
+      {
+        ids: ["p1", "p2"],
+        reviewerUserId: "staff-1",
+        status: "rejected",
+        reviewNotes: "duplicated registration",
+      },
+      { preCheckinRepo },
+    );
+    for (const row of preCheckinRepo.rows) {
+      expect(row.status).toBe("rejected");
+      expect(row.reviewNotes).toBe("duplicated registration");
+    }
   });
 });

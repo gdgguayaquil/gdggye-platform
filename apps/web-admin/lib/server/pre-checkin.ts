@@ -1,8 +1,10 @@
 import "server-only";
 
 import {
+  bulkReviewPreCheckin as bulkReviewUseCase,
   listPreCheckinForEvent as listForEventUseCase,
   reviewPreCheckin as reviewUseCase,
+  type BulkReviewPreCheckinInput,
   type ListPreCheckinFilter,
   type ReviewPreCheckinInput,
 } from "@gdggye/backend-core";
@@ -26,4 +28,8 @@ export async function listPreCheckinForEvent(
 
 export async function reviewPreCheckin(input: ReviewPreCheckinInput) {
   return reviewUseCase(input, await deps());
+}
+
+export async function bulkReviewPreCheckin(input: BulkReviewPreCheckinInput) {
+  return bulkReviewUseCase(input, await deps());
 }

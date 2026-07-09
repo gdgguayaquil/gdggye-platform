@@ -11,7 +11,7 @@ import { listPreCheckinForEvent } from "@/lib/server/pre-checkin";
 import { SupabaseUserRepository } from "@gdggye/supabase-adapters";
 import { getSupabaseServerClient } from "@/lib/server/supabase";
 
-import { SubmissionActions } from "./SubmissionActions";
+import { PreCheckinList, type PreCheckinRow } from "./PreCheckinList";
 
 const TABS: { key: SubmittedPreCheckinStatus | "all"; label: string }[] = [
   { key: "pending", label: "Pending" },
@@ -19,8 +19,6 @@ const TABS: { key: SubmittedPreCheckinStatus | "all"; label: string }[] = [
   { key: "rejected", label: "Rejected" },
   { key: "all", label: "All" },
 ];
-
-const SLOT_COLS = "200px 100px 1fr 80px 80px 80px 280px";
 
 export default async function PreCheckinQueuePage({
   params,
@@ -63,6 +61,30 @@ export default async function PreCheckinQueuePage({
     }),
   );
 
+  // Flatten to a serializable shape for the client component. Dates are
+  // pre-formatted so the client stays a pure display + selection layer
+  // (no Date props crossing the RSC boundary).
+  const rows: PreCheckinRow[] = submissions.map((s) => {
+    const u = userMap.get(s.userId);
+    return {
+      id: s.id,
+      status: s.status,
+      badgeName: s.badgeName,
+      dietary: s.dietary,
+      tshirtSize: s.tshirtSize,
+      notes: s.notes,
+      photoConsent: s.photoConsent,
+      reviewNotes: s.reviewNotes,
+      submittedAtLabel: s.submittedAt.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+      fullName: u?.fullName ?? "",
+      email: u?.email ?? "",
+      userIdHint: s.userId.slice(0, 8),
+    };
+  });
+
   return (
     <div className="container-x py-12">
       <PageHeader
@@ -104,100 +126,7 @@ export default async function PreCheckinQueuePage({
         })}
       </div>
 
-      <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--c-border)]">
-        <div
-          className="grid gap-4 border-b border-[var(--c-border)] bg-[var(--c-surface)] px-5 py-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]"
-          style={{ gridTemplateColumns: SLOT_COLS }}
-        >
-          <div>Attendee</div>
-          <div>Status</div>
-          <div>Badge / dietary / notes</div>
-          <div>Shirt</div>
-          <div>Photo</div>
-          <div>Submitted</div>
-          <div />
-        </div>
-        {submissions.length === 0 ? (
-          <div className="px-5 py-10 text-center text-[var(--c-text-muted)]">
-            Nothing to review.
-          </div>
-        ) : (
-          submissions.map((s) => {
-            const u = userMap.get(s.userId);
-            return (
-              <div
-                key={s.id}
-                className="grid items-start gap-4 border-b border-[var(--c-border)] px-5 py-4 last:border-b-0"
-                style={{ gridTemplateColumns: SLOT_COLS }}
-              >
-                <div>
-                  <div className="font-display font-semibold">
-                    {u?.fullName || "—"}
-                  </div>
-                  <div className="font-mono text-xs text-[var(--c-text-subtle)]">
-                    {u?.email ?? s.userId.slice(0, 8)}
-                  </div>
-                </div>
-                <div>
-                  <span
-                    className={`chip ${
-                      s.status === "approved"
-                        ? "chip-green"
-                        : s.status === "rejected"
-                          ? "chip-red"
-                          : "chip-yellow"
-                    }`}
-                  >
-                    {s.status}
-                  </span>
-                </div>
-                <div>
-                  <div className="font-display font-semibold">
-                    {s.badgeName}
-                  </div>
-                  {s.dietary ? (
-                    <div className="text-xs text-[var(--c-text-muted)]">
-                      Diet: {s.dietary}
-                    </div>
-                  ) : null}
-                  {s.notes ? (
-                    <div className="text-xs text-[var(--c-text-subtle)]">
-                      "{s.notes}"
-                    </div>
-                  ) : null}
-                  {s.status === "rejected" && s.reviewNotes ? (
-                    <div
-                      className="mt-1 text-xs"
-                      style={{ color: "var(--c-red)" }}
-                    >
-                      Rejected: {s.reviewNotes}
-                    </div>
-                  ) : null}
-                </div>
-                <div className="font-mono text-xs">{s.tshirtSize ?? "—"}</div>
-                <div className="font-mono text-xs">
-                  {s.photoConsent ? "yes" : "no"}
-                </div>
-                <div className="font-mono text-xs text-[var(--c-text-muted)]">
-                  {s.submittedAt.toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </div>
-                <div>
-                  {s.status === "pending" ? (
-                    <SubmissionActions submissionId={s.id} eventId={id} />
-                  ) : (
-                    <span className="text-xs text-[var(--c-text-subtle)]">
-                      reviewed
-                    </span>
-                  )}
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
+      <PreCheckinList eventId={id} rows={rows} />
     </div>
   );
 }

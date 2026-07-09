@@ -51,14 +51,14 @@ export function SpeakerForm({
   const fe = state.fieldErrors ?? {};
 
   const [name, setName] = React.useState(initial.name);
-  const [slug, setSlug] = React.useState(initial.slug);
+  const [slugManual, setSlugManual] = React.useState(initial.slug);
   const [slugTouched, setSlugTouched] = React.useState(initial.slug.length > 0);
 
-  React.useEffect(() => {
-    if (!slugTouched && mode === "create") {
-      setSlug(previewSlug(name));
-    }
-  }, [name, slugTouched, mode]);
+  // Slug auto-follows the name while creating and untouched; once the user
+  // edits it (or we're editing an existing record) it holds the manual value.
+  // Derived during render — no effect syncing state to state.
+  const slug =
+    !slugTouched && mode === "create" ? previewSlug(name) : slugManual;
 
   return (
     <form action={formAction} className="grid max-w-[720px] gap-5">
@@ -84,7 +84,7 @@ export function SpeakerForm({
           name="slug"
           value={slug}
           onChange={(e) => {
-            setSlug(e.target.value);
+            setSlugManual(e.target.value);
             setSlugTouched(true);
           }}
           required

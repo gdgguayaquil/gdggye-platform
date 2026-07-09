@@ -55,32 +55,31 @@ export function PreCheckinList({
     [pendingRows],
   );
 
-  // If a revalidation drops a row from pending, prune it from the
-  // selection so the bulk bar reflects only actionable rows.
-  React.useEffect(() => {
-    setSelected((prev) => {
-      let changed = false;
-      const next = new Set<string>();
-      for (const id of prev) {
-        if (pendingIds.has(id)) next.add(id);
-        else changed = true;
-      }
-      return changed ? next : prev;
-    });
-  }, [pendingIds]);
+  // Only pending rows are actionable. Derive the effective selection during
+  // render so a row dropped from pending by a revalidation falls out of it
+  // automatically — no effect syncing state to state.
+  const validSelected = React.useMemo(() => {
+    const next = new Set<string>();
+    for (const id of selected) if (pendingIds.has(id)) next.add(id);
+    return next;
+  }, [selected, pendingIds]);
 
   // A successful bulk action clears the selection and closes the reject
-  // sheet. Errors stay visible so the operator can retry.
-  React.useEffect(() => {
+  // sheet. Adjusted during render (not in an effect) keyed on the action
+  // result, which useActionState replaces once per dispatch. Errors stay
+  // visible so the operator can retry.
+  const [handledResult, setHandledResult] = React.useState(state);
+  if (state !== handledResult) {
+    setHandledResult(state);
     if (state.ok) {
       setSelected(new Set());
       setBulkMode("idle");
     }
-  }, [state.ok, state.approved, state.rejected, state.skipped]);
+  }
 
   const allPendingSelected =
-    pendingRows.length > 0 && selected.size === pendingRows.length;
-  const someSelected = selected.size > 0;
+    pendingRows.length > 0 && validSelected.size === pendingRows.length;
+  const someSelected = validSelected.size > 0;
 
   const toggleRow = (id: string) => {
     setSelected((prev) => {
@@ -92,17 +91,16 @@ export function PreCheckinList({
   };
 
   const toggleAllPending = () => {
-    setSelected((prev) => {
-      if (prev.size === pendingRows.length) return new Set();
-      return new Set(pendingRows.map((r) => r.id));
-    });
+    setSelected(
+      allPendingSelected ? new Set() : new Set(pendingRows.map((r) => r.id)),
+    );
   };
 
   return (
     <div>
       <BulkBar
-        selectedCount={selected.size}
-        selectedIds={[...selected]}
+        selectedCount={validSelected.size}
+        selectedIds={[...validSelected]}
         eventId={eventId}
         bulkMode={bulkMode}
         setBulkMode={setBulkMode}
@@ -146,7 +144,7 @@ export function PreCheckinList({
         ) : (
           rows.map((r) => {
             const isPending = r.status === "pending";
-            const isSelected = selected.has(r.id);
+            const isSelected = validSelected.has(r.id);
             return (
               <div
                 key={r.id}
@@ -201,7 +199,7 @@ export function PreCheckinList({
                   ) : null}
                   {r.notes ? (
                     <div className="text-xs text-[var(--c-text-subtle)]">
-                      "{r.notes}"
+                      &ldquo;{r.notes}&rdquo;
                     </div>
                   ) : null}
                   {r.status === "rejected" && r.reviewNotes ? (

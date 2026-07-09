@@ -24,6 +24,8 @@ A digital platform for **GDG Guayaquil** with two purposes:
 
 > When the user asks for Phase 2 work, open `CLAUDE-phase2.md` for the full spec (locked decisions, migration `0002`, RLS, scan use-case, sprint backlog). This file remains the source of truth for locked decisions and architectural rules that apply across **all** phases.
 
+> **Outstanding non-phase work** (design-adoption remnants, shared-package consolidation, cleanups) is tracked in **`docs/backlog.md`**. The visual language it draws on is documented in **`docs/design-system.md`**.
+
 ---
 
 ## Locked decisions

@@ -191,12 +191,17 @@ function AttachExisting({
       .slice(0, 8);
   }, [query, candidates]);
 
-  React.useEffect(() => {
+  // Clear the picker after a successful attach. Adjusted during render (not
+  // in an effect) keyed on the action result, which useActionState replaces
+  // once per dispatch.
+  const [handledResult, setHandledResult] = React.useState(state);
+  if (state !== handledResult) {
+    setHandledResult(state);
     if (state.ok) {
       setSelected(null);
       setQuery("");
     }
-  }, [state.ok]);
+  }
 
   return (
     <div className="rounded-[var(--r-lg)] border border-[var(--c-border)] p-6">
@@ -377,28 +382,35 @@ const CreateSpeakerDialog = React.forwardRef<HTMLDialogElement, DialogProps>(
     );
     const fe = state.fieldErrors ?? {};
     const [name, setName] = React.useState("");
-    const [slug, setSlug] = React.useState("");
+    const [slugManual, setSlugManual] = React.useState("");
     const [slugTouched, setSlugTouched] = React.useState(false);
 
-    React.useEffect(() => {
+    // Slug auto-follows the name until the user edits it. Derived during
+    // render — no effect syncing state to state.
+    const slug = slugTouched
+      ? slugManual
+      : name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+
+    // Reset the form after a successful create. Adjusted during render keyed
+    // on the action result, which useActionState replaces once per dispatch.
+    const [handledResult, setHandledResult] = React.useState(state);
+    if (state !== handledResult) {
+      setHandledResult(state);
       if (state.ok) {
         setName("");
-        setSlug("");
+        setSlugManual("");
         setSlugTouched(false);
-        onCreated();
       }
-    }, [state.ok, onCreated]);
+    }
 
+    // Closing the dialog is an imperative DOM call (no React state), so it
+    // stays in an effect.
     React.useEffect(() => {
-      if (!slugTouched) {
-        setSlug(
-          name
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/^-+|-+$/g, ""),
-        );
-      }
-    }, [name, slugTouched]);
+      if (state.ok) onCreated();
+    }, [state.ok, onCreated]);
 
     return (
       <dialog
@@ -450,7 +462,7 @@ const CreateSpeakerDialog = React.forwardRef<HTMLDialogElement, DialogProps>(
               name="slug"
               value={slug}
               onChange={(e) => {
-                setSlug(e.target.value);
+                setSlugManual(e.target.value);
                 setSlugTouched(true);
               }}
               required

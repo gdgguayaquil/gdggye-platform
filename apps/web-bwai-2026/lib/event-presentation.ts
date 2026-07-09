@@ -20,6 +20,21 @@ export function eventAccent(event: Pick<Event, "type">): EventAccent {
   return TYPE_TO_ACCENT[event.type];
 }
 
+// Kept in lib (not inline in render) so components stay pure — React's
+// purity lint forbids calling Date.now() during render.
+export function isUpcomingEvent(event: Pick<Event, "startAt">): boolean {
+  return new Date(event.startAt).getTime() > Date.now();
+}
+
+// True when the pre-checkin window has closed. A null deadline means the
+// organizer never opened pre-checkin for this event (so it's not "closed").
+export function isPreCheckinClosed(
+  event: Pick<Event, "preCheckinDeadline">,
+): boolean {
+  if (event.preCheckinDeadline === null) return false;
+  return new Date(event.preCheckinDeadline).getTime() <= Date.now();
+}
+
 // Short label for venue lines on cards/lists when the full venue_name is too
 // long. Splits on common separators (—, ·) and returns the first chunk.
 export function shortVenue(venueName: string | null): string {

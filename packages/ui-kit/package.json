@@ -8,7 +8,8 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./lib/utils": "./src/lib/utils.ts"
+    "./lib/utils": "./src/lib/utils.ts",
+    "./styles/patterns.css": "./src/styles/patterns.css"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

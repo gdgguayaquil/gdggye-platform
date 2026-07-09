@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/server/auth";
 import { findEventBySlug } from "@/lib/server/events";
 import { mintAttendeeQrToken } from "@/lib/server/qr";
 import { ensureRegistration } from "@/lib/server/registrations";
+import { eventAccent } from "@/lib/event-presentation";
 
 import { MyQrCard } from "./MyQrCard";
 
@@ -34,7 +35,7 @@ export default async function MyQrPage() {
           className="h-display"
           style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
         >
-          Mi QR
+          Mi credencial
         </h1>
         <p className="mt-3 mx-auto max-w-[440px] text-[var(--c-text-muted)]">
           Presenta este QR en el evento. Es único para ti.
@@ -46,6 +47,7 @@ export default async function MyQrPage() {
         fullName={user.fullName}
         email={user.email}
         eventName={`${event.name} ${event.year}`}
+        accent={eventAccent(event)}
       />
     </div>
   );

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/server/auth";
 import { findEventBySlug } from "@/lib/server/events";
 import { getMyPreCheckin } from "@/lib/server/pre-checkin";
+import { isPreCheckinClosed } from "@/lib/event-presentation";
 
 import { PreCheckinForm, type PreCheckinFormValues } from "./PreCheckinForm";
 
@@ -38,8 +39,7 @@ export default async function PreCheckinPage() {
   // Pre-checkin is gated by event.preCheckinDeadline. Null deadline =
   // organizer hasn't turned this workflow on for this event.
   const noPreCheckin = event.preCheckinDeadline === null;
-  const closed =
-    !noPreCheckin && event.preCheckinDeadline!.getTime() <= Date.now();
+  const closed = isPreCheckinClosed(event);
 
   const existing = await getMyPreCheckin(event.id, user.id);
 

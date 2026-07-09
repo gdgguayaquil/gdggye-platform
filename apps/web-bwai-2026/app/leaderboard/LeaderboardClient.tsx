@@ -32,20 +32,16 @@ export function LeaderboardClient({
   const [myRank, setMyRank] = React.useState<MyRank | null>(initialMyRank);
   const [connected, setConnected] = React.useState(false);
 
-  // Capture the supabase client + repo in refs so the realtime effect
-  // doesn't churn them across renders.
-  const repoRef = React.useRef<SupabaseLeaderboardRepository | null>(null);
-  if (!repoRef.current) {
-    repoRef.current = new SupabaseLeaderboardRepository(
-      createSupabaseBrowserClient(),
-    );
-  }
+  // Lazy-init the repo once via useState so it isn't rebuilt every render
+  // and we never read a ref during render (React purity rule).
+  const [repo] = React.useState(
+    () => new SupabaseLeaderboardRepository(createSupabaseBrowserClient()),
+  );
 
   // Debounced refetch: bursts of scans land as multiple postgres_changes
   // messages within milliseconds. Coalesce them into a single RPC round
   // trip so the leaderboard doesn't thrash on event day.
   const refetch = React.useCallback(async () => {
-    const repo = repoRef.current!;
     try {
       const next = await repo.top(eventId, limit);
       setEntries(next);
@@ -56,7 +52,7 @@ export function LeaderboardClient({
     } catch {
       // Network flap during a tick is fine — next tick will refresh.
     }
-  }, [eventId, limit, currentUserId]);
+  }, [repo, eventId, limit, currentUserId]);
 
   React.useEffect(() => {
     const supabase = createSupabaseBrowserClient();

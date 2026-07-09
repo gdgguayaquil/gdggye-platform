@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Event-First design-system pattern utilities (accent panels, panel buttons,
+ * badge slot, ticker). Shared across apps — see docs/design-system.md. */
+@import "../../../packages/ui-kit/src/styles/patterns.css";
+
 /* Tailwind only auto-scans this app's own files. The shared components in
  * @gdggye/ui-kit style themselves with Tailwind utilities, so their sources
  * must be declared explicitly or Button/Input/Badge/Card ship UNSTYLED. */

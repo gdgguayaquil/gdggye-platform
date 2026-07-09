@@ -5,6 +5,7 @@ import { DEFAULT_LEADERBOARD_LIMIT } from "@gdggye/backend-core";
 import { getCurrentAuthUser } from "@/lib/server/auth";
 import { findEventBySlug } from "@/lib/server/events";
 import { getEventLeaderboard, getMyEventStats } from "@/lib/server/leaderboard";
+import { eventAccent } from "@/lib/event-presentation";
 
 import { LeaderboardClient } from "./LeaderboardClient";
 
@@ -30,17 +31,24 @@ export default async function LeaderboardPage() {
     ? await getMyEventStats(event.id, authUser.id)
     : null;
 
+  const accent = eventAccent(event);
+
   return (
     <div className="container-x py-10">
-      <div className="mb-6 text-center">
-        <div className="eyebrow mb-2">BWAI 2026</div>
+      <div
+        className={`accent-panel-${accent} relative mb-8 overflow-hidden rounded-[28px] px-6 py-9 text-center md:px-10`}
+      >
+        <div className="mb-2.5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] opacity-90">
+          <span className="dot dot-pulse panel-pop" />
+          {event.name} {event.year}
+        </div>
         <h1
-          className="h-display mb-2"
-          style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
+          className="h-display mb-2.5"
+          style={{ fontSize: "clamp(30px, 5vw, 52px)" }}
         >
           Tabla de posiciones
         </h1>
-        <p className="mx-auto max-w-[440px] text-sm text-[var(--c-text-muted)]">
+        <p className="mx-auto max-w-[440px] text-[15px] opacity-90">
           Top {DEFAULT_LEADERBOARD_LIMIT}. Se actualiza en vivo mientras se
           escanean QRs en booths y actividades.
         </p>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/server/auth";
 import { findEventBySlug } from "@/lib/server/events";
 import { getMyEventStats } from "@/lib/server/leaderboard";
+import { eventAccent } from "@/lib/event-presentation";
 
 const EVENT_SLUG = "bwai-2026";
 
@@ -29,26 +30,36 @@ export default async function MyStatsPage() {
   if (!event) notFound();
 
   const stats = await getMyEventStats(event.id, user.id);
+  const accent = eventAccent(event);
 
   return (
     <div className="container-x py-10">
-      <div className="mb-6 text-center">
-        <div className="eyebrow mb-2">Mis puntos</div>
-        <h1
-          className="h-display mb-2"
-          style={{ fontSize: "clamp(28px, 4vw, 44px)" }}
+      <div
+        className={`accent-panel-${accent} relative mx-auto mb-8 max-w-[480px] overflow-hidden rounded-[28px] px-6 py-9 text-center`}
+      >
+        <div className="mb-1 font-mono text-[11px] uppercase tracking-[0.14em] opacity-90">
+          Mis puntos · {event.name} {event.year}
+        </div>
+        <div
+          className="font-display font-semibold leading-none"
+          style={{
+            fontSize: "clamp(72px, 15vw, 120px)",
+            letterSpacing: "-0.04em",
+          }}
         >
           {stats.totalPoints}
-          <span className="ml-2 text-lg font-normal text-[var(--c-text-muted)]">
+          <span className="panel-pop ml-2 align-baseline text-[0.28em] font-medium uppercase tracking-wider">
             pts
           </span>
-        </h1>
+        </div>
         {stats.rank !== null ? (
-          <p className="text-sm text-[var(--c-text-muted)]">
-            Posición #{stats.rank} en la tabla.
+          <p className="mt-3 text-[15px] opacity-90">
+            Posición{" "}
+            <span className="panel-pop font-semibold">#{stats.rank}</span> en la
+            tabla.
           </p>
         ) : (
-          <p className="text-sm text-[var(--c-text-muted)]">
+          <p className="mt-3 text-[15px] opacity-90">
             Aún no estás en la tabla. Escanea tu primer QR para entrar.
           </p>
         )}

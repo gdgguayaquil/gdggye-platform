@@ -77,6 +77,7 @@ Domain and application layers must have **zero Supabase imports** and **zero Nex
 6. **Server-only secrets** are imported with `import 'server-only'` so leaks fail the build.
 7. **Public, private attendee, and admin experiences must remain clearly separated.**
 8. **shadcn lives only in `packages/ui-kit/`.** Apps never run `npx shadcn add`. They import from `@gdggye/ui-kit`. shadcn components are themed exclusively through CSS variables driven by the theme engine — no hardcoded colors inside shadcn components.
+9. **Visual language follows the Event-First design system** — see **`docs/design-system.md`** (accent panels, badge cards, ticker, loudness budget, dark-mode token swap). Read it before designing or restyling any public-facing page. Admin stays in the quiet register.
 
 ---
 

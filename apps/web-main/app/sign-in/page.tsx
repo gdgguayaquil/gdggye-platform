@@ -19,6 +19,7 @@ export default async function SignInPage({
   return (
     <div className="container-x flex min-h-[60vh] flex-col items-center justify-center py-20">
       <div className="w-full max-w-[420px]">
+        <div className="brand-rule mb-5" aria-hidden="true" />
         <div className="eyebrow mb-4">Acceso</div>
         <h1
           className="h-display mb-4"

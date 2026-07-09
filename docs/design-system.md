@@ -161,8 +161,11 @@ per theme).
   column rules.
 - **Pillar dots**: 12px color dots instead of numbered markers — use numbers
   only when order genuinely carries information.
-- **Four-color rule**: the 6px blue/red/yellow/green segmented bar. Use as a
-  top border on the final CTA band — at most once per page.
+- **Four-color rule**: the blue/red/yellow/green segmented bar. Two forms:
+  the full-bleed 6px band (top border on the final CTA band — at most once per
+  page), and `.brand-rule`, a compact 52px pill used as a quiet brand
+  signature on utilitarian pages (auth, profile) above the eyebrow. Both are
+  decorative — mark them `aria-hidden`.
 
 ## 6. Motion
 
@@ -208,11 +211,12 @@ React's purity lint forbids `Date.now()` inside component render. Patterns:
 panel-variant countdown gated by `isUpcomingEvent`, numbered section eyebrows
 dropped); `/events` list (calendar rows kept as the quiet register, day
 numbers switched to `.accent-ink-*` so yellow/red stay legible in both themes).
-Remaining: auth/profile pages — quiet register only, at most a four-color rule.
+Auth/profile pages carry a `.brand-rule` signature in the quiet register.
 
 **Event-year apps — `web-bwai-2026` done:** event home hero (accent panel +
 countdown); `my-qr` (credential badge card); `leaderboard` / `my-stats`
-(accent-panel headers, quiet rows). Remaining / future:
+(accent-panel headers, quiet rows); auth/profile (`.brand-rule` signature).
+Remaining / future:
 
 - Ticker → live announcements during the event ("Track 2 starts 14:00").
 - `scanner`, `pre-checkin`, auth pages — quiet register; a panel header where

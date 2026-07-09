@@ -126,6 +126,22 @@
   color: var(--c-red);
 }
 
+/* Four-color brand rule — the GDG palette as a compact signature. The one
+ * sanctioned accent for utilitarian pages (auth, profile) where an accent
+ * panel would be too loud. Decorative: mark it aria-hidden. */
+.brand-rule {
+  height: 4px;
+  width: 52px;
+  border-radius: var(--r-pill);
+  background: linear-gradient(
+    90deg,
+    var(--c-blue) 0 25%,
+    var(--c-red) 25% 50%,
+    var(--c-yellow) 50% 75%,
+    var(--c-green) 75% 100%
+  );
+}
+
 /* Ticker — venue-signage marquee. Inverted strip: ink on light theme,
  * paper on dark. Pauses on hover; reduced-motion kills it (see globals). */
 .ticker {

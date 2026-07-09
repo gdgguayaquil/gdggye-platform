@@ -11,6 +11,7 @@ export default async function ProfilePage() {
   return (
     <div className="container-x py-16">
       <div className="mb-10">
+        <div className="brand-rule mb-5" aria-hidden="true" />
         <div className="eyebrow mb-3">Tu cuenta</div>
         <h1
           className="h-display"

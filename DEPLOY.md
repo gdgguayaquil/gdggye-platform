@@ -62,13 +62,18 @@ Commit the regenerated `packages/types/src/database.ts`.
 
 ### 1.3 Grab the API keys
 
-**Project Settings → API**:
+**Project Settings → API Keys** (new-format keys; create them if the project
+still shows only legacy JWT keys):
 
-| Key              | Use as env var                  | Exposure        |
-| ---------------- | ------------------------------- | --------------- |
-| Project URL      | `NEXT_PUBLIC_SUPABASE_URL`      | public          |
-| anon public key  | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | public          |
-| service_role key | `SUPABASE_SERVICE_ROLE_KEY`     | **server-only** |
+| Key             | Use as env var                         | Exposure        |
+| --------------- | -------------------------------------- | --------------- |
+| Project URL     | `NEXT_PUBLIC_SUPABASE_URL`             | public          |
+| publishable key | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | public          |
+| secret key      | `SUPABASE_SECRET_KEY`                  | **server-only** |
+
+> These replace the legacy `anon` / `service_role` JWT keys. The code still
+> reads `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `SUPABASE_SERVICE_ROLE_KEY` as a
+> fallback, so a rollout can happen key-by-key — but set the new vars here.
 
 ---
 
@@ -92,27 +97,27 @@ Create three Vercel projects pointing at the same GitHub repo. Per project:
 ### 2.1 Environment variables
 
 Set these in **Settings → Environment Variables** for each project. Mark
-non-`NEXT_PUBLIC_*` vars as **Production + Preview** only — never expose
-service-role to the browser.
+non-`NEXT_PUBLIC_*` vars as **Production + Preview** only — never expose the
+secret key to the browser.
 
 **web-main, web-bwai-2026, web-admin (all):**
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable key>
 ```
 
 **web-bwai-2026 (additional):**
 
 ```
-SUPABASE_SERVICE_ROLE_KEY=<service role key>
+SUPABASE_SECRET_KEY=<secret key>
 QR_SIGNING_SECRET=<openssl rand -hex 32>
 ```
 
 **web-admin (additional):**
 
 ```
-SUPABASE_SERVICE_ROLE_KEY=<service role key>
+SUPABASE_SECRET_KEY=<secret key>
 QR_SIGNING_SECRET=<same value as bwai>
 ```
 

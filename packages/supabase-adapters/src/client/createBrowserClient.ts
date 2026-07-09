@@ -9,8 +9,8 @@ let cached: Client | null = null;
 
 export function createSupabaseBrowserClient(): Client {
   if (cached) return cached;
-  const { url, anonKey } = readSupabasePublicEnv();
-  cached = createSsrBrowserClient<Database>(url, anonKey);
+  const { url, publishableKey } = readSupabasePublicEnv();
+  cached = createSsrBrowserClient<Database>(url, publishableKey);
   return cached;
 }
 

@@ -19,8 +19,8 @@ export interface CookieAdapter {
 }
 
 export function createSupabaseServerClient(cookies: CookieAdapter) {
-  const { url, anonKey } = readSupabasePublicEnv();
-  return createSsrServerClient<Database>(url, anonKey, {
+  const { url, publishableKey } = readSupabasePublicEnv();
+  return createSsrServerClient<Database>(url, publishableKey, {
     cookies: {
       getAll() {
         return cookies.getAll();

@@ -67,61 +67,52 @@ before the next sprint:
   admin app (which mints the PDF) and the bwai app (which validates). They
   must be the **same string ≥ 32 chars** in both `.env.local` files.
 
-## 2. Sprint 5 — Leaderboard & stats (next sprint)
+## 2. Sprint 5 — Leaderboard & stats — ✅ LANDED
 
-Spec lives in `Claude phase2.md` Epic F. Scope:
+Delivered:
 
-**F1 — Live leaderboard (`/leaderboard` in web-bwai-2026)**
+- Migration `0010_leaderboard.sql`: added `registrations` to
+  `supabase_realtime`, event-scoped read policy for published+ events, and
+  SECURITY DEFINER RPCs `get_event_leaderboard` + `get_user_event_rank`
+  with `rank()` tie-break by `created_at`.
+- `packages/backend-core` — `LeaderboardRepository`,
+  `PointTransactionRepository` ports + `leaderboardUseCases`
+  (`getEventLeaderboard`, `getMyEventStats`).
+- `apps/web-bwai-2026/app/leaderboard/` — server-rendered top-N + client
+  `LeaderboardClient` with debounced (600 ms) realtime refetch and
+  pinned viewer row when outside top-N.
+- Browser barrel: `@gdggye/supabase-adapters/browser` now exports
+  `SupabaseLeaderboardRepository` + `SupabasePointTransactionRepository`.
 
-- Supabase Realtime subscription on `public.registrations` filtered by
-  `event_id`, ordered by `total_points desc`.
-- Server renders the initial top-N (RSC); client component subscribes to
-  the channel for updates.
-- Show top N + the current user's row pinned at the bottom if they fall
-  outside top N.
-- Reconnect cleanly after a network drop (Realtime's default retry plus a
-  refetch on `subscribe()` settled).
+Open follow-ups (not blocking Phase 2):
 
-**F2 — My event stats (`/profile` or `/my-stats`)**
-
-- New use-case `getMyEventStats(eventId, userId)` returning `{ total,
-rank, breakdown: Record<PointSource, number> }`.
-- Reads only the user's own data (RLS-enforced on `point_transactions` and
-  `registrations`).
-
-**Files that will need to exist:**
-
-- `packages/backend-core/src/application/use-cases/stats/getMyEventStats.ts`
-- A new port for ranked reads (or extend `RegistrationRepository` with
-  `rankFor(eventId, userId)` returning `{ rank, total }`).
-- `apps/web-bwai-2026/app/leaderboard/page.tsx` (server) + a
-  `Leaderboard.tsx` client component that handles the subscription.
-- `apps/web-bwai-2026/lib/server/stats.ts` thin facade.
-
-**Open decisions for Sprint 5:**
-
-- Top-N value (suggest 20, configurable per event later).
-- Whether to show full names + photos or anonymize. Privacy: profiles are
-  public-read, but a leaderboard surfaces them in aggregate. Probably
-  show display name + photo; offer opt-out toggle in profile.
-- Whether to share the realtime channel between leaderboard and a future
-  "live activity feed" (Phase 6). Default: separate channel; cheap.
+- `/my-stats` discoverability — link from `/profile` and from the viewer's
+  row on `/leaderboard`.
+- Opt-out toggle for name/photo on the leaderboard (privacy).
 
 ## 3. Deferred from Phase 2 (do before declaring Phase 2 complete)
 
-- **Unit tests for backend-core use-cases.** Skipped at user request;
-  should land before Phase 2 ships. Highest priority test:
-  `validateAndRecordScan` rejection-order coverage with an in-memory
-  scan/target repo. Pattern already exists in `events` use-case tests.
+- ~~**Unit tests for backend-core use-cases.**~~ ✅ **Landed** (49 tests
+  passing across `events`, `scans`, `pre-checkin`, `leaderboard`). Covers
+  `validateAndRecordScan` full rejection order (incl. the 23505 race +
+  rejection-log swallow), `submitPreCheckin` guards, `reviewPreCheckin`
+  transitions, and leaderboard limit clamping.
 - **Phase 2 acceptance criteria** (`Claude phase2.md` §"Phase 2 acceptance
   criteria"). Walk the list once Sprint 5 is in.
 - **Risk register sweep** (`Claude phase2.md` §"Risk register").
   Especially the iOS Safari camera permission flow — verify on a real
   iPhone, not desktop dev tools.
 
-## 4. Out-of-Phase-2 known follow-ups (don't do now)
+## 4. Out-of-Phase-2 known follow-ups
 
-- **Phase 3** — Pre-checkin workflow.
+- **Phase 3 v1 — Pre-checkin workflow** — ✅ **Landed**. Migration
+  `0011_pre_checkin.sql` (submissions table + tight RLS), backend-core
+  `submitPreCheckin` / `reviewPreCheckin` use-cases (unit-tested),
+  attendee form at `apps/web-bwai-2026/app/pre-checkin`, admin queue at
+  `apps/web-admin/app/events/[id]/pre-checkin` with status tabs +
+  approve/reject actions.
+- **Phase 3 v2** — Email notifications on approve/reject (needs email
+  provider decision), bulk actions in the admin queue.
 - **Phase 4** — Full admin suite (current admin app is the "minimum
   slice"; Phase 4 expands it).
 - **Phase 5** — Networking + badges (this is where the `attendee` scan

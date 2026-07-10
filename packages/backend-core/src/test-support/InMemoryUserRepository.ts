@@ -1,4 +1,4 @@
-import type { User } from "../domain/entities/User";
+import type { SystemRole, User } from "../domain/entities/User";
 import type {
   BootstrapUserInput,
   ProfileUpdate,
@@ -48,6 +48,28 @@ export class InMemoryUserRepository implements UserRepository {
     return ids
       .map((id) => this.users.get(id))
       .filter((u): u is User => u !== undefined);
+  }
+
+  async listUsers(limit: number, offset: number): Promise<User[]> {
+    return [...this.users.values()]
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(offset, offset + limit);
+  }
+
+  async setSystemRole(userId: string, role: SystemRole): Promise<User> {
+    const existing = this.users.get(userId);
+    if (!existing) {
+      throw new Error(
+        `InMemoryUserRepository.setSystemRole: ${userId} not found`,
+      );
+    }
+    const updated: User = {
+      ...existing,
+      systemRole: role,
+      updatedAt: new Date(),
+    };
+    this.users.set(userId, updated);
+    return updated;
   }
 
   async upsertBootstrap(input: BootstrapUserInput): Promise<User> {

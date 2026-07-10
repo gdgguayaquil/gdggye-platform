@@ -70,3 +70,13 @@ export async function requireStaff(): Promise<User> {
   }
   return user;
 }
+
+// Admin-only gate for role management. Organizers are staff but may not
+// change roles — bounce them back to the events list with a marker.
+export async function requireAdmin(): Promise<User> {
+  const user = await requireStaff();
+  if (user.systemRole !== "admin") {
+    redirect("/events?error=not_admin");
+  }
+  return user;
+}

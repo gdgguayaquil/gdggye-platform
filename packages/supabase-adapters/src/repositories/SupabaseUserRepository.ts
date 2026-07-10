@@ -1,6 +1,7 @@
 import type {
   BootstrapUserInput,
   ProfileUpdate,
+  SystemRole,
   User,
   UserRepository,
 } from "@gdggye/backend-core";
@@ -59,6 +60,29 @@ export class SupabaseUserRepository implements UserRepository {
     if (error)
       throw new Error(`SupabaseUserRepository.findManyByIds: ${error.message}`);
     return (data ?? []).map(rowToUser);
+  }
+
+  async listUsers(limit: number, offset: number): Promise<User[]> {
+    const { data, error } = await this.client
+      .from("users")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+    if (error)
+      throw new Error(`SupabaseUserRepository.listUsers: ${error.message}`);
+    return (data ?? []).map(rowToUser);
+  }
+
+  async setSystemRole(userId: string, role: SystemRole): Promise<User> {
+    const { data, error } = await this.client
+      .from("users")
+      .update({ system_role: role })
+      .eq("id", userId)
+      .select("*")
+      .single();
+    if (error)
+      throw new Error(`SupabaseUserRepository.setSystemRole: ${error.message}`);
+    return rowToUser(data);
   }
 
   async upsertBootstrap(input: BootstrapUserInput): Promise<User> {

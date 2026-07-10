@@ -59,6 +59,7 @@ export function AdminHeader({ user }: { user: AdminHeaderUser | null }) {
             {link("/events", "Events")}
             {link("/sponsors", "Sponsors")}
             {link("/speakers", "Speakers")}
+            {user.systemRole === "admin" ? link("/users", "Users") : null}
             <span className="mx-2 hidden h-5 w-px bg-[var(--c-border)] md:block" />
             <span
               className="hidden font-mono text-[11px] uppercase tracking-wider md:inline"

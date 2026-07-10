@@ -1,4 +1,4 @@
-import type { SocialLinks, User } from "../../domain/entities/User";
+import type { SocialLinks, SystemRole, User } from "../../domain/entities/User";
 
 export interface ProfileUpdate {
   fullName?: string;
@@ -26,6 +26,14 @@ export interface UserRepository {
   // N+1 findById calls. Order and completeness are not guaranteed; the
   // caller maps by id. An empty input returns an empty array.
   findManyByIds(ids: string[]): Promise<User[]>;
+
+  // Admin user directory, newest first, paginated. Behind the users_self_read
+  // is_staff branch. Used by the role-management screen.
+  listUsers(limit: number, offset: number): Promise<User[]>;
+
+  // Sets one user's system_role. Admin-only at both the app (requireAdmin)
+  // and DB (users_admin_role_write + guard_system_role) layers.
+  setSystemRole(userId: string, role: SystemRole): Promise<User>;
 
   // Idempotent insert keyed by `id` (= auth.users.id). Used by signInBootstrap.
   upsertBootstrap(input: BootstrapUserInput): Promise<User>;

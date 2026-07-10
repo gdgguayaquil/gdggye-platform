@@ -213,13 +213,40 @@ end;
 $$;
 ```
 
-**Role-change policy (deferred to Sprint 4.4, not in 0012):**
+**Shipped as `0013_role_admin.sql` (Sprint 4.4):**
 
 ```sql
+-- Admins may UPDATE any user row (needed to change OTHER users' roles;
+-- users_self_update only covers a user's own row).
 create policy users_admin_role_write on public.users
-  for update to authenticated
-  using (public.is_admin()) with check (public.is_admin());
+  for update using (public.is_admin()) with check (public.is_admin());
+
+-- SECURITY FIX discovered in 4.4: users_self_update is `using (id = auth.uid())`
+-- with no column guard, so any authenticated user could set their OWN
+-- system_role via a crafted PostgREST call (self-escalation). This trigger
+-- allows a system_role change only when there is no authenticated user
+-- (service-role / seed / migrations, auth.uid() null) or the caller is admin.
+create or replace function public.guard_system_role()
+returns trigger language plpgsql security definer set search_path = public
+as $$
+begin
+  if new.system_role is distinct from old.system_role
+     and auth.uid() is not null and not public.is_admin() then
+    raise exception 'Only an admin can change system_role';
+  end if;
+  return new;
+end;
+$$;
+create trigger users_guard_system_role
+  before update on public.users
+  for each row execute function public.guard_system_role();
 ```
+
+> Verified end-to-end against local RLS: an admin can change another user's
+> role; an attendee setting their **own** role to admin is blocked by the
+> trigger; an organizer changing anyone's role updates 0 rows; a non-admin's
+> own-profile edit (role unchanged) and service-role role writes both still
+> work.
 
 > Verified end-to-end against local RLS: staff `+25`/`−10` move the total via
 > the trigger; an attendee self-grant and a staff non-`admin_adjustment` insert

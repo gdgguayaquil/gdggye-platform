@@ -12,6 +12,7 @@ export const COPY = {
       scanner: "Escáner",
       leaderboard: "Tabla",
       myQr: "Mi QR",
+      badges: "Logros",
       profile: "Perfil",
     },
     hero: {
@@ -119,6 +120,7 @@ export const COPY = {
       scanner: "Scanner",
       leaderboard: "Ranking",
       myQr: "My QR",
+      badges: "Badges",
       profile: "Profile",
     },
     hero: {

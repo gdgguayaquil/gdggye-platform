@@ -24,6 +24,7 @@ type Phase =
       newTotal: number;
       targetType: "sponsor" | "activity" | "attendee";
       targetName: string | null;
+      newBadges: { name: string; icon: string | null }[];
     }
   | { kind: "rejected"; reason: RejectReason }
   | { kind: "fatal"; message: string };
@@ -137,6 +138,21 @@ export function QrScanner() {
             : data.targetType === "attendee"
               ? "attendee"
               : "sponsor";
+        const newBadges = Array.isArray(data.newBadges)
+          ? (data.newBadges as unknown[]).flatMap((b) =>
+              b && typeof b === "object"
+                ? [
+                    {
+                      name: String((b as Record<string, unknown>).name ?? ""),
+                      icon:
+                        typeof (b as Record<string, unknown>).icon === "string"
+                          ? ((b as Record<string, unknown>).icon as string)
+                          : null,
+                    },
+                  ]
+                : [],
+            )
+          : [];
         setPhase({
           kind: "accepted",
           pointsGranted: Number(data.pointsGranted ?? 0),
@@ -144,6 +160,7 @@ export function QrScanner() {
           targetType,
           targetName:
             typeof data.targetName === "string" ? data.targetName : null,
+          newBadges,
         });
         return;
       }
@@ -316,6 +333,32 @@ function PhaseOverlay({
           <p className="mb-5 mt-2 text-sm text-[var(--c-text-muted)]">
             Tienes <strong>{phase.newTotal}</strong> puntos en total.
           </p>
+          {phase.newBadges.length > 0 ? (
+            <div
+              className="mb-5 rounded-[var(--r-lg)] border p-4"
+              style={{
+                borderColor: "var(--c-accent, var(--c-primary))",
+                background:
+                  "color-mix(in srgb, var(--c-primary) 8%, transparent)",
+              }}
+            >
+              <div className="mb-2 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]">
+                {phase.newBadges.length === 1
+                  ? "¡Nuevo logro!"
+                  : "¡Nuevos logros!"}
+              </div>
+              <ul className="flex flex-col gap-2">
+                {phase.newBadges.map((b, i) => (
+                  <li key={i} className="flex items-center gap-2">
+                    <span className="text-2xl leading-none" aria-hidden>
+                      {b.icon ?? "🏅"}
+                    </span>
+                    <span className="font-display font-semibold">{b.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
           <PrimaryButton onClick={onReset}>Escanear otro</PrimaryButton>
         </div>
       );

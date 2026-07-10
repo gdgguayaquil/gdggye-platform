@@ -3,11 +3,14 @@ import "server-only";
 import { NextResponse, type NextRequest } from "next/server";
 
 import {
+  evaluateBadges,
   ScanRejected,
   validateAndRecordScan,
   verifyQrToken,
+  type AwardedBadge,
 } from "@gdggye/backend-core";
 import {
+  buildBadgeDeps,
   buildScanDeps,
   createSupabaseServiceClient,
   SupabaseUserRepository,
@@ -92,12 +95,27 @@ export async function POST(req: NextRequest) {
       targetName = target?.fullName ?? null;
     }
 
+    // Award any badges this scan just earned. Best-effort: a badge failure must
+    // never fail the scan (the points are already granted), so we swallow and
+    // return an empty list — same discipline as the rejection logger.
+    let newBadges: AwardedBadge[] = [];
+    try {
+      newBadges = await evaluateBadges(
+        authUser.id,
+        payload.e,
+        buildBadgeDeps(service),
+      );
+    } catch {
+      newBadges = [];
+    }
+
     return NextResponse.json({
       ok: true,
       pointsGranted: outcome.pointsGranted,
       newTotal: outcome.newTotal,
       targetType: payload.t,
       targetName,
+      newBadges,
     });
   } catch (e) {
     if (e instanceof ScanRejected) {

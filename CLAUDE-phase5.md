@@ -1,7 +1,7 @@
 # CLAUDE-phase5.md — Phase 5: Networking + Badges
 
-> **Status: Sprints 5.1–5.2 shipped (networking scans + badge model/engine);
-> 5.3–5.4 pending.** Phase 4
+> **Status: Sprints 5.1–5.3 shipped (networking + badge model/engine + wiring &
+> surfacing); 5.4 (admin badges read) pending.** Phase 4
 > (admin suite) is v1-complete. Phase 5 turns on the two attendee-facing systems
 > that were scaffolded but inert: **networking scans** (attendee↔attendee, now
 > live) and **badges/achievements** (next). This file is the full spec;
@@ -230,9 +230,12 @@ scan" path.
 - [x] Crossing a badge threshold via a scan awards the badge exactly once;
       re-evaluating awards nothing new (idempotent). _(5.2 — engine unit-tested;
       wiring into the scan path is 5.3.)_
-- [ ] `/my-badges` shows earned badges and locked ones with progress.
-- [ ] The scanner surfaces a badge earned on the scan that triggered it.
-- [ ] A failed badge evaluation never fails the underlying scan/adjustment.
+- [x] `/my-badges` shows earned badges and locked ones with progress. _(5.3 —
+      bwai page + bottom-nav "Logros" tab.)_
+- [x] The scanner surfaces a badge earned on the scan that triggered it. _(5.3 —
+      scan route returns `newBadges`; QrScanner celebrates them.)_
+- [x] A failed badge evaluation never fails the underlying scan/adjustment.
+      _(5.3 — both call sites wrap `evaluateBadges` best-effort.)_
 - [ ] Every new `backend-core` use-case has an in-memory-repo unit test.
 - [ ] `grep -r "supabase\|@supabase" packages/backend-core/src` → zero.
 - [ ] `grep -r "from 'next" packages/backend-core/src` → zero.

@@ -78,6 +78,22 @@ const ITEMS: Item[] = [
     ),
   },
   {
+    href: "/my-badges",
+    match: (p) => p.startsWith("/my-badges"),
+    label: (t) => t.badges,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="9" r="5" stroke="currentColor" strokeWidth="1.7" />
+        <path
+          d="M8.5 13.5L7 21l5-3 5 3-1.5-7.5"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+  },
+  {
     href: "/profile",
     match: (p) => p.startsWith("/profile"),
     label: (t) => t.profile,
@@ -110,7 +126,7 @@ export function BottomNav() {
       }}
       aria-label="App nav"
     >
-      <div className="container-x grid grid-cols-5 gap-1 py-2">
+      <div className="container-x grid grid-cols-6 gap-1 py-2">
         {ITEMS.map((item) => {
           const active = item.match(pathname);
           return (

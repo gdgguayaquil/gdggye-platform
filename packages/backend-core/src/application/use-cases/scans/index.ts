@@ -18,6 +18,7 @@ export {
 } from "../../../domain/errors/ScanRejected";
 export {
   SPONSOR_SCAN_POINTS,
+  NETWORKING_SCAN_POINTS,
   resolveScanPoints,
   type ScanTarget,
   type SponsorScanTarget,

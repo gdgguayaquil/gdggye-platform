@@ -8,6 +8,11 @@
 
 export const SPONSOR_SCAN_POINTS = 10;
 
+// Networking scans (Phase 5). Flat payout to the scanner for meeting another
+// registered attendee — v1 value; the resolver signature already takes the
+// target if this ever needs to vary.
+export const NETWORKING_SCAN_POINTS = 5;
+
 export interface SponsorScanTarget {
   type: "sponsor";
   id: string;
@@ -47,8 +52,7 @@ export function resolveScanPoints(target: ScanTarget): number {
     case "activity":
       return target.points;
     case "attendee":
-      // Networking scans are out of Phase 2 scope; default to 0 to be safe
-      // if a v1 QR ever encodes an attendee target.
-      return 0;
+      // Networking scan (Phase 5): scanner-only flat payout.
+      return NETWORKING_SCAN_POINTS;
   }
 }

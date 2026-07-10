@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import { ScanRejected } from "../../../domain/errors/ScanRejected";
 import type { ScanTarget } from "../../../domain/rules/scoringRules";
-import { SPONSOR_SCAN_POINTS } from "../../../domain/rules/scoringRules";
+import {
+  NETWORKING_SCAN_POINTS,
+  SPONSOR_SCAN_POINTS,
+} from "../../../domain/rules/scoringRules";
 import type { Event } from "../../../domain/entities/Event";
 import { FrozenClock } from "../../../test-support/clocks";
 import { makeEvent } from "../../../test-support/fixtures";
@@ -255,5 +258,83 @@ describe("validateAndRecordScan", () => {
     );
     expect(first.newTotal).toBe(SPONSOR_SCAN_POINTS);
     expect(second.newTotal).toBe(SPONSOR_SCAN_POINTS * 2);
+  });
+});
+
+describe("validateAndRecordScan — networking (Phase 5)", () => {
+  // A registered attendee target: the DB adapter returns this when a
+  // registration exists; the in-memory repo is seeded directly.
+  const attendeeTargets: ScanTarget[] = [
+    { type: "attendee", id: "user-b", eventId: "evt-1", isActive: true },
+  ];
+  const NETWORKING_INPUT = {
+    eventId: "evt-1",
+    scannerUserId: "user-a",
+    targetType: "attendee" as const,
+    targetId: "user-b",
+  };
+
+  it("accepts a networking scan and grants networking points to the scanner", async () => {
+    const { events, targets, scans, clock } = scaffold({
+      targets: attendeeTargets,
+    });
+    const out = await validateAndRecordScan(NETWORKING_INPUT, {
+      events,
+      targets,
+      scans,
+      clock,
+    });
+    expect(out.pointsGranted).toBe(NETWORKING_SCAN_POINTS);
+    expect(out.newTotal).toBe(NETWORKING_SCAN_POINTS);
+    expect(scans.accepted).toHaveLength(1);
+  });
+
+  it("rejects scanning yourself (self_scan)", async () => {
+    const { events, targets, scans, clock } = scaffold({
+      targets: [
+        { type: "attendee", id: "user-a", eventId: "evt-1", isActive: true },
+      ],
+    });
+    await expect(
+      validateAndRecordScan(
+        { ...NETWORKING_INPUT, targetId: "user-a" },
+        { events, targets, scans, clock },
+      ),
+    ).rejects.toMatchObject({ reason: "self_scan" });
+    expect(scans.accepted).toHaveLength(0);
+  });
+
+  it("rejects an unregistered attendee (target_inactive)", async () => {
+    // No attendee target seeded → the repo returns null, same as an
+    // attendee with no registration for this event.
+    const { events, targets, scans, clock } = scaffold({ targets: [] });
+    await expect(
+      validateAndRecordScan(NETWORKING_INPUT, {
+        events,
+        targets,
+        scans,
+        clock,
+      }),
+    ).rejects.toMatchObject({ reason: "target_inactive" });
+  });
+
+  it("rejects meeting the same person twice (already_claimed)", async () => {
+    const { events, targets, scans, clock } = scaffold({
+      targets: attendeeTargets,
+    });
+    await validateAndRecordScan(NETWORKING_INPUT, {
+      events,
+      targets,
+      scans,
+      clock,
+    });
+    await expect(
+      validateAndRecordScan(NETWORKING_INPUT, {
+        events,
+        targets,
+        scans,
+        clock,
+      }),
+    ).rejects.toMatchObject({ reason: "already_claimed" });
   });
 });

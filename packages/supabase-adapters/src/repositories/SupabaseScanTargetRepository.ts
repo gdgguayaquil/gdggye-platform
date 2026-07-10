@@ -95,7 +95,26 @@ export class SupabaseScanTargetRepository implements ScanTargetRepository {
       };
     }
 
-    // attendee — Phase 5; refuse for now.
-    return null;
+    // attendee (Phase 5 networking): a valid target is anyone registered for
+    // this event. Pre-checkin status does not gate networking. isActive is
+    // true iff a registration row exists; the use-case handles self_scan and
+    // the one-claim guard.
+    const { data, error } = await this.client
+      .from("registrations")
+      .select("user_id, event_id")
+      .eq("event_id", eventId)
+      .eq("user_id", targetId)
+      .maybeSingle();
+    if (error)
+      throw new Error(
+        `SupabaseScanTargetRepository.find(attendee): ${error.message}`,
+      );
+    if (!data) return null;
+    return {
+      type: "attendee",
+      id: data.user_id,
+      eventId: data.event_id,
+      isActive: true,
+    };
   }
 }

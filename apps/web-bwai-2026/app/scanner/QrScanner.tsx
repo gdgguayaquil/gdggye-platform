@@ -22,7 +22,8 @@ type Phase =
       kind: "accepted";
       pointsGranted: number;
       newTotal: number;
-      targetType: "sponsor" | "activity";
+      targetType: "sponsor" | "activity" | "attendee";
+      targetName: string | null;
     }
   | { kind: "rejected"; reason: RejectReason }
   | { kind: "fatal"; message: string };
@@ -58,7 +59,7 @@ const REJECT_COPY: Record<RejectReason, { title: string; body: string }> = {
   },
   already_claimed: {
     title: "Ya escaneaste este QR",
-    body: "Solo puedes ganar puntos una vez por sponsor o actividad.",
+    body: "Solo puedes ganar puntos una vez por sponsor, actividad o persona.",
   },
   self_scan: {
     title: "No puedes escanearte a ti mismo",
@@ -130,11 +131,19 @@ export function QrScanner() {
         unknown
       >;
       if (res.ok && data.ok === true) {
+        const targetType =
+          data.targetType === "activity"
+            ? "activity"
+            : data.targetType === "attendee"
+              ? "attendee"
+              : "sponsor";
         setPhase({
           kind: "accepted",
           pointsGranted: Number(data.pointsGranted ?? 0),
           newTotal: Number(data.newTotal ?? 0),
-          targetType: data.targetType === "activity" ? "activity" : "sponsor",
+          targetType,
+          targetName:
+            typeof data.targetName === "string" ? data.targetName : null,
         });
         return;
       }
@@ -297,7 +306,13 @@ function PhaseOverlay({
           >
             +{phase.pointsGranted} puntos
           </div>
-          <h2 className="font-display text-2xl font-semibold">¡Listo!</h2>
+          <h2 className="font-display text-2xl font-semibold">
+            {phase.targetType === "attendee"
+              ? phase.targetName
+                ? `¡Conociste a ${phase.targetName}!`
+                : "¡Nueva conexión!"
+              : "¡Listo!"}
+          </h2>
           <p className="mb-5 mt-2 text-sm text-[var(--c-text-muted)]">
             Tienes <strong>{phase.newTotal}</strong> puntos en total.
           </p>

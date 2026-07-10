@@ -10,6 +10,7 @@ import {
 import {
   buildScanDeps,
   createSupabaseServiceClient,
+  SupabaseUserRepository,
 } from "@gdggye/supabase-adapters";
 
 import { getCurrentAuthUser } from "@/lib/server/auth";
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
   }
 
   const verification = await verifyQrToken(body.token, readQrSecret(), {
-    allowedTypes: ["sponsor", "activity"],
+    allowedTypes: ["sponsor", "activity", "attendee"],
   });
   if (!verification.ok) {
     return NextResponse.json(
@@ -66,7 +67,8 @@ export async function POST(req: NextRequest) {
   }
   const payload = verification.payload;
 
-  const deps = buildScanDeps(createSupabaseServiceClient());
+  const service = createSupabaseServiceClient();
+  const deps = buildScanDeps(service);
 
   try {
     const outcome = await validateAndRecordScan(
@@ -78,11 +80,24 @@ export async function POST(req: NextRequest) {
       },
       deps,
     );
+
+    // For a networking scan, surface the met attendee's name so the scanner
+    // can say "met {name}". Public identity only (name) — never email, same
+    // rule as the leaderboard. Best-effort: a lookup miss just omits the name.
+    let targetName: string | null = null;
+    if (payload.t === "attendee") {
+      const target = await new SupabaseUserRepository(service).findById(
+        payload.i,
+      );
+      targetName = target?.fullName ?? null;
+    }
+
     return NextResponse.json({
       ok: true,
       pointsGranted: outcome.pointsGranted,
       newTotal: outcome.newTotal,
       targetType: payload.t,
+      targetName,
     });
   } catch (e) {
     if (e instanceof ScanRejected) {

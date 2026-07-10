@@ -75,6 +75,7 @@ export default async function AttendeesPage({
           id: e.id,
           source: e.source,
           points: e.points,
+          note: e.note,
           createdAtLabel: timeLabel(e.createdAt),
         })),
         scans: d.scans.map((s) => ({
@@ -113,7 +114,11 @@ export default async function AttendeesPage({
       />
 
       {detail ? (
-        <AttendeeDrawer detail={detail} closeHref={`/events/${id}/attendees`} />
+        <AttendeeDrawer
+          eventId={id}
+          detail={detail}
+          closeHref={`/events/${id}/attendees`}
+        />
       ) : null}
     </div>
   );

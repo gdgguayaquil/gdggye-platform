@@ -177,28 +177,53 @@ As an organizer, I see the event's vital signs at a glance.
 
 Only two schema needs; everything else is new read paths over existing tables.
 
+**Shipped as `0012_points_admin.sql` (Sprint 4.2):**
+
 ```sql
--- 1. Free-text reason for admin point adjustments (audit trail for Epic B).
+-- 1. Audit fields for manual adjustments (Epic B). Both nullable — scan-driven
+--    rows never set them. actor_user_id records WHICH staff member posted it.
 alter table public.point_transactions
-  add column note text;
+  add column note text,
+  add column actor_user_id uuid references public.users(id) on delete set null;
 
--- 2. Staff-scoped write policies (RLS-first; today these tables are
---    service-role-insert-only — see 0004 comments). Add narrow staff policies
---    so the admin use-cases run under the staff JWT, not a service-role key.
-
--- Points: staff may insert ONLY admin_adjustment rows. Scans still flow
--- through the service-role path in validateAndRecordScan unchanged.
+-- 2. Staff may insert ONLY admin_adjustment rows. Attendees have no insert
+--    policy at all (unchanged). Scans still flow through the service-role
+--    path in validateAndRecordScan, unaffected.
 create policy pt_staff_adjust on public.point_transactions
-  for insert to authenticated
+  for insert
   with check (public.is_staff() and source_type = 'admin_adjustment');
 
--- Role changes: admin-only. is_admin() already exists (0004). Guard the
--- self-demotion case in the use-case, not RLS.
+-- 3. REQUIRED, discovered during 4.2: apply_point_transaction() was a plain
+--    (invoker-rights) trigger. It only ever worked because every insert came
+--    from the service-role client (RLS bypassed). A staff-JWT insert runs
+--    RLS-ON, and there is NO staff UPDATE policy on registrations (by design
+--    — nothing writes total_points directly). So the trigger's UPDATE would
+--    silently match zero rows and the total would never move. Fix: make the
+--    trigger SECURITY DEFINER so its UPDATE always runs as owner and bypasses
+--    RLS. Invariant preserved: only this trigger writes the total.
+create or replace function public.apply_point_transaction()
+returns trigger language plpgsql security definer set search_path = public
+as $$
+begin
+  update public.registrations
+     set total_points = total_points + new.points
+   where event_id = new.event_id and user_id = new.user_id;
+  return new;
+end;
+$$;
+```
+
+**Role-change policy (deferred to Sprint 4.4, not in 0012):**
+
+```sql
 create policy users_admin_role_write on public.users
   for update to authenticated
-  using (public.is_admin())
-  with check (public.is_admin());
+  using (public.is_admin()) with check (public.is_admin());
 ```
+
+> Verified end-to-end against local RLS: staff `+25`/`−10` move the total via
+> the trigger; an attendee self-grant and a staff non-`admin_adjustment` insert
+> are both denied by `pt_staff_adjust`.
 
 > **Locked:** the adjustment and role-change use-cases run under the **staff JWT
 > with the RLS policies above** — not a service-role key. This follows RLS-first

@@ -10,11 +10,15 @@ import type {
   ScanResult,
   ScanTargetType,
 } from "@gdggye/backend-core";
+import { Button } from "@gdggye/ui-kit";
+
+import { adjustPointsAction, type AdjustPointsActionState } from "./actions";
 
 export interface LedgerLine {
   id: string;
   source: PointSource;
   points: number;
+  note: string | null;
   createdAtLabel: string;
 }
 
@@ -62,9 +66,11 @@ const SOURCE_LABEL: Record<PointSource, string> = {
 const signed = (n: number) => (n > 0 ? `+${n}` : `${n}`);
 
 export function AttendeeDrawer({
+  eventId,
   detail,
   closeHref,
 }: {
+  eventId: string;
   detail: AttendeeDetail;
   closeHref: string;
 }) {
@@ -139,26 +145,32 @@ export function AttendeeDrawer({
           </div>
         ) : null}
 
+        <AdjustPointsForm eventId={eventId} userId={detail.userId} />
+
         <Section title="Point ledger" count={detail.ledger.length}>
           {detail.ledger.length === 0 ? (
             <Empty>No points recorded yet.</Empty>
           ) : (
             detail.ledger.map((line) => (
-              <div
-                key={line.id}
-                className="flex items-center justify-between gap-3 px-6 py-3"
-              >
-                <div className="flex items-center gap-2">
-                  <span className={`chip ${SOURCE_CHIP[line.source]}`}>
-                    {SOURCE_LABEL[line.source]}
-                  </span>
-                  <span className="font-mono text-xs text-[var(--c-text-muted)]">
-                    {line.createdAtLabel}
+              <div key={line.id} className="px-6 py-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className={`chip ${SOURCE_CHIP[line.source]}`}>
+                      {SOURCE_LABEL[line.source]}
+                    </span>
+                    <span className="font-mono text-xs text-[var(--c-text-muted)]">
+                      {line.createdAtLabel}
+                    </span>
+                  </div>
+                  <span className="font-mono text-sm tabular-nums">
+                    {signed(line.points)}
                   </span>
                 </div>
-                <span className="font-mono text-sm tabular-nums">
-                  {signed(line.points)}
-                </span>
+                {line.note ? (
+                  <div className="mt-1 text-xs text-[var(--c-text-muted)]">
+                    {line.note}
+                  </div>
+                ) : null}
               </div>
             ))
           )}
@@ -258,5 +270,79 @@ function Empty({ children }: { children: React.ReactNode }) {
     <div className="px-6 py-6 text-center text-sm text-[var(--c-text-muted)]">
       {children}
     </div>
+  );
+}
+
+const INITIAL_ADJUST: AdjustPointsActionState = { ok: false };
+
+function AdjustPointsForm({
+  eventId,
+  userId,
+}: {
+  eventId: string;
+  userId: string;
+}) {
+  const [state, dispatch, pending] = React.useActionState(
+    adjustPointsAction,
+    INITIAL_ADJUST,
+  );
+
+  // Clear the inputs after a successful post by remounting the fields
+  // (bump the key). Adjusted during render, keyed on the action result —
+  // useActionState hands back a new state object once per dispatch.
+  const [formKey, setFormKey] = React.useState(0);
+  const [handled, setHandled] = React.useState(state);
+  if (state !== handled) {
+    setHandled(state);
+    if (state.ok) setFormKey((k) => k + 1);
+  }
+
+  return (
+    <section className="border-b border-[var(--c-border)] px-6 py-4">
+      <h3 className="mb-3 font-mono text-[11px] uppercase tracking-wider text-[var(--c-text-muted)]">
+        Adjust points
+      </h3>
+      <form action={dispatch} key={formKey} className="flex flex-col gap-2">
+        <input type="hidden" name="eventId" value={eventId} />
+        <input type="hidden" name="userId" value={userId} />
+        <div className="flex gap-2">
+          <input
+            name="points"
+            type="number"
+            step="1"
+            required
+            placeholder="±points"
+            className="w-28 rounded-[var(--r-md)] border border-[var(--c-border)] bg-[var(--c-bg)] px-3 py-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-primary)]"
+            aria-label="Points to add or subtract"
+          />
+          <input
+            name="reason"
+            type="text"
+            required
+            placeholder="Reason (stored as the audit note)"
+            className="flex-1 rounded-[var(--r-md)] border border-[var(--c-border)] bg-[var(--c-bg)] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-primary)]"
+            aria-label="Reason for the adjustment"
+          />
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs text-[var(--c-text-subtle)]">
+            Use a negative number to correct an over-grant.
+          </p>
+          <Button type="submit" variant="primary" disabled={pending}>
+            {pending ? "Saving…" : "Apply"}
+          </Button>
+        </div>
+        {state.error ? (
+          <p className="text-xs" style={{ color: "var(--c-red)" }}>
+            {state.error}
+          </p>
+        ) : null}
+        {state.ok ? (
+          <p className="text-xs" style={{ color: "var(--c-green)" }}>
+            Adjustment applied.
+          </p>
+        ) : null}
+      </form>
+    </section>
   );
 }

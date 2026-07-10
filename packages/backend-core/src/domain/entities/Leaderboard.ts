@@ -39,6 +39,7 @@ export interface PointLedgerEntry {
   source: PointSource;
   sourceId: string | null;
   points: number; // signed; negative for corrective admin_adjustment rows
+  note: string | null; // operator reason, set only on admin_adjustment rows
   createdAt: Date;
 }
 

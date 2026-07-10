@@ -411,33 +411,46 @@ export type Database = {
       };
       point_transactions: {
         Row: {
+          actor_user_id: string | null;
           created_at: string;
           event_id: string;
           id: string;
+          note: string | null;
           points: number;
           source_id: string | null;
           source_type: Database["public"]["Enums"]["point_source"];
           user_id: string;
         };
         Insert: {
+          actor_user_id?: string | null;
           created_at?: string;
           event_id: string;
           id?: string;
+          note?: string | null;
           points: number;
           source_id?: string | null;
           source_type: Database["public"]["Enums"]["point_source"];
           user_id: string;
         };
         Update: {
+          actor_user_id?: string | null;
           created_at?: string;
           event_id?: string;
           id?: string;
+          note?: string | null;
           points?: number;
           source_id?: string | null;
           source_type?: Database["public"]["Enums"]["point_source"];
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "point_transactions_actor_user_id_fkey";
+            columns: ["actor_user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "point_transactions_event_id_fkey";
             columns: ["event_id"];

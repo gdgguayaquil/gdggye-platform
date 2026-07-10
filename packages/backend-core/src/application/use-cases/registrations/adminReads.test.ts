@@ -133,6 +133,7 @@ describe("getRegistrationDetail", () => {
       source: "sponsor",
       sourceId: "s-1",
       points: 10,
+      note: null,
       createdAt: new Date("2026-01-01T10:00:00Z"),
     },
     {
@@ -142,6 +143,7 @@ describe("getRegistrationDetail", () => {
       source: "activity",
       sourceId: "a-1",
       points: 25,
+      note: null,
       createdAt: new Date("2026-01-01T11:00:00Z"),
     },
   ];

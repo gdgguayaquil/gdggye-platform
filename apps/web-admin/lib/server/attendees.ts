@@ -1,14 +1,17 @@
 import "server-only";
 
 import {
+  adjustEventPoints as adjustEventPointsUseCase,
   getRegistrationDetail as getRegistrationDetailUseCase,
   listEventRegistrations as listEventRegistrationsUseCase,
+  type AdjustEventPointsInput,
 } from "@gdggye/backend-core";
 import {
   SupabasePointTransactionRepository,
   SupabaseRegistrationRepository,
   SupabaseScanLogRepository,
   SupabaseUserRepository,
+  SystemClock,
 } from "@gdggye/supabase-adapters";
 
 import { getSupabaseServerClient } from "./supabase";
@@ -36,4 +39,14 @@ export async function listEventRegistrations(eventId: string) {
 
 export async function getRegistrationDetail(eventId: string, userId: string) {
   return getRegistrationDetailUseCase(eventId, userId, await deps());
+}
+
+// The one write in this file. Insert runs under the staff server client
+// (pt_staff_adjust RLS policy); the trigger moves the total.
+export async function adjustEventPoints(input: AdjustEventPointsInput) {
+  const supabase = await getSupabaseServerClient();
+  return adjustEventPointsUseCase(input, {
+    pointTxRepo: new SupabasePointTransactionRepository(supabase),
+    clock: new SystemClock(),
+  });
 }

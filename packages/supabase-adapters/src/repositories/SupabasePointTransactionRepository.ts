@@ -1,4 +1,5 @@
 import type {
+  InsertPointTransactionInput,
   PointBreakdownItem,
   PointLedgerEntry,
   PointSource,
@@ -61,7 +62,7 @@ export class SupabasePointTransactionRepository implements PointTransactionRepos
     const { data, error } = await this.client
       .from("point_transactions")
       .select(
-        "id, event_id, user_id, source_type, source_id, points, created_at",
+        "id, event_id, user_id, source_type, source_id, points, note, created_at",
       )
       .eq("event_id", eventId)
       .eq("user_id", userId)
@@ -77,7 +78,34 @@ export class SupabasePointTransactionRepository implements PointTransactionRepos
       source: row.source_type as PointSource,
       sourceId: row.source_id,
       points: row.points,
+      note: row.note,
       createdAt: new Date(row.created_at),
     }));
+  }
+
+  // Appends a transaction. For admin_adjustment this runs under the staff
+  // server client, gated by the pt_staff_adjust RLS policy. The
+  // apply_point_transaction trigger (SECURITY DEFINER) moves the running
+  // total on registrations.
+  async insert(input: InsertPointTransactionInput): Promise<{ id: string }> {
+    const { data, error } = await this.client
+      .from("point_transactions")
+      .insert({
+        event_id: input.eventId,
+        user_id: input.userId,
+        source_type: input.sourceType,
+        source_id: input.sourceId,
+        points: input.points,
+        note: input.note,
+        actor_user_id: input.actorUserId,
+        created_at: input.createdAt.toISOString(),
+      })
+      .select("id")
+      .single();
+    if (error)
+      throw new Error(
+        `SupabasePointTransactionRepository.insert: ${error.message}`,
+      );
+    return { id: data.id };
   }
 }

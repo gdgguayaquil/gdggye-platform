@@ -7,7 +7,10 @@ import type {
   LeaderboardRepository,
   UserRankSummary,
 } from "../application/ports/LeaderboardRepository";
-import type { PointTransactionRepository } from "../application/ports/PointTransactionRepository";
+import type {
+  InsertPointTransactionInput,
+  PointTransactionRepository,
+} from "../application/ports/PointTransactionRepository";
 
 // Both repos combined into one class for test ergonomics — in production
 // they're two SECURITY DEFINER RPCs backed by different queries, but the
@@ -46,5 +49,29 @@ export class InMemoryLeaderboardRepository
     userId: string,
   ): Promise<PointLedgerEntry[]> {
     return this.ledgers.get(userId) ?? [];
+  }
+
+  // Records the insert so tests can assert what the use-case appended. The
+  // real adapter delegates the running-total update to a DB trigger; here we
+  // just capture the row.
+  public inserted: InsertPointTransactionInput[] = [];
+  async insert(input: InsertPointTransactionInput): Promise<{ id: string }> {
+    this.inserted.push(input);
+    const id = `pt-${this.inserted.length}`;
+    const existing = this.ledgers.get(input.userId) ?? [];
+    this.ledgers.set(input.userId, [
+      {
+        id,
+        eventId: input.eventId,
+        userId: input.userId,
+        source: input.sourceType,
+        sourceId: input.sourceId,
+        points: input.points,
+        note: input.note,
+        createdAt: input.createdAt,
+      },
+      ...existing,
+    ]);
+    return { id };
   }
 }

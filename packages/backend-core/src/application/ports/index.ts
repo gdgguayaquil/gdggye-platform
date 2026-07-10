@@ -51,7 +51,10 @@ export type {
   LeaderboardRepository,
   UserRankSummary,
 } from "./LeaderboardRepository";
-export type { PointTransactionRepository } from "./PointTransactionRepository";
+export type {
+  PointTransactionRepository,
+  InsertPointTransactionInput,
+} from "./PointTransactionRepository";
 export type {
   PreCheckinSubmissionRepository,
   UpsertOwnPreCheckinInput,

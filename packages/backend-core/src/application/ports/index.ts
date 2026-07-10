@@ -78,5 +78,6 @@ export type {
 export type {
   ScanLogRepository,
   ScanHistoryEntry,
+  ScanEventSummary,
   ScanResult,
 } from "./ScanLogRepository";

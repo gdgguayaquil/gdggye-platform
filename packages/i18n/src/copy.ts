@@ -50,7 +50,7 @@ export const COPY = {
     about: {
       eyebrow: "Sobre nosotros",
       title: "Una comunidad técnica abierta, en la mitad del mundo.",
-      body: "GDG Guayaquil es un capítulo independiente del programa Google Developer Groups. Operamos desde 2017 organizando charlas, talleres y hackatones para más de 3,200 desarrolladores en la región. Sin barreras: español primario, inglés cuando ayuda, código abierto siempre.",
+      body: "GDG Guayaquil es un capítulo independiente del programa Google Developer Groups. Operamos desde 2020 organizando charlas, talleres y hackatones para más de 3,200 desarrolladores en el país.",
       pillarTitle1: "Aprendizaje práctico",
       pillarBody1:
         "Talleres con código en vivo, no diapositivas. Salimos con algo construido.",
@@ -62,7 +62,7 @@ export const COPY = {
         "Priorizamos herramientas y modelos de licencia que la comunidad puede adoptar.",
     },
     footer: {
-      tagline: "Construyendo en la costa del Pacífico desde 2017.",
+      tagline: "Construyendo en Ecuador desde el 2020.",
       navTitle: "Plataforma",
       eventsTitle: "Eventos",
       connectTitle: "Conectar",
@@ -157,7 +157,7 @@ export const COPY = {
     about: {
       eyebrow: "About",
       title: "An open technical community, on the equator.",
-      body: "GDG Guayaquil is an independent chapter of the Google Developer Groups program. Since 2017 we have organized talks, workshops and hackathons for over 3,200 developers across the region. No barriers: Spanish primary, English when it helps, open source always.",
+      body: "GDG Guayaquil is an independent chapter of the Google Developer Groups program. Since 2020 we have organized talks, workshops and hackathons for over 3,200 developers across the region.",
       pillarTitle1: "Practical learning",
       pillarBody1:
         "Workshops with live code, not slides. You leave having built something.",
@@ -169,7 +169,7 @@ export const COPY = {
         "We prioritize tools and license models the community can actually adopt.",
     },
     footer: {
-      tagline: "Building on the Pacific coast since 2017.",
+      tagline: "Building on Ecuador since 2020.",
       navTitle: "Platform",
       eventsTitle: "Events",
       connectTitle: "Connect",

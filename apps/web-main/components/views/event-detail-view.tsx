@@ -577,7 +577,7 @@ function SponsorsSection({ detail }: { detail: EventDetail }) {
           sub={t.sponsorsSub}
           action={
             <Button asChild variant="secondary">
-              <a href="mailto:hi@gdggye.org?subject=Sponsorship">
+              <a href="mailto:info@gdggye.org?subject=Sponsorship">
                 {t.becomeSponsor} →
               </a>
             </Button>
@@ -869,11 +869,11 @@ function FAQSection({ detail }: { detail: EventDetail }) {
                   : "Email us — we reply within 24h."}
               </div>
               <a
-                href="mailto:hi@gdggye.org"
+                href="mailto:info@gdggye.org"
                 className="font-mono text-[13px]"
                 style={{ color: "var(--c-blue)" }}
               >
-                hi@gdggye.org →
+                info@gdggye.org →
               </a>
             </div>
           </div>

@@ -99,10 +99,10 @@ export function SiteFooter({ events }: SiteFooterProps) {
             <ul className="grid gap-2.5 text-sm">
               <li>
                 <a
-                  href="mailto:hi@gdggye.org"
+                  href="mailto:info@gdggye.org"
                   className="text-[var(--c-text-muted)] hover:text-[var(--c-text)]"
                 >
-                  hi@gdggye.org
+                  info@gdggye.org
                 </a>
               </li>
               <li>

@@ -1,5 +1,10 @@
 # CLAUDE-phase4.md — Phase 4: Full Admin Suite
 
+> **Status: v1 complete.** All five sprints shipped (4.1 attendee management,
+> 4.2 points administration, 4.3 scan monitoring, 4.4 role management, 4.5 event
+> overview), each verified end-to-end against local RLS. Reporting/exports and
+> cross-event ranking remain deferred to Phase 6.
+>
 > The Phase 2 work shipped a **minimum admin slice** (`apps/web-admin`): enough
 > to author event content and gate the scanner. Phase 4 turns that slice into an
 > operations console staff can actually run an event day from. This file is the
@@ -347,23 +352,27 @@ export async function adjustEventPoints(
 
 Phase 4 (v1 scope above) is done when:
 
-- [ ] `events/[id]/attendees` lists registrations with points + pre-checkin
+- [x] `events/[id]/attendees` lists registrations with points + pre-checkin
       status, searchable.
-- [ ] The attendee drawer shows the point ledger and scan history, and the
+- [x] The attendee drawer shows the point ledger and scan history, and the
       ledger sum reconciles with `registrations.total_points`.
-- [ ] An organizer can post a signed `admin_adjustment` with a reason; the total
+- [x] An organizer can post a signed `admin_adjustment` with a reason; the total
       updates via the trigger and the new row appears in the ledger.
-- [ ] `adjustEventPoints` rejects `0`, non-integers, out-of-bounds, and empty
+- [x] `adjustEventPoints` rejects `0`, non-integers, out-of-bounds, and empty
       reasons — covered by unit tests.
-- [ ] `events/[id]/scans` shows recent scans with accepted/rejected counts and
+- [x] `events/[id]/scans` shows recent scans with accepted/rejected counts and
       reject-reason breakdown.
-- [ ] An **admin** can change a user's `system_role`; an organizer cannot see
+- [x] An **admin** can change a user's `system_role`; an organizer cannot see
       the users screen; an admin cannot demote themselves.
-- [ ] Every new backend-core use-case has an in-memory-repo unit test.
-- [ ] `grep -r "supabase\|@supabase" packages/backend-core/src` → zero matches.
-- [ ] `grep -r "from 'next" packages/backend-core/src` → zero matches.
-- [ ] No accent panel / ticker / badge card appears anywhere in `web-admin`.
-- [ ] `npm run typecheck && npm run lint && npm run build` green across the repo.
+- [x] Every new backend-core use-case has an in-memory-repo unit test.
+- [x] `grep -r "supabase\|@supabase" packages/backend-core/src` → zero matches.
+- [x] `grep -r "from 'next" packages/backend-core/src` → zero matches.
+- [x] No accent panel / ticker / badge card appears anywhere in `web-admin`.
+- [x] `npm run typecheck && npm run lint && npm run build` green across the repo.
+
+**Also delivered beyond the original sketch:** an `event overview` header
+(Sprint 4.5), the `actor_user_id` audit column, and a `guard_system_role`
+trigger closing a pre-existing self-escalation hole (Sprint 4.4).
 
 ---
 

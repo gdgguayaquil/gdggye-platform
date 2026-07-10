@@ -177,6 +177,53 @@ export type Database = {
           },
         ];
       };
+      badges: {
+        Row: {
+          created_at: string;
+          criteria_type: Database["public"]["Enums"]["badge_criteria_type"];
+          description: string | null;
+          event_id: string | null;
+          icon: string | null;
+          id: string;
+          is_active: boolean;
+          key: string;
+          name: string;
+          threshold: number;
+        };
+        Insert: {
+          created_at?: string;
+          criteria_type: Database["public"]["Enums"]["badge_criteria_type"];
+          description?: string | null;
+          event_id?: string | null;
+          icon?: string | null;
+          id?: string;
+          is_active?: boolean;
+          key: string;
+          name: string;
+          threshold?: number;
+        };
+        Update: {
+          created_at?: string;
+          criteria_type?: Database["public"]["Enums"]["badge_criteria_type"];
+          description?: string | null;
+          event_id?: string | null;
+          icon?: string | null;
+          id?: string;
+          is_active?: boolean;
+          key?: string;
+          name?: string;
+          threshold?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "badges_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       consent_records: {
         Row: {
           accepted_at: string;
@@ -732,6 +779,52 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_badges: {
+        Row: {
+          awarded_at: string;
+          badge_id: string;
+          event_id: string;
+          id: string;
+          user_id: string;
+        };
+        Insert: {
+          awarded_at?: string;
+          badge_id: string;
+          event_id: string;
+          id?: string;
+          user_id: string;
+        };
+        Update: {
+          awarded_at?: string;
+          badge_id?: string;
+          event_id?: string;
+          id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey";
+            columns: ["badge_id"];
+            isOneToOne: false;
+            referencedRelation: "badges";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "user_badges_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "user_badges_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       users: {
         Row: {
           accepted_privacy_at: string | null;
@@ -816,6 +909,12 @@ export type Database = {
       is_staff: { Args: never; Returns: boolean };
     };
     Enums: {
+      badge_criteria_type:
+        | "points_total"
+        | "sponsor_scans"
+        | "activity_scans"
+        | "networking_scans"
+        | "precheckin_approved";
       event_status: "draft" | "published" | "live" | "closed";
       event_type:
         | "devfest"
@@ -971,6 +1070,13 @@ export const Constants = {
   },
   public: {
     Enums: {
+      badge_criteria_type: [
+        "points_total",
+        "sponsor_scans",
+        "activity_scans",
+        "networking_scans",
+        "precheckin_approved",
+      ],
       event_status: ["draft", "published", "live", "closed"],
       event_type: [
         "devfest",

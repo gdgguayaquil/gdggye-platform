@@ -13,6 +13,7 @@ export * from "./entities/EventDetail";
 export * from "./entities/Leaderboard";
 export * from "./entities/PreCheckinSubmission";
 export * from "./entities/Activity";
+export * from "./entities/Badge";
 export * from "./qr-token";
 export * from "./errors/ScanRejected";
 export * from "./rules/scoringRules";

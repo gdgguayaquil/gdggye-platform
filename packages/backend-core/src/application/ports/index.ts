@@ -81,3 +81,6 @@ export type {
   ScanEventSummary,
   ScanResult,
 } from "./ScanLogRepository";
+export type { BadgeRepository } from "./BadgeRepository";
+export type { UserBadgeRepository } from "./UserBadgeRepository";
+export type { AttendeeStatsRepository } from "./AttendeeStatsRepository";

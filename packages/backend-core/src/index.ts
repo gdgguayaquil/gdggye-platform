@@ -6,6 +6,7 @@ export * from "./application/use-cases/consents";
 export * from "./application/use-cases/registrations";
 export * from "./application/use-cases/points";
 export * from "./application/use-cases/overview";
+export * from "./application/use-cases/badges";
 export * from "./application/use-cases/sponsors";
 export * from "./application/use-cases/event-sponsors";
 export * from "./application/use-cases/speakers";

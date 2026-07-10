@@ -29,5 +29,9 @@ export { SupabaseActivityRepository } from "./repositories/SupabaseActivityRepos
 export { SupabaseScanTargetRepository } from "./repositories/SupabaseScanTargetRepository";
 export { SupabaseScanRepository } from "./repositories/SupabaseScanRepository";
 export { SupabaseScanLogRepository } from "./repositories/SupabaseScanLogRepository";
+export { SupabaseBadgeRepository } from "./repositories/SupabaseBadgeRepository";
+export { SupabaseUserBadgeRepository } from "./repositories/SupabaseUserBadgeRepository";
+export { SupabaseAttendeeStatsRepository } from "./repositories/SupabaseAttendeeStatsRepository";
 export { SystemClock } from "./clock/SystemClock";
 export { buildScanDeps } from "./composition/buildScanDeps";
+export { buildBadgeDeps } from "./composition/buildBadgeDeps";

@@ -1,6 +1,7 @@
 # CLAUDE-phase5.md — Phase 5: Networking + Badges
 
-> **Status: Sprint 5.1 shipped (networking scans); 5.2–5.4 pending.** Phase 4
+> **Status: Sprints 5.1–5.2 shipped (networking scans + badge model/engine);
+> 5.3–5.4 pending.** Phase 4
 > (admin suite) is v1-complete. Phase 5 turns on the two attendee-facing systems
 > that were scaffolded but inert: **networking scans** (attendee↔attendee, now
 > live) and **badges/achievements** (next). This file is the full spec;
@@ -223,10 +224,12 @@ scan" path.
       again rejects `already_claimed`; scanning yourself rejects `self_scan`.
       _(5.1 — unit-tested + DB-verified.)_
 - [x] Scanning an unregistered/absent attendee rejects `target_inactive`. _(5.1)_
-- [ ] `badges` + `user_badges` ship with RLS; awards write only via the
-      server-authorized evaluator (no attendee insert policy).
-- [ ] Crossing a badge threshold via a scan awards the badge exactly once;
-      re-evaluating awards nothing new (idempotent).
+- [x] `badges` + `user_badges` ship with RLS; awards write only via the
+      server-authorized evaluator (no attendee insert policy). _(5.2 — migration
+      `0014`; DB-verified: 23505 on duplicate award.)_
+- [x] Crossing a badge threshold via a scan awards the badge exactly once;
+      re-evaluating awards nothing new (idempotent). _(5.2 — engine unit-tested;
+      wiring into the scan path is 5.3.)_
 - [ ] `/my-badges` shows earned badges and locked ones with progress.
 - [ ] The scanner surfaces a badge earned on the scan that triggered it.
 - [ ] A failed badge evaluation never fails the underlying scan/adjustment.

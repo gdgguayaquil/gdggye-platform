@@ -159,7 +159,7 @@ export function HomeView({ events }: { events: Event[] }) {
             />
           ))}
         </div>
-        <div className="container-x py-20 text-center md:py-24">
+        <div className="container-x py-20 flex flex-col items-center text-center md:py-24">
           <div className="eyebrow mb-4">{t.join.eyebrow}</div>
           <h2
             className="h-section mx-auto max-w-[20ch]"

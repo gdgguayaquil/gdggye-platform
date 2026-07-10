@@ -50,6 +50,17 @@ export class SupabaseUserRepository implements UserRepository {
     return data ? rowToUser(data) : null;
   }
 
+  async findManyByIds(ids: string[]): Promise<User[]> {
+    if (ids.length === 0) return [];
+    const { data, error } = await this.client
+      .from("users")
+      .select("*")
+      .in("id", ids);
+    if (error)
+      throw new Error(`SupabaseUserRepository.findManyByIds: ${error.message}`);
+    return (data ?? []).map(rowToUser);
+  }
+
   async upsertBootstrap(input: BootstrapUserInput): Promise<User> {
     const { data, error } = await this.client
       .from("users")

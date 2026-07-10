@@ -32,6 +32,18 @@ export class SupabaseRegistrationRepository implements RegistrationRepository {
     return data ? rowToRegistration(data) : null;
   }
 
+  async listByEvent(eventId: string): Promise<Registration[]> {
+    const { data, error } = await this.client
+      .from("registrations")
+      .select("*")
+      .eq("event_id", eventId);
+    if (error)
+      throw new Error(
+        `SupabaseRegistrationRepository.listByEvent: ${error.message}`,
+      );
+    return (data ?? []).map(rowToRegistration);
+  }
+
   async ensure(input: EnsureRegistrationInput): Promise<Registration> {
     // Idempotent. Race-safe via the (event_id, user_id) unique constraint:
     // a duplicate insert errors with code 23505, which we treat as success

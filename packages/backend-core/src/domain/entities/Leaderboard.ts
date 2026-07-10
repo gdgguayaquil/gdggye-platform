@@ -29,6 +29,19 @@ export interface PointBreakdownItem {
   count: number;
 }
 
+// A single point_transactions row, as the admin ledger shows it (newest
+// first). Unlike PointBreakdownItem this is the un-aggregated line item —
+// the admin attendee drawer needs to see each grant, not just the totals.
+export interface PointLedgerEntry {
+  id: string;
+  eventId: string;
+  userId: string;
+  source: PointSource;
+  sourceId: string | null;
+  points: number; // signed; negative for corrective admin_adjustment rows
+  createdAt: Date;
+}
+
 export interface MyEventStats {
   eventId: string;
   userId: string;

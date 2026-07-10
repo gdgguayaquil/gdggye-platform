@@ -44,6 +44,12 @@ export class InMemoryUserRepository implements UserRepository {
     return null;
   }
 
+  async findManyByIds(ids: string[]): Promise<User[]> {
+    return ids
+      .map((id) => this.users.get(id))
+      .filter((u): u is User => u !== undefined);
+  }
+
   async upsertBootstrap(input: BootstrapUserInput): Promise<User> {
     const existing = this.users.get(input.id);
     if (existing) return existing;

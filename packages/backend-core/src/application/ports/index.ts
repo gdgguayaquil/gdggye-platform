@@ -72,3 +72,8 @@ export type {
   RecordAcceptedScanInput,
   RecordRejectedScanInput,
 } from "./ScanRepository";
+export type {
+  ScanLogRepository,
+  ScanHistoryEntry,
+  ScanResult,
+} from "./ScanLogRepository";

@@ -8,6 +8,10 @@ export class InMemoryRegistrationRepository implements RegistrationRepository {
   private rows: Registration[] = [];
   private counter = 0;
 
+  constructor(seed: Registration[] = []) {
+    this.rows = [...seed];
+  }
+
   async findByEventAndUser(
     eventId: string,
     userId: string,
@@ -16,6 +20,10 @@ export class InMemoryRegistrationRepository implements RegistrationRepository {
       this.rows.find((r) => r.eventId === eventId && r.userId === userId) ??
       null
     );
+  }
+
+  async listByEvent(eventId: string): Promise<Registration[]> {
+    return this.rows.filter((r) => r.eventId === eventId);
   }
 
   async ensure(input: EnsureRegistrationInput): Promise<Registration> {

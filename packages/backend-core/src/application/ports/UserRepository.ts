@@ -22,6 +22,11 @@ export interface UserRepository {
   findById(id: string): Promise<User | null>;
   findByGoogleId(googleId: string): Promise<User | null>;
 
+  // Batch identity lookup — hydrates a list of registrations/scans without
+  // N+1 findById calls. Order and completeness are not guaranteed; the
+  // caller maps by id. An empty input returns an empty array.
+  findManyByIds(ids: string[]): Promise<User[]>;
+
   // Idempotent insert keyed by `id` (= auth.users.id). Used by signInBootstrap.
   upsertBootstrap(input: BootstrapUserInput): Promise<User>;
 

@@ -1,6 +1,7 @@
 import type {
   LeaderboardEntry,
   PointBreakdownItem,
+  PointLedgerEntry,
 } from "../domain/entities/Leaderboard";
 import type {
   LeaderboardRepository,
@@ -17,6 +18,7 @@ export class InMemoryLeaderboardRepository
   constructor(
     private entries: LeaderboardEntry[] = [],
     private breakdowns: Map<string, PointBreakdownItem[]> = new Map(),
+    private ledgers: Map<string, PointLedgerEntry[]> = new Map(),
   ) {}
 
   async top(_eventId: string, limit: number): Promise<LeaderboardEntry[]> {
@@ -37,5 +39,12 @@ export class InMemoryLeaderboardRepository
     userId: string,
   ): Promise<PointBreakdownItem[]> {
     return this.breakdowns.get(userId) ?? [];
+  }
+
+  async listForUser(
+    _eventId: string,
+    userId: string,
+  ): Promise<PointLedgerEntry[]> {
+    return this.ledgers.get(userId) ?? [];
   }
 }

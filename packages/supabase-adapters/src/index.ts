@@ -28,5 +28,6 @@ export { SupabasePreCheckinSubmissionRepository } from "./repositories/SupabaseP
 export { SupabaseActivityRepository } from "./repositories/SupabaseActivityRepository";
 export { SupabaseScanTargetRepository } from "./repositories/SupabaseScanTargetRepository";
 export { SupabaseScanRepository } from "./repositories/SupabaseScanRepository";
+export { SupabaseScanLogRepository } from "./repositories/SupabaseScanLogRepository";
 export { SystemClock } from "./clock/SystemClock";
 export { buildScanDeps } from "./composition/buildScanDeps";

@@ -1,5 +1,6 @@
 import type {
   PointBreakdownItem,
+  PointLedgerEntry,
   PointSource,
   PointTransactionRepository,
 } from "@gdggye/backend-core";
@@ -48,5 +49,35 @@ export class SupabasePointTransactionRepository implements PointTransactionRepos
     }
     // Stable sort so the my-stats view doesn't reshuffle between renders.
     return [...acc.values()].sort((a, b) => b.total - a.total);
+  }
+
+  // Un-aggregated ledger for the admin attendee drawer, newest first.
+  // Behind pt_self_read (is_staff branch) — caller passes the staff-scoped
+  // server client.
+  async listForUser(
+    eventId: string,
+    userId: string,
+  ): Promise<PointLedgerEntry[]> {
+    const { data, error } = await this.client
+      .from("point_transactions")
+      .select(
+        "id, event_id, user_id, source_type, source_id, points, created_at",
+      )
+      .eq("event_id", eventId)
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    if (error)
+      throw new Error(
+        `SupabasePointTransactionRepository.listForUser: ${error.message}`,
+      );
+    return (data ?? []).map((row) => ({
+      id: row.id,
+      eventId: row.event_id,
+      userId: row.user_id,
+      source: row.source_type as PointSource,
+      sourceId: row.source_id,
+      points: row.points,
+      createdAt: new Date(row.created_at),
+    }));
   }
 }

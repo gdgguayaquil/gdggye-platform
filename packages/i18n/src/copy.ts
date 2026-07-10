@@ -30,9 +30,9 @@ export const COPY = {
       stat3: "Años organizando",
     },
     ticker: {
-      devs: "3,200+ developers",
+      devs: "1,200+ developers",
       free: "Entrada gratuita",
-      years: "9 años de comunidad",
+      years: "6 años de comunidad",
     },
     upcoming: {
       eyebrow: "Calendario 2026",
@@ -138,9 +138,9 @@ export const COPY = {
       stat3: "Years running",
     },
     ticker: {
-      devs: "3,200+ developers",
+      devs: "1,200+ developers",
       free: "Free admission",
-      years: "9 years of community",
+      years: "6 years of community",
     },
     upcoming: {
       eyebrow: "Calendar 2026",

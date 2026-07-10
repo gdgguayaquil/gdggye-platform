@@ -42,4 +42,28 @@ export class SupabaseUserBadgeRepository implements UserBadgeRepository {
     if (error.code === "23505") return false;
     throw new Error(`SupabaseUserBadgeRepository.award: ${error.message}`);
   }
+
+  async awardCountsForEvent(
+    eventId: string,
+  ): Promise<{ badgeId: string; count: number }[]> {
+    // Fetch this event's award rows (badge_id only) and tally in memory —
+    // award volume per event is bounded by attendees × badges. Behind the
+    // staff read branch of user_badges_self_read.
+    const { data, error } = await this.client
+      .from("user_badges")
+      .select("badge_id")
+      .eq("event_id", eventId);
+    if (error)
+      throw new Error(
+        `SupabaseUserBadgeRepository.awardCountsForEvent: ${error.message}`,
+      );
+    const byBadge = new Map<string, number>();
+    for (const row of data ?? []) {
+      byBadge.set(row.badge_id, (byBadge.get(row.badge_id) ?? 0) + 1);
+    }
+    return [...byBadge.entries()].map(([badgeId, count]) => ({
+      badgeId,
+      count,
+    }));
+  }
 }

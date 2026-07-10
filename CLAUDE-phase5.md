@@ -1,7 +1,9 @@
 # CLAUDE-phase5.md — Phase 5: Networking + Badges
 
-> **Status: Sprints 5.1–5.3 shipped (networking + badge model/engine + wiring &
-> surfacing); 5.4 (admin badges read) pending.** Phase 4
+> **Status: v1 complete.** All four sprints shipped — 5.1 networking scans,
+> 5.2 badge model/engine, 5.3 wiring + attendee surfacing, 5.4 admin badges
+> read — each verified end-to-end against local RLS. Open items (mutual credit,
+> per-event cap, admin badge CRUD) remain deferred. Phase 4
 > (admin suite) is v1-complete. Phase 5 turns on the two attendee-facing systems
 > that were scaffolded but inert: **networking scans** (attendee↔attendee, now
 > live) and **badges/achievements** (next). This file is the full spec;
@@ -236,10 +238,11 @@ scan" path.
       scan route returns `newBadges`; QrScanner celebrates them.)_
 - [x] A failed badge evaluation never fails the underlying scan/adjustment.
       _(5.3 — both call sites wrap `evaluateBadges` best-effort.)_
-- [ ] Every new `backend-core` use-case has an in-memory-repo unit test.
-- [ ] `grep -r "supabase\|@supabase" packages/backend-core/src` → zero.
-- [ ] `grep -r "from 'next" packages/backend-core/src` → zero.
-- [ ] `npm run typecheck && npm run lint && npm run build` green across the repo.
+- [x] Every new `backend-core` use-case has an in-memory-repo unit test.
+      _(evaluateBadges, getMyBadges, getEventBadgeStats — 90 tests total.)_
+- [x] `grep -r "supabase\|@supabase" packages/backend-core/src` → zero.
+- [x] `grep -r "from 'next" packages/backend-core/src` → zero.
+- [x] `npm run typecheck && npm run lint && npm run build` green across the repo.
 
 ---
 

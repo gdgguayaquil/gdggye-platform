@@ -13,30 +13,58 @@ export class InMemoryBadgeRepository implements BadgeRepository {
   }
 }
 
-export class InMemoryUserBadgeRepository implements UserBadgeRepository {
-  // key: `${userId}:${badgeId}`
-  private awards = new Set<string>();
+interface AwardRecord {
+  userId: string;
+  eventId: string;
+  badgeId: string;
+}
 
-  constructor(seedAwarded: { userId: string; badgeId: string }[] = []) {
-    for (const a of seedAwarded) this.awards.add(`${a.userId}:${a.badgeId}`);
+export class InMemoryUserBadgeRepository implements UserBadgeRepository {
+  private awards: AwardRecord[] = [];
+
+  constructor(
+    seedAwarded: { userId: string; badgeId: string; eventId?: string }[] = [],
+  ) {
+    for (const a of seedAwarded) {
+      this.awards.push({
+        userId: a.userId,
+        eventId: a.eventId ?? "evt-1",
+        badgeId: a.badgeId,
+      });
+    }
   }
 
-  async awardedBadgeIds(userId: string): Promise<string[]> {
-    const prefix = `${userId}:`;
-    return [...this.awards]
-      .filter((k) => k.startsWith(prefix))
-      .map((k) => k.slice(prefix.length));
+  async awardedBadgeIds(userId: string, eventId: string): Promise<string[]> {
+    return this.awards
+      .filter((a) => a.userId === userId && a.eventId === eventId)
+      .map((a) => a.badgeId);
   }
 
   async award(
     userId: string,
-    _eventId: string,
+    eventId: string,
     badgeId: string,
   ): Promise<boolean> {
-    const key = `${userId}:${badgeId}`;
-    if (this.awards.has(key)) return false; // mirrors the 23505 no-op
-    this.awards.add(key);
+    // The DB unique is (user_id, badge_id) — a badge is earned once, period.
+    if (this.awards.some((a) => a.userId === userId && a.badgeId === badgeId)) {
+      return false; // mirrors the 23505 no-op
+    }
+    this.awards.push({ userId, eventId, badgeId });
     return true;
+  }
+
+  async awardCountsForEvent(
+    eventId: string,
+  ): Promise<{ badgeId: string; count: number }[]> {
+    const byBadge = new Map<string, number>();
+    for (const a of this.awards) {
+      if (a.eventId !== eventId) continue;
+      byBadge.set(a.badgeId, (byBadge.get(a.badgeId) ?? 0) + 1);
+    }
+    return [...byBadge.entries()].map(([badgeId, count]) => ({
+      badgeId,
+      count,
+    }));
   }
 }
 

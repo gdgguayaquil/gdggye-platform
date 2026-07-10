@@ -11,6 +11,7 @@ export type EventSubNavKey =
   | "activities"
   | "attendees"
   | "scans"
+  | "badges"
   | "pre-checkin";
 
 interface Tab {
@@ -55,6 +56,11 @@ const TABS: Tab[] = [
     key: "scans",
     label: "Scans",
     href: (id) => `/events/${id}/scans`,
+  },
+  {
+    key: "badges",
+    label: "Badges",
+    href: (id) => `/events/${id}/badges`,
   },
   {
     key: "pre-checkin",
